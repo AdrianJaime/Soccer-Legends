@@ -16,6 +16,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
+        PhotonNetwork.SendRate = 20;
+        PhotonNetwork.SerializationRate = 15;
         if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -28,7 +30,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             ProcessInputs();
         }
-        else
+        else if(!photonView.IsMine)
         {
             smoothMovement();
         }
@@ -48,7 +50,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(transform.position); //Solo se envía si se está moviendo.
+            stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
         }
         else if (stream.IsReading)
         {

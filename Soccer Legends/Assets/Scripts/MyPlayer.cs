@@ -34,7 +34,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine) //Check if we're the local player
         {
             ProcessInputs();
-            if (actualLine) FollowLine();
+            if (actualLine && points.Count > 1) FollowLine();
         }
         else if(!photonView.IsMine)
         {
@@ -93,7 +93,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
            transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed);
             
-           if(Vector3.Distance(transform.position, points[0]) < dist  && points.Count > 1) //Maybe not necessary == could be ok
+           if(Vector3.Distance(transform.position, points[0]) < dist ) //Maybe not necessary == could be ok
             {
                 points.RemoveAt(0);
                 actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());

@@ -7,13 +7,13 @@ using System;
 
 public class MyPlayer : MonoBehaviourPun, IPunObservable
 {
-    const int MAX_POSITIONS = 100;
-
     public PhotonView pv;
-    public float speed, dist;
+    public float speed, dist, maxPointDist, minPointDist, characterRad;
+    public int maxPoints;
     public GameObject playerCamera;
     public GameObject line;
 
+    public bool onMove = false;
     private Vector3 smoothMove;
     private GameObject actualLine;
     private List<Vector3> points;
@@ -25,7 +25,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
-           // playerCamera.SetActive(true);
             playerCamera.SetActive(true);
         }
         points = new List<Vector3>();
@@ -34,8 +33,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine) //Check if we're the local player
         {
-            if (actualLine) FollowLine();
             ProcessInputs();
+            if (actualLine) FollowLine();
         }
         else if(!photonView.IsMine)
         {
@@ -48,7 +47,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
     }
 
-    private int ProcessInputs()
+    private void ProcessInputs()
     {
         //Movement
         if (Input.touchCount > 0)
@@ -56,47 +55,51 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             Touch swipe = Input.GetTouch(0);
             if (swipe.phase == TouchPhase.Began)
             {
+                onMove = false;
                 Vector3 aux;
-                aux = Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0));
+                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
 
                 points.Clear();
                 if (actualLine) Destroy(actualLine); //Clear
 
-                points.Add(new Vector3(aux.x, aux.y, -1));
+                points.Add(transform.position);
                 actualLine = Instantiate(line, points[0], transform.rotation);
                 actualLine.GetComponent<LineRenderer>().positionCount++;
                 actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
             }
-            if (actualLine != null)
+            if (actualLine != null && points.Count < maxPoints)
             {
                 Vector3 aux;
-                aux = Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0));
-                points.Add(new Vector3(aux.x, aux.y, -1));
-                actualLine.GetComponent<LineRenderer>().positionCount = points.Count;
-                actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
-                return actualLine.GetComponent<LineRenderer>().positionCount;
+                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                if (IsPointCorrect(aux))
+                {
+                    onMove = true;
+                    points.Add(new Vector3(aux.x, aux.y, -1));
+                    actualLine.GetComponent<LineRenderer>().positionCount = points.Count;
+                    actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
+                }
             }
-            else return 0;
+            if(swipe.phase == TouchPhase.Ended && points.Count == 1)
+            {
+                GameObject.Destroy(actualLine);
+                onMove = false;
+            }
         }
-        else return 0;
-
     }
 
     public void FollowLine()
     {
-        if (actualLine.GetComponent<LineRenderer>().positionCount > 0 && points.Count > 0)
+        if (actualLine.GetComponent<LineRenderer>().positionCount > 0 && points.Count > 0 && onMove)
         {
-           transform.position = Vector3.Lerp(transform.position, points[0], Time.deltaTime * speed);
+           transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed);
             
-           if(Vector3.Distance(transform.position, points[0]) < dist) //Maybe not necessary == could be ok
+           if(Vector3.Distance(transform.position, points[0]) < dist  && points.Count > 1) //Maybe not necessary == could be ok
             {
                 points.RemoveAt(0);
                 actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
             }
-            if (points.Count == 0) GameObject.Destroy(actualLine);
         }
     }
-
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
     {
         if (stream.IsWriting)
@@ -108,5 +111,18 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             smoothMove = (Vector3)stream.ReceiveNext();
         }
     }
+
+    private bool IsPointCorrect(Vector3 point)
+    {
+        if (Vector3.Distance(point, transform.position) < characterRad && points.Count == 1) return false;
+        if (points.Count != 0)
+        {
+            if (Vector3.Distance(point, points[points.Count - 1]) < maxPointDist && Vector3.Distance(point, points[points.Count - 1]) > minPointDist) return true;
+        }
+        return false;
+    }
+
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, -1); }
+
 
 }

@@ -324,9 +324,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pv: {fileID: 5635280161170061597}
   speed: 2
-  dist: 0.3
+  dist: 0.05
+  maxPointDist: 0.7
+  minPointDist: 0.1
+  characterRad: 0.5
+  maxPoints: 20
   playerCamera: {fileID: 3981013601932884041}
   line: {fileID: 2617429420129864162, guid: 38db48a805201ee4d8f24b4da64d58c2, type: 3}
+  onMove: 0
 --- !u!114 &6442219383259052985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +372,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3981013601932884041}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []

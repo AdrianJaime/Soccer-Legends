@@ -35,6 +35,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             ProcessInputs();
             if (actualLine && points.Count > 1) FollowLine();
+            rePositionBall();
         }
         else if(!photonView.IsMine)
         {
@@ -53,8 +54,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (Input.touchCount > 0)
         {
             Touch swipe = Input.GetTouch(0);
+            float touchTime = 0;
             if (swipe.phase == TouchPhase.Began)
             {
+                touchTime = Time.time;
                 onMove = false;
                 Vector3 aux;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
@@ -74,15 +77,24 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (IsPointCorrect(aux))
                 {
                     onMove = true;
-                    points.Add(new Vector3(aux.x, aux.y, -1));
+                    points.Add(putZAxis(aux));
                     actualLine.GetComponent<LineRenderer>().positionCount = points.Count;
                     actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
                 }
             }
-            if(swipe.phase == TouchPhase.Ended && points.Count == 1)
+            if(swipe.phase == TouchPhase.Ended)
             {
-                GameObject.Destroy(actualLine);
-                onMove = false;
+                if (Time.time - touchTime <= 0.5)
+                {
+                    //Tap
+                    if(transform.Find("Ball"))shootBall();
+                    Debug.Log("Tap");
+                }
+                if (points.Count == 1)
+                {
+                    GameObject.Destroy(actualLine);
+                    onMove = false;
+                }
             }
         }
     }
@@ -122,7 +134,23 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         return false;
     }
 
-    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, -1); }
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, 0); }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Ball" && other.transform.parent == null)
+        {
+            other.transform.SetParent(transform);
+        }
+    }
+
+    private void rePositionBall()
+    {
+        // 2 options of layer
+    }
+    private void shootBall()
+    {
+        //transform.Find("Ball")
+    }
 
 }

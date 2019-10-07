@@ -8,14 +8,16 @@ using System;
 public class MyPlayer : MonoBehaviourPun, IPunObservable
 {
     public PhotonView pv;
-    public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize;
+    public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject playerCamera;
     public GameObject line;
+    public int kick;
 
     public bool onMove = false;
-    private Vector3 smoothMove;
+    private Vector3 smoothMove, aux;
     private GameObject actualLine;
     private List<Vector3> points;
+    private float touchTime;
 
     private void Start()
     {
@@ -53,13 +55,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (Input.touchCount > 0)
         {
             Touch swipe = Input.GetTouch(0);
-            float touchTime = 0;
             if (swipe.phase == TouchPhase.Began)
             {
                 touchTime = Time.time;
-                Vector3 aux;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-
                 if (Vector3.Distance(aux, transform.position) < characterRad)
                 {
                     points.Clear();
@@ -74,7 +73,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if (actualLine != null && TrailDistance() < maxSize)
             {
-                Vector3 aux;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 if (IsPointCorrect(aux))
                 {
@@ -86,11 +84,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if(swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= 1)
+                if (Time.time - touchTime <= shootTime)
                 {
                     //Tap
-                    if(transform.Find("Ball"))shootBall();
-                    Debug.Log("Tap");
+                    if(transform.Find("Ball"))shootBall(aux);
                 }
                 if (points.Count == 1)
                 {
@@ -133,7 +130,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             if (Vector3.Distance(point, points[points.Count - 1]) < maxPointDist && Vector3.Distance(point, points[points.Count - 1]) > minPointDist) return true;
         }
-        Debug.Log("Point" + point + "is incorrect for" + points[points.Count - 1]);
         return false;
     }
 
@@ -144,6 +140,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if(other.tag == "Ball" && other.transform.parent == null)
         {
             other.transform.SetParent(transform);
+            other.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            other.transform.position = transform.position;
         }
     }
 
@@ -151,9 +149,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         // 2 options of layer
     }
-    private void shootBall()
+    private void shootBall(Vector3 tap)
     {
-        //transform.Find("Ball")
+        Vector2 shootDir = new Vector2( tap.x - transform.Find("Ball").position.x, tap.y - transform.Find("Ball").position.y).normalized;
+        transform.Find("Ball").GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
+        transform.Find("Ball").SetParent(null);
     }
 
     private float TrailDistance()

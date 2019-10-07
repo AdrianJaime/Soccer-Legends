@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 using System;
 
 
@@ -15,7 +16,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     public bool onMove = false;
     private Vector3 smoothMove, aux;
-    private GameObject actualLine;
+    private GameObject actualLine, ball;
     private List<Vector3> points;
     private float touchTime;
 
@@ -87,7 +88,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (Time.time - touchTime <= shootTime)
                 {
                     //Tap
-                    if(transform.Find("Ball"))shootBall(aux);
+                    Debug.Log("tap");
+                    if (ball)
+                    {
+                        Debug.Log("I have the ball");
+                        photonView.RPC("ShootBall", RpcTarget.All, aux);
+                        ball = null;
+                    }
                 }
                 if (points.Count == 1)
                 {
@@ -137,23 +144,27 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Ball" && other.transform.parent == null)
+        if(other.tag == "Ball" && other.transform.parent == null && other.GetComponent<Ball>().lastPlayer != gameObject)
         {
-            other.transform.SetParent(transform);
-            other.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            other.transform.position = transform.position;
+            other.GetComponent<Ball>().lastPlayer = gameObject;
+            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Ball";
+            ball = other.gameObject;
+            ball.transform.SetParent(transform);
+            ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            ball.transform.position = transform.position;
         }
+    }
+
+    [PunRPC]
+    private void ShootBall(Vector3 tap)
+    {
+        ball.GetComponent<Ball>().shoot = true;
+        ball.GetComponent<Ball>().direction = tap;
     }
 
     private void rePositionBall()
     {
         // 2 options of layer
-    }
-    private void shootBall(Vector3 tap)
-    {
-        Vector2 shootDir = new Vector2( tap.x - transform.Find("Ball").position.x, tap.y - transform.Find("Ball").position.y).normalized;
-        transform.Find("Ball").GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
-        transform.Find("Ball").SetParent(null);
     }
 
     private float TrailDistance()

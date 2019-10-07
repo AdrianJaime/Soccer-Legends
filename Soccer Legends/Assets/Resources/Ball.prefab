@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 5445093676735528277}
   - component: {fileID: 5445093676735528281}
   - component: {fileID: 5445093676735528276}
+  - component: {fileID: 6673339172527137537}
   - component: {fileID: 5445093676735528283}
   - component: {fileID: 5445093676735528280}
+  - component: {fileID: 3327251852630702426}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -123,6 +125,28 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &6673339172527137537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5445093676735528279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 5445093676735528283}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &5445093676735528283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,6 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e3551ae6ad2ee4cb1e5434b92973e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shoot: 0
+  direction: {x: 0, y: 0}
+  lastPlayer: {fileID: 0}
 --- !u!61 &5445093676735528280
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -161,3 +188,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.54, y: 0.51}
   m_EdgeRadius: 0
+--- !u!114 &3327251852630702426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5445093676735528279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0

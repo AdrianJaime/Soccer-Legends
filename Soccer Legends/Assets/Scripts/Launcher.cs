@@ -9,6 +9,10 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public GameObject connectedScreen, disconnectedScreen;
 
+    private void Update()
+    {
+        Debug.Log(PhotonNetwork.CountOfRooms);
+    }
     public void OnClick_ConnectBtn()
     {
         PhotonNetwork.ConnectUsingSettings(); //If succesfull OnConnectedToMaster is called.

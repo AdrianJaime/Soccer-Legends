@@ -69,8 +69,8 @@ namespace Photon.Pun
                     this.m_Direction = transform.position - this.m_StoredPosition;
                     this.m_StoredPosition = transform.position;
 
-                    stream.SendNext(transform.position);
-                    stream.SendNext(this.m_Direction);
+                    stream.SendNext(-transform.position);
+                    stream.SendNext(-this.m_Direction);
                 }
 
                 if (this.m_SynchronizeRotation)

@@ -62,7 +62,7 @@ namespace Photon.Pun
 
                 if (this.m_SynchronizeVelocity)
                 {
-                    stream.SendNext(this.m_Body.velocity);
+                    stream.SendNext(-this.m_Body.velocity);
                 }
 
                 if (this.m_SynchronizeAngularVelocity)

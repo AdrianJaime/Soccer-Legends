@@ -212,6 +212,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3981013600726818670}
+  - {fileID: 3981013601932884040}
   m_Father: {fileID: 3981013602569086295}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -347,10 +348,10 @@ MonoBehaviour:
   pv: {fileID: 5635280161170061597}
   speed: 2
   dist: 0.05
-  maxPointDist: 0.7
+  maxPointDist: 1
   minPointDist: 0.1
   characterRad: 0.5
-  maxPoints: 20
+  maxSize: 2.5
   playerCamera: {fileID: 3981013601932884041}
   line: {fileID: 2617429420129864162, guid: 38db48a805201ee4d8f24b4da64d58c2, type: 3}
   onMove: 0
@@ -398,7 +399,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3981013602569086295}
+  m_Father: {fileID: 3981013601855209106}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -484,7 +485,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3981013601855209106}
-  - {fileID: 3981013601932884040}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

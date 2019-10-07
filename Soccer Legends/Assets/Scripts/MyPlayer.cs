@@ -8,8 +8,7 @@ using System;
 public class MyPlayer : MonoBehaviourPun, IPunObservable
 {
     public PhotonView pv;
-    public float speed, dist, maxPointDist, minPointDist, characterRad;
-    public int maxPoints;
+    public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize;
     public GameObject playerCamera;
     public GameObject line;
 
@@ -58,19 +57,22 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             if (swipe.phase == TouchPhase.Began)
             {
                 touchTime = Time.time;
-                onMove = false;
                 Vector3 aux;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
 
-                points.Clear();
-                if (actualLine) Destroy(actualLine); //Clear
+                if (Vector3.Distance(aux, transform.position) < characterRad)
+                {
+                    points.Clear();
+                    onMove = false;
+                    if (actualLine) Destroy(actualLine); //Clear
 
-                points.Add(transform.position);
-                actualLine = Instantiate(line, points[0], transform.rotation);
-                actualLine.GetComponent<LineRenderer>().positionCount++;
-                actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
+                    points.Add(transform.position);
+                    actualLine = Instantiate(line, points[0], transform.rotation);
+                    actualLine.GetComponent<LineRenderer>().positionCount++;
+                    actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
+                }
             }
-            if (actualLine != null && points.Count < maxPoints)
+            if (actualLine != null && TrailDistance() < maxSize)
             {
                 Vector3 aux;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
@@ -84,7 +86,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if(swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= 0.5)
+                if (Time.time - touchTime <= 1)
                 {
                     //Tap
                     if(transform.Find("Ball"))shootBall();
@@ -105,7 +107,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
            transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed);
             
-           if(Vector3.Distance(transform.position, points[0]) < dist ) //Maybe not necessary == could be ok
+           if(Vector3.Distance(transform.position, points[0]) < dist ) 
             {
                 points.RemoveAt(0);
                 actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
@@ -131,6 +133,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             if (Vector3.Distance(point, points[points.Count - 1]) < maxPointDist && Vector3.Distance(point, points[points.Count - 1]) > minPointDist) return true;
         }
+        Debug.Log("Point" + point + "is incorrect for" + points[points.Count - 1]);
         return false;
     }
 
@@ -153,4 +156,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         //transform.Find("Ball")
     }
 
+    private float TrailDistance()
+    {
+        float dist = 0;
+        for (int i = 1; points.Count > i; i++) dist += Vector3.Distance(points[i], points[i - 1]);
+        return dist;
+    }
 }

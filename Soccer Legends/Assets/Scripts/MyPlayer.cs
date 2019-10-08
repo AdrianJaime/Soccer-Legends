@@ -159,7 +159,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private void ShootBall(Vector3 tap)
     {
         ball.GetComponent<Ball>().shoot = true;
-        ball.GetComponent<Ball>().direction = tap;
+        if(ball.GetComponent<Ball>().direction == Vector2.zero) ball.GetComponent<Ball>().direction = new Vector2(-tap.x, -tap.y);
+        Debug.Log("Direction" + tap);
     }
 
     private void rePositionBall()
@@ -173,4 +174,5 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         for (int i = 1; points.Count > i; i++) dist += Vector3.Distance(points[i], points[i - 1]);
         return dist;
     }
+    
 }

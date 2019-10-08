@@ -339,6 +339,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1508418378}
   - component: {fileID: 1508418379}
+  - component: {fileID: 1508418380}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -376,6 +377,28 @@ MonoBehaviour:
     type: 3}
   ballPrefab: {fileID: 5445093676735528279, guid: d1cf774281d3af54fae6a3819b6e22d7,
     type: 3}
+--- !u!114 &1508418380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508418377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 1508418379}
+  viewIdField: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &2091783943
 GameObject:
   m_ObjectHideFlags: 0

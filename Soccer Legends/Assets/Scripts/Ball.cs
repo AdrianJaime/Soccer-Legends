@@ -31,14 +31,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         if (shoot)
         {
             Vector2 shootDir = new Vector2(direction.x - transform.position.x, direction.y - transform.position.y).normalized;
-            if (photonView.IsMine)
-            {
-                GetComponent<Rigidbody2D>().AddForce(shootDir * transform.parent.GetComponent<MyPlayer>().kick, ForceMode2D.Impulse);
-            }
-            else
-            {
-                GetComponent<Rigidbody2D>().AddForce(-shootDir * transform.parent.GetComponent<MyPlayer>().kick, ForceMode2D.Impulse);
-            }
+            GetComponent<Rigidbody2D>().AddForce(shootDir * transform.parent.GetComponent<MyPlayer>().kick, ForceMode2D.Impulse);
             transform.SetParent(null);
             shoot = false;
         }
@@ -49,10 +42,12 @@ public class Ball : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            stream.SendNext(-rb.velocity);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
+            rb.velocity = (Vector2)stream.ReceiveNext();
         }
     }
     private void smoothMovement()

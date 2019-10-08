@@ -34,6 +34,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             GetComponent<Rigidbody2D>().AddForce(shootDir * transform.parent.GetComponent<MyPlayer>().kick, ForceMode2D.Impulse);
             transform.SetParent(null);
             shoot = false;
+            direction = Vector2.zero;
         }
     }
 
@@ -42,12 +43,12 @@ public class Ball : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
-            stream.SendNext(-rb.velocity);
+            //stream.SendNext(-rb.velocity);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
-            rb.velocity = (Vector2)stream.ReceiveNext();
+            //rb.velocity = (Vector2)stream.ReceiveNext();
         }
     }
     private void smoothMovement()

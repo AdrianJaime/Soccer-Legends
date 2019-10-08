@@ -16,10 +16,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     private void Update()
     {
-        if (GameObject.FindGameObjectWithTag("Ball")) ball = true;
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2) {
             if ( timeStart == 0) timeStart = Time.time;
-            if (Time.time - timeStart >= 10 && !ball)
+            if (Time.time - timeStart >= 10 && !GameObject.FindGameObjectWithTag("Ball"))
             {
                 PhotonNetwork.Instantiate(ballPrefab.name, Vector3.zero, ballPrefab.transform.rotation);
                 ball = true;
@@ -30,6 +29,16 @@ public class Manager : MonoBehaviourPun, IPunObservable
     void SpawnPlayer()
     {
         PhotonNetwork.Instantiate(playerPrefab.name, playerPrefab.transform.position - new Vector3(0,5,0), playerPrefab.transform.rotation);
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1) PhotonNetwork.Instantiate(ballPrefab.name, Vector3.zero, ballPrefab.transform.rotation);
+       /* 
+        {
+            if (timeStart == 0) timeStart = Time.time;
+            if (Time.time - timeStart >= 10 && !GameObject.FindGameObjectWithTag("Ball"))
+            {
+                
+                ball = true;
+            }
+        }*/
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.

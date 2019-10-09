@@ -90,7 +90,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     //Tap
                     transform.GetChild(0).GetChild(0).GetComponent<Text>().text = aux.ToString();
                     Debug.Log("tap: " + aux);
-                    float[] dir = { aux.x, aux.y };
+                    float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
                     photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                 }
                 if (points.Count == 1)
@@ -153,13 +153,17 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    private void ShootBall(float[] _dir)
+    private void ShootBall(float[] _dir, PhotonMessageInfo info)
     {
+        Debug.Log(info.Sender);
         if (ball)
         {
             if (ball.GetComponent<Ball>().direction == Vector2.zero)
             {
+                ball.GetComponent<Ball>().shootPosition = new Vector2(_dir[2], _dir[3]);
                 ball.GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
+                if(info.Sender.IsMasterClient)ball.GetComponent<Ball>().shooterIsMaster = true;
+                else ball.GetComponent<Ball>().shooterIsMaster = false;
                 ball.GetComponent<Ball>().shoot = true;
             }
             ball.transform.parent = null;

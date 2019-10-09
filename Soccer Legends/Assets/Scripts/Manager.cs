@@ -21,7 +21,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2) {
             if (Input.GetKeyDown(KeyCode.Space)) GameStarted = true;
         }
-        Debug.Log(GameStarted);
     }
 
     void SpawnPlayer()

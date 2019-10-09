@@ -88,13 +88,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (Time.time - touchTime <= shootTime)
                 {
                     //Tap
-                    Debug.Log("tap");
-                    if (ball)
-                    {
-                        Debug.Log("I have the ball");
-                        photonView.RPC("ShootBall", RpcTarget.All, aux);
-                        ball = null;
-                    }
+                    transform.GetChild(0).GetChild(0).GetComponent<Text>().text = aux.ToString();
+                    Debug.Log("tap: " + aux);
+                    float[] dir = { aux.x, aux.y };
+                    photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                 }
                 if (points.Count == 1)
                 {
@@ -144,7 +141,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Ball" && other.transform.parent == null && other.GetComponent<Ball>().lastPlayer != gameObject)
+        if(other.tag == "Ball" && other.transform.parent == null  && GameObject.Find("Manager").GetComponent<Manager>().GameStarted /*&& other.GetComponent<Ball>().lastPlayer != gameObject*/)
         {
             other.GetComponent<Ball>().lastPlayer = gameObject;
             transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Ball";
@@ -156,11 +153,19 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    private void ShootBall(Vector3 tap)
+    private void ShootBall(float[] _dir)
     {
-        ball.GetComponent<Ball>().shoot = true;
-        if(ball.GetComponent<Ball>().direction == Vector2.zero) ball.GetComponent<Ball>().direction = new Vector2(-tap.x, -tap.y);
-        Debug.Log("Direction" + tap);
+        if (ball)
+        {
+            if (ball.GetComponent<Ball>().direction == Vector2.zero)
+            {
+                ball.GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
+                ball.GetComponent<Ball>().shoot = true;
+            }
+            ball.transform.parent = null;
+            ball = null;
+        }
+        else Debug.Log("No");
     }
 
     private void rePositionBall()

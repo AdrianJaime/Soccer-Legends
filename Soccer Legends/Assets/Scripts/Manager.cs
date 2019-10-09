@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    public GameObject playerPrefab, ballPrefab;
+    public GameObject player1Prefab, player2Prefab, ballPrefab;
+    public bool GameStarted = false;
     private float timeStart = 0;
     private bool ball = false;
     // Start is called before the first frame update
@@ -17,41 +19,43 @@ public class Manager : MonoBehaviourPun, IPunObservable
     private void Update()
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2) {
-            if ( timeStart == 0) timeStart = Time.time;
-            if (Time.time - timeStart >= 10 && !GameObject.FindGameObjectWithTag("Ball"))
-            {
-                PhotonNetwork.Instantiate(ballPrefab.name, Vector3.zero, ballPrefab.transform.rotation);
-                ball = true;
-            }
+            if (Input.GetKeyDown(KeyCode.Space)) GameStarted = true;
         }
+        Debug.Log(GameStarted);
     }
 
     void SpawnPlayer()
     {
-        PhotonNetwork.Instantiate(playerPrefab.name, playerPrefab.transform.position - new Vector3(0,5,0), playerPrefab.transform.rotation);
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1) PhotonNetwork.Instantiate(ballPrefab.name, Vector3.zero, ballPrefab.transform.rotation);
-       /* 
+        
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
-            if (timeStart == 0) timeStart = Time.time;
-            if (Time.time - timeStart >= 10 && !GameObject.FindGameObjectWithTag("Ball"))
-            {
-                
-                ball = true;
-            }
-        }*/
+            PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+            PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+        }
+        else PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
+        /* 
+         {
+             if (timeStart == 0) timeStart = Time.time;
+             if (Time.time - timeStart >= 10 && !GameObject.FindGameObjectWithTag("Ball"))
+             {
+
+                 ball = true;
+             }
+         }*/
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(ball); //Solo se envía si se está moviendo.
+            stream.SendNext(GameStarted); //Solo se envía si se está moviendo.
         }
         else if (stream.IsReading)
         {
-            ball = (bool)stream.ReceiveNext();
+            GameStarted = (bool)stream.ReceiveNext();
         }
     }
+    public void StartGame() { GameStarted = true; }
 
 
 

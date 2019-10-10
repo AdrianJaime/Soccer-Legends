@@ -64,9 +64,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void StartGame() { GameStarted = true; }
 
     [PunRPC]
-    public void fight()
+    public void fight(GameObject player1, GameObject player2)
     {
-
     }
 
 

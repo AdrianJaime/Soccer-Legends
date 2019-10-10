@@ -8,13 +8,26 @@ using System;
 
 public class MyPlayer : MonoBehaviourPun, IPunObservable
 {
+
+    public class Stats
+    {
+        public int shoot, technique, defense;
+
+        public Stats(int _shoot, int _technique, int _defense)
+        {
+            shoot = _shoot;
+            technique = _technique;
+            defense = _defense;
+        }
+    }
+
+    public Stats stats;
     public PhotonView pv;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject playerCamera;
     public GameObject line;
-    public int kick;
-
     public bool onMove = false;
+
     private Vector3 smoothMove, aux;
     private GameObject actualLine, ball;
     private List<Vector3> points;
@@ -88,8 +101,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (Time.time - touchTime <= shootTime)
                 {
                     //Tap
-                    transform.GetChild(0).GetChild(0).GetComponent<Text>().text = aux.ToString();
-                    Debug.Log("tap: " + aux);
                     float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
                     photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                 }
@@ -141,9 +152,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Ball" && other.transform.parent == null  && GameObject.Find("Manager").GetComponent<Manager>().GameStarted /*&& other.GetComponent<Ball>().lastPlayer != gameObject*/)
+        if(other.tag == "Ball" && other.transform.parent == null  && GameObject.Find("Manager").GetComponent<Manager>().GameStarted)
         {
-            other.GetComponent<Ball>().lastPlayer = gameObject;
             transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Ball";
             ball = other.gameObject;
             ball.transform.SetParent(transform);

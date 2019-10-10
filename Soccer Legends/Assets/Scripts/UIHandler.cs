@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIHandler : MonoBehaviourPunCallbacks
 {
-    public InputField createRoomTF, joinRoomTF;
+    public InputField createRoomTF, joinRoomTF, setNameTF;
 
     public void OnClick_JoinRoom()
     {
@@ -18,6 +18,10 @@ public class UIHandler : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(createRoomTF.text, new Photon.Realtime.RoomOptions { MaxPlayers = 2 }, null);
     }
 
+    public void setName()
+    {
+        PhotonNetwork.LocalPlayer.NickName = setNameTF.text;
+    }
     public override void OnJoinedRoom()
     {
         print("Room Joined succesfully");

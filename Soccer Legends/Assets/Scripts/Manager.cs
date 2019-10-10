@@ -7,9 +7,8 @@ using UnityEngine.UI;
 public class Manager : MonoBehaviourPun, IPunObservable
 {
     public GameObject player1Prefab, player2Prefab, ballPrefab;
-    public bool GameStarted = false;
+    public bool GameStarted = false, GameOn = false;
     private float timeStart = 0;
-    private bool ball = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,13 +24,21 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     void SpawnPlayer()
     {
-        
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
-            PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+            GameObject player = PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
             PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+
+            player.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = PhotonNetwork.LocalPlayer.NickName;
+            Debug.Log(PhotonNetwork.LocalPlayer.IsMasterClient);
         }
-        else PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
+        else
+        {
+            GameObject player = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
+            player.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = PhotonNetwork.LocalPlayer.NickName;
+            Debug.Log(PhotonNetwork.LocalPlayer.IsMasterClient);
+        }
         /* 
          {
              if (timeStart == 0) timeStart = Time.time;
@@ -56,7 +63,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
     public void StartGame() { GameStarted = true; }
 
+    [PunRPC]
+    public void fight()
+    {
 
+    }
 
 
 }

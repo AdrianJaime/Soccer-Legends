@@ -12,7 +12,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public bool shoot = false;
     public Vector2 direction, shootPosition;
     public bool shooterIsMaster;
-    public GameObject lastPlayer;
+    public int kick;
 
     private void Start()
     {
@@ -28,7 +28,6 @@ public class Ball : MonoBehaviourPun, IPunObservable
             float[] dir = { direction.x, direction.y };
             ShootBall(dir);
         }
-        if(rb.velocity != Vector2.zero)Debug.Log(rb.velocity);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -51,23 +50,25 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
         else transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if(collision.tag == "Background" && photonView.IsMine) rb.velocity *= -1;
-    }
 
     public void ShootBall(float[] _dir)
     {
         Vector2 shootDir = new Vector2(_dir[0] - shootPosition.x, _dir[1] - shootPosition.y).normalized;
         if (rb.velocity == Vector2.zero)
         {
-            Debug.Log("Posición: " + transform.position);
-            Debug.Log("X: " + _dir[0] + "Y: " + _dir[1]);
-            Debug.Log(shootDir);
-            if(shooterIsMaster)GetComponent<Rigidbody2D>().AddForce(shootDir * 10 /*KICK*/, ForceMode2D.Impulse);
-            else  GetComponent<Rigidbody2D>().AddForce(-shootDir * 10 /*KICK*/, ForceMode2D.Impulse);
+            if(shooterIsMaster)GetComponent<Rigidbody2D>().AddForce(-shootDir * kick, ForceMode2D.Impulse);
+            else  GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
             shoot = false;
             direction = Vector2.zero;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Wall" && photonView.IsMine)
+        {
+            if (collision.name == "U_Wall" || collision.name == "D_Wall") rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
+            if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
         }
     }
 }

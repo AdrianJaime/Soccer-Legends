@@ -27,6 +27,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public GameObject playerCamera;
     public GameObject line;
     public bool onMove = false;
+    public string fightDir;
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine, ball;
@@ -131,6 +132,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            //stream.SendNext(fightDir);
         }
         else if (stream.IsReading)
         {
@@ -193,5 +195,5 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         for (int i = 1; points.Count > i; i++) dist += Vector3.Distance(points[i], points[i - 1]);
         return dist;
     }
-    
+
 }

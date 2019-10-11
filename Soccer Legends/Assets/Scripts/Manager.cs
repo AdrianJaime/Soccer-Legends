@@ -6,9 +6,10 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, DirectionButtons;
     public bool GameStarted = false, GameOn = false;
     private float timeStart = 0;
+    private string fightDir;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,9 +18,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     private void Update()
     {
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 2) {
-            if (Input.GetKeyDown(KeyCode.Space)) GameStarted = true;
-        }
     }
 
     void SpawnPlayer()
@@ -61,12 +59,18 @@ public class Manager : MonoBehaviourPun, IPunObservable
             GameStarted = (bool)stream.ReceiveNext();
         }
     }
-    public void StartGame() { GameStarted = true; }
+    public void StartGame() { GameStarted = true; GameOn = true; }
 
     [PunRPC]
-    public void fight(GameObject player1, GameObject player2)
+    public void chooseDirection(GameObject player1, GameObject player2)
     {
-    }
+        if (fightDir == null)
+        {
+            GameOn = false;
+        }
 
+
+    }
+    public void setFightDir(string dir) { fightDir = dir; }
 
 }

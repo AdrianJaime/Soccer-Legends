@@ -31,6 +31,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine, ball;
+    private Manager mg;
     private List<Vector3> points;
     private float touchTime;
 
@@ -38,10 +39,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
+        fightDir = null;
         if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
             playerCamera.SetActive(true);
+            mg = GameObject.Find("Manager").GetComponent<Manager>();
         }
         points = new List<Vector3>();
     }
@@ -50,8 +53,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine) //Check if we're the local player
         {
             ProcessInputs();
-            if (actualLine && points.Count > 1) FollowLine();
-            rePositionBall();
+            if (actualLine && points.Count > 1 && mg.GameOn) FollowLine();
+            rePositionBall(); //To be implemented
         }
         else if(!photonView.IsMine)
         {
@@ -99,7 +102,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if(swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= shootTime)
+                if (Time.time - touchTime <= shootTime && mg.GameOn)
                 {
                     //Tap
                     float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
@@ -161,6 +164,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.SetParent(transform);
             ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             ball.transform.position = transform.position;
+        }
+
+        if(other.tag == "Player" && ball)
+        {
+            mg.chooseDirection(this, other.gameObject.GetComponent<MyPlayer>());
         }
     }
 

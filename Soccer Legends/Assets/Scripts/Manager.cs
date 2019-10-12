@@ -18,6 +18,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     private void Update()
     {
+        if (!GameOn)
+        {
+            
+        }
     }
 
     void SpawnPlayer()
@@ -61,16 +65,14 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
     public void StartGame() { GameStarted = true; GameOn = true; }
 
-    [PunRPC]
-    public void chooseDirection(GameObject player1, GameObject player2)
+    public void chooseDirection(MyPlayer player1, MyPlayer player2)
     {
-        if (fightDir == null)
+        if (player1.fightDir != null && player2.fightDir != null) GameOn = true; //Start Fight
+        else if (!DirectionButtons.activeSelf)
         {
             GameOn = false;
+            DirectionButtons.SetActive(true);
         }
-
-
     }
-    public void setFightDir(string dir) { fightDir = dir; }
 
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using System;
+using Random = UnityEngine.Random;
 
 
 public class MyPlayer : MonoBehaviourPun, IPunObservable
@@ -24,22 +25,23 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public Stats stats;
     public PhotonView pv;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
-    public GameObject playerCamera;
-    public GameObject line;
+    public GameObject playerCamera, ball, line;
     public bool onMove = false;
     public string fightDir;
 
     private Vector3 smoothMove, aux;
-    private GameObject actualLine, ball;
+    private GameObject actualLine;
     private Manager mg;
     private List<Vector3> points;
     private float touchTime;
+    private bool stunned = false;
 
     private void Start()
     {
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
         fightDir = null;
+        stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
         if (photonView.IsMine)
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -53,8 +55,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine) //Check if we're the local player
         {
             ProcessInputs();
-            if (actualLine && points.Count > 1 && mg.GameOn) FollowLine();
+            if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
             rePositionBall(); //To be implemented
+            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = fightDir;
         }
         else if(!photonView.IsMine)
         {
@@ -102,7 +105,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if(swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= shootTime && mg.GameOn)
+                if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
                     //Tap
                     float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
@@ -135,11 +138,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
-            //stream.SendNext(fightDir);
+            stream.SendNext(fightDir);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
+            fightDir = (string)stream.ReceiveNext();
         }
     }
 
@@ -157,25 +161,27 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Ball" && other.transform.parent == null  && GameObject.Find("Manager").GetComponent<Manager>().GameStarted)
+        if(other.tag == "Ball" && other.transform.parent == null && !stunned && GameObject.Find("Manager").GetComponent<Manager>().GameStarted)
         {
-            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Ball";
             ball = other.gameObject;
             ball.transform.SetParent(transform);
             ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             ball.transform.position = transform.position;
         }
 
-        if(other.tag == "Player" && ball)
+        if(other.tag == "Player" && photonView.IsMine && !stunned)
         {
-            mg.chooseDirection(this, other.gameObject.GetComponent<MyPlayer>());
+            if (ball || other.GetComponent<MyPlayer>().ball)
+            {
+                fightDir = null;
+                mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+            }
         }
     }
 
     [PunRPC]
     private void ShootBall(float[] _dir, PhotonMessageInfo info)
     {
-        Debug.Log(info.Sender);
         if (ball)
         {
             if (ball.GetComponent<Ball>().direction == Vector2.zero)
@@ -204,4 +210,22 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         return dist;
     }
 
+    public void Lose()
+    {
+        stunned = true;
+        StartCoroutine(Blink(2.0f));
+    }
+
+    private IEnumerator Blink(float waitTime)
+    {
+        var endTime = Time.time + waitTime;
+        while (Time.time < endTime)
+        {
+            GetComponent<Renderer>().enabled = false;
+            yield return new WaitForSeconds(0.2f);
+            GetComponent<Renderer>().enabled = true;
+            yield return new WaitForSeconds(0.2f);
+        }
+        stunned = false;
+    }
 }

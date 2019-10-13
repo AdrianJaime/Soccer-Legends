@@ -8,6 +8,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 {
     public GameObject player1Prefab, player2Prefab, ballPrefab, DirectionButtons;
     public bool GameStarted = false, GameOn = false;
+    public MyPlayer player1, player2;
     private float timeStart = 0;
     private string fightDir;
     // Start is called before the first frame update
@@ -18,9 +19,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     private void Update()
     {
-        if (!GameOn)
+        if (!GameOn && player1 != null)
         {
-            
+            if (player1.fightDir != null && player2.fightDir != null)
+            {
+                if (player1.fightDir == player2.fightDir) Fight(false, HasTheBall());
+                GameOn = true; //Start Fight
+                DirectionButtons.SetActive(false);
+            }
+            else if (fightDir != null)
+            {
+                player1.fightDir = fightDir;
+                fightDir = null;
+            }
         }
     }
 
@@ -65,14 +76,52 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
     public void StartGame() { GameStarted = true; GameOn = true; }
 
-    public void chooseDirection(MyPlayer player1, MyPlayer player2)
+    public void chooseDirection(MyPlayer _player1, MyPlayer _player2)
     {
-        if (player1.fightDir != null && player2.fightDir != null) GameOn = true; //Start Fight
-        else if (!DirectionButtons.activeSelf)
+        if (!DirectionButtons.activeSelf)
         {
             GameOn = false;
             DirectionButtons.SetActive(true);
+            player1 = _player1;
+            player2 = _player2;
         }
+    }
+
+    private void Fight(bool shoot, int ballPlayer)
+    {
+        if (shoot)
+        {
+            switch (ballPlayer)
+            {
+                case 1:
+                    if (player1.stats.shoot >= player2.stats.defense) ; //GOAL player 1
+                    break;
+                case 2:
+                    if (player2.stats.shoot >= player1.stats.defense) ; //GOAL player 2
+                    break;
+            }
+        }
+        else
+        {
+            switch (ballPlayer)
+            {
+                case 1:
+                    if (player1.stats.technique >= player2.stats.defense) player2.Lose(); //Ball player 1
+                    break;
+                case 2:
+                    if (player2.stats.technique >= player1.stats.defense) player1.Lose(); //Ball player 2
+                    break;
+            }
+        }
+    }
+
+    public void setFightDir(string dir) { fightDir = dir; }
+
+    private int HasTheBall()
+    {
+        if (player1.ball != null) return 1;
+        else if (player2.ball != null) return 2;
+        else return 0;
     }
 
 }

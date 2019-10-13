@@ -107,9 +107,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 case 1:
                     if (player1.stats.technique >= player2.stats.defense) player2.Lose(); //Ball player 1
+                    else
+                    {
+                        player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        player2.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                    }
                     break;
                 case 2:
                     if (player2.stats.technique >= player1.stats.defense) player1.Lose(); //Ball player 2
+                    else
+                    {
+                        player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                    }
                     break;
             }
         }

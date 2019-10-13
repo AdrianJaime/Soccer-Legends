@@ -210,9 +210,15 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         return dist;
     }
 
+    [PunRPC]
     public void Lose()
     {
         stunned = true;
+        if (ball)
+        {
+            ball.transform.parent = null;
+            ball = null;
+        }
         StartCoroutine(Blink(2.0f));
     }
 
@@ -228,4 +234,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         }
         stunned = false;
     }
+
+    [PunRPC]
+    public void GetBall()
+    {
+        ball = GameObject.FindGameObjectWithTag("Ball");
+        ball.transform.parent = transform;
+        ball.transform.localPosition = Vector3.zero;
+    }
+
 }

@@ -26,7 +26,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public PhotonView pv;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject playerCamera, ball, line;
-    public bool onMove = false;
+    public bool onMove = false, stunned = false;
     public string fightDir;
 
     private Vector3 smoothMove, aux;
@@ -34,7 +34,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private Manager mg;
     private List<Vector3> points;
     private float touchTime;
-    private bool stunned = false;
 
     private void Start()
     {
@@ -57,7 +56,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ProcessInputs();
             if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
             rePositionBall(); //To be implemented
-            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = fightDir;
         }
         else if(!photonView.IsMine)
         {
@@ -195,7 +193,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.parent = null;
             ball = null;
         }
-        else Debug.Log("No");
     }
 
     private void rePositionBall()
@@ -241,6 +238,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.localPosition = Vector3.zero;
+    }
+
+    [PunRPC]
+    public void SetName(string name)
+    {
+        transform.GetChild(0).GetComponentInChildren<Text>().text = name;
     }
 
 }

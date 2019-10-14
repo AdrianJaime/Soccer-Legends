@@ -10,7 +10,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public bool GameStarted = false, GameOn = false;
     public MyPlayer player1, player2;
     private float timeStart = 0;
-    private string fightDir;
+    private string fightDir, name1, name2;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,15 +42,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             GameObject player = PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
             PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
-
-            player.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = PhotonNetwork.LocalPlayer.NickName;
-            Debug.Log(PhotonNetwork.LocalPlayer.IsMasterClient);
+            player.transform.GetChild(0).GetComponent<MyPlayer>().photonView.RPC("SetName", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer.NickName);
         }
         else
         {
             GameObject player = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
-            player.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = PhotonNetwork.LocalPlayer.NickName;
-            Debug.Log(PhotonNetwork.LocalPlayer.IsMasterClient);
+            player.transform.GetChild(0).GetComponent<MyPlayer>().photonView.RPC("SetName", RpcTarget.AllBufferedViaServer, PhotonNetwork.LocalPlayer.NickName);
         }
         /* 
          {
@@ -106,16 +103,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
             switch (ballPlayer)
             {
                 case 1:
+                    Debug.Log("2:" + player2.stats.defense);
+                    Debug.Log("1:" + player1.stats.technique);
                     if (player1.stats.technique >= player2.stats.defense) player2.Lose(); //Ball player 1
-                    else
+                    else if (!player1.stunned && !player2.stunned)
                     {
                         player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
                         player2.photonView.RPC("GetBall", RpcTarget.AllViaServer);
                     }
                     break;
                 case 2:
+                    Debug.Log("1:" + player1.stats.defense);
+                    Debug.Log("2:" + player2.stats.technique);
                     if (player2.stats.technique >= player1.stats.defense) player1.Lose(); //Ball player 2
-                    else
+                    else if (!player1.stunned && !player2.stunned)
                     {
                         player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
                         player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);

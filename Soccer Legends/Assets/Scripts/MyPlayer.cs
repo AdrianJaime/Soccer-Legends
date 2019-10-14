@@ -26,8 +26,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public PhotonView pv;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject playerCamera, ball, line;
-    public bool onMove = false, stunned = false;
+    public bool onMove = false, stunned = false, colliding = false;
     public string fightDir;
+    public Vector3 playerObjective = Vector3.zero;
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine;
@@ -54,7 +55,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine) //Check if we're the local player
         {
             ProcessInputs();
-            if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
+            if (playerObjective != Vector3.zero) transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
+            else if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
             rePositionBall(); //To be implemented
         }
         else if(!photonView.IsMine)
@@ -167,12 +169,33 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.position = transform.position;
         }
 
-        if(other.tag == "Player" && photonView.IsMine && !stunned)
+        if(other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned)
         {
             if (ball || other.GetComponent<MyPlayer>().ball)
             {
                 fightDir = null;
                 mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "Player" && photonView.IsMine)
+        {
+            if (ball || other.GetComponent<MyPlayer>().ball)
+            {
+                photonView.RPC("IsColliding", RpcTarget.AllViaServer, false);
+            }
+        }
+    }
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned)
+        {
+            if (ball || other.GetComponent<MyPlayer>().ball)
+            {
+                photonView.RPC("IsColliding", RpcTarget.AllViaServer, true);
             }
         }
     }
@@ -244,6 +267,19 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public void SetName(string name)
     {
         transform.GetChild(0).GetComponentInChildren<Text>().text = name;
+    }
+
+    [PunRPC]
+    public void IsColliding(bool isIt)
+    {
+        colliding = isIt;
+        if(!isIt)playerObjective = Vector3.zero;
+    }
+
+    [PunRPC]
+    public void MoveTo(float[] objective)
+    {
+        playerObjective = new Vector3(objective[0], objective[1], objective[2]);
     }
 
 }

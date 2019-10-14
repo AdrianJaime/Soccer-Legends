@@ -77,6 +77,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         if (!DirectionButtons.activeSelf)
         {
+            if (!_player2.colliding && _player2.playerObjective != Vector3.zero)
+            {
+                float[] arr = { _player1.transform.position.x, _player1.transform.position.y, _player1.transform.position.z};
+                _player2.photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
+            }
             GameOn = false;
             DirectionButtons.SetActive(true);
             player1 = _player1;

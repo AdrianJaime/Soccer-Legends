@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab, DirectionButtons;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons;
     public bool GameStarted = false, GameOn = false;
     public MyPlayer player1, player2;
     private float timeStart = 0;
@@ -25,7 +25,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 if (player1.fightDir == player2.fightDir) Fight(false, HasTheBall());
                 GameOn = true; //Start Fight
-                DirectionButtons.SetActive(false);
+                directionButtons.SetActive(false);
+                shootButtons.SetActive(false);
             }
             else if (fightDir != null)
             {
@@ -75,7 +76,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void chooseDirection(MyPlayer _player1, MyPlayer _player2)
     {
-        if (!DirectionButtons.activeSelf)
+        if (!directionButtons.activeSelf)
         {
             if (!_player2.colliding && _player2.playerObjective != Vector3.zero)
             {
@@ -83,10 +84,18 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 _player2.photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
             }
             GameOn = false;
-            DirectionButtons.SetActive(true);
+            directionButtons.SetActive(true);
             player1 = _player1;
             player2 = _player2;
         }
+    }
+
+    public void chooseShoot(MyPlayer _player1, MyPlayer _player2)
+    {
+        GameOn = false;
+        shootButtons.SetActive(true);
+        player1 = _player1;
+        player2 = _player2;
     }
 
     private void Fight(bool shoot, int ballPlayer)

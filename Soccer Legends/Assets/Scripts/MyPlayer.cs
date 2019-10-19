@@ -34,6 +34,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private GameObject actualLine;
     private Manager mg;
     private List<Vector3> points;
+    private Collider2D goal;
     private float touchTime;
 
     private void Start()
@@ -42,17 +43,18 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         PhotonNetwork.SerializationRate = 15;
         fightDir = null;
         stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
-        if (photonView.IsMine)
+        if (photonView.IsMine && gameObject.name != "GoalKeeper")
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
             playerCamera.SetActive(true);
             mg = GameObject.Find("Manager").GetComponent<Manager>();
+            goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
         }
         points = new List<Vector3>();
     }
     private void Update()
     {
-        if (photonView.IsMine) //Check if we're the local player
+        if (photonView.IsMine && gameObject.name != "GoalKeeper") //Check if we're the local player
         {
             ProcessInputs();
             if (playerObjective != Vector3.zero) transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
@@ -107,9 +109,17 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             {
                 if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
-                    //Tap
-                    float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
-                    photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                    
+                    if (goal.bounds.Contains(aux))
+                    {
+                        //Goal
+                    }
+                    else
+                    {
+                        //Pass
+                        float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
+                        photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                    }
                 }
                 if (points.Count == 1)
                 {
@@ -169,7 +179,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.position = transform.position;
         }
 
-        if(other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned)
+        if(other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
         {
             if (ball || other.GetComponent<MyPlayer>().ball)
             {
@@ -181,7 +191,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.tag == "Player" && photonView.IsMine)
+        if (other.tag == "Player" && photonView.IsMine && !SameTeam(other.gameObject, gameObject))
         {
             if (ball || other.GetComponent<MyPlayer>().ball)
             {
@@ -191,7 +201,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned)
+        if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
         {
             if (ball || other.GetComponent<MyPlayer>().ball)
             {
@@ -282,4 +292,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         playerObjective = new Vector3(objective[0], objective[1], objective[2]);
     }
 
+    private bool SameTeam(GameObject P1, GameObject P2)
+    {
+        if (P1.transform.parent == P2.transform.parent) return true;
+        else return false;
+    }
 }

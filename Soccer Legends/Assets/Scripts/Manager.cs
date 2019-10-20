@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
@@ -10,7 +11,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public bool GameStarted = false, GameOn = false;
     public MyPlayer player1, player2;
     private float timeStart = 0;
-    private string fightDir, name1, name2;
+    private string fightDir;
+    private bool shooting = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,16 +24,24 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         if (!GameOn && player1 != null)
         {
+            Debug.Log(player1.name + player1.fightDir + player2.name + player2.fightDir);
             if (player1.fightDir != null && player2.fightDir != null)
             {
-                if (player1.fightDir == player2.fightDir) Fight(false, HasTheBall());
+                if (player1.fightDir == "Normal" || player1.fightDir == "Special") Fight(true, HasTheBall());
+                else if (player1.fightDir == player2.fightDir) Fight(false, HasTheBall());
                 GameOn = true; //Start Fight
                 directionButtons.SetActive(false);
                 shootButtons.SetActive(false);
             }
             else if (fightDir != null)
             {
-                player1.fightDir = fightDir;
+                if (!shooting) player1.fightDir = fightDir;
+                else
+                {
+                    if (PhotonNetwork.IsMasterClient && player1.fightDir == null) player1.fightDir = fightDir;
+                    else if(player2.fightDir == null) player2.fightDir = fightDir;
+                }
+
                 fightDir = null;
             }
         }
@@ -90,27 +101,40 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void chooseShoot(MyPlayer _player1, MyPlayer _player2)
+    [PunRPC]
+    public void ChooseShoot(int _player1, int _player2)
     {
         GameOn = false;
         shootButtons.SetActive(true);
-        player1 = _player1;
-        player2 = _player2;
+        Debug.Log(_player1 + "    " + _player2);
+        Debug.Log(PhotonView.Find(_player1).gameObject.name + "    " + PhotonView.Find(_player2).gameObject.name);
+        if (player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+        if (player2 == null) player2 = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+        player1.fightDir = null;
+        player2.fightDir = null;
+        shooting = true;
     }
 
     private void Fight(bool shoot, int ballPlayer)
     {
+        Debug.Log("Chutamos, chabales");
         if (shoot)
         {
+            Debug.Log("Chutamos, chabales");
             switch (ballPlayer)
             {
                 case 1:
-                    if (player1.stats.shoot >= player2.stats.defense) ; //GOAL player 1
+                    Debug.Log("Chutamos, chabales");
+                    if (player1.stats.shoot >= player2.stats.defense) Debug.Log("Goal"); //GOAL player 1
+                    else Debug.Log("Parada");
                     break;
                 case 2:
-                    if (player2.stats.shoot >= player1.stats.defense) ; //GOAL player 2
+                    Debug.Log("Chutamos, chabales");
+                    if (player2.stats.shoot >= player1.stats.defense) Debug.Log("Goal"); //GOAL player 2
+                    else Debug.Log("Parada");
                     break;
             }
+            shooting = false;
         }
         else
         {
@@ -138,6 +162,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     break;
             }
         }
+        player1 = null;
+        player2 = null;
     }
 
     public void setFightDir(string dir) { fightDir = dir; }

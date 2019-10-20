@@ -113,6 +113,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     if (goal.bounds.Contains(aux))
                     {
                         //Goal
+                        if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
+                        else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
                     else
                     {
@@ -208,6 +210,16 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 photonView.RPC("IsColliding", RpcTarget.AllViaServer, true);
             }
         }
+    }
+
+    private MyPlayer findGoalKeeper()
+    {
+        GameObject[] GKarr = GameObject.FindGameObjectsWithTag("GoalKeeper");
+        for (int i = 0; i < GKarr.Length; i++)
+        {
+            if (GKarr[i].transform.parent != transform.parent) return GKarr[i].GetComponent<MyPlayer>();
+        }
+        return null;
     }
 
     [PunRPC]

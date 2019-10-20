@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 using Photon.Realtime;
 using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton;
     public bool GameStarted = false, GameOn = false;
     public MyPlayer player1, player2;
+
     private float timeStart = 0;
     private string fightDir;
     private bool shooting = false;
+    private Vector2 score = new Vector2( 0, 0 );
 
     // Start is called before the first frame update
     void Start()
@@ -83,7 +86,14 @@ public class Manager : MonoBehaviourPun, IPunObservable
             GameStarted = (bool)stream.ReceiveNext();
         }
     }
-    public void StartGame() { GameStarted = true; GameOn = true; }
+
+    public void StartButton()
+    {
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
+    }
+
+    [PunRPC]
+    public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
 
     public void chooseDirection(MyPlayer _player1, MyPlayer _player2)
     {
@@ -99,6 +109,16 @@ public class Manager : MonoBehaviourPun, IPunObservable
             player1 = _player1;
             player2 = _player2;
         }
+    }
+
+    [PunRPC]
+    public void Goal(bool isLocal)
+    {
+        if (isLocal) score[0]++;
+        else score[1]++;
+
+        UpdateScoreBoard();
+        Reposition();
     }
 
     [PunRPC]
@@ -125,12 +145,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 case 1:
                     Debug.Log("Chutamos, chabales");
-                    if (player1.stats.shoot >= player2.stats.defense) Debug.Log("Goal"); //GOAL player 1
+                    if (player1.stats.shoot >= player2.stats.defense) Goal(true); //GOAL player 1
                     else Debug.Log("Parada");
                     break;
                 case 2:
                     Debug.Log("Chutamos, chabales");
-                    if (player2.stats.shoot >= player1.stats.defense) Debug.Log("Goal"); //GOAL player 2
+                    if (player2.stats.shoot >= player1.stats.defense) Goal(false); //GOAL player 2
                     else Debug.Log("Parada");
                     break;
             }
@@ -175,4 +195,14 @@ public class Manager : MonoBehaviourPun, IPunObservable
         else return 0;
     }
 
+    private void UpdateScoreBoard()
+    {
+        scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
+        scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
+    }
+
+    private void Reposition()
+    {
+
+    }
 }

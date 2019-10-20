@@ -27,7 +27,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         if (!GameOn && player1 != null)
         {
-            Debug.Log(player1.name + player1.fightDir + player2.name + player2.fightDir);
             if (player1.fightDir != null && player2.fightDir != null)
             {
                 if (player1.fightDir == "Normal" || player1.fightDir == "Special") Fight(true, HasTheBall());
@@ -118,7 +117,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         else score[1]++;
 
         UpdateScoreBoard();
-        Reposition();
+        photonView.RPC("Reposition", RpcTarget.AllViaServer);
     }
 
     [PunRPC]
@@ -201,8 +200,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
         scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
     }
 
+    [PunRPC]
     private void Reposition()
     {
-
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++) players[i].transform.position = players[i].GetComponent<MyPlayer>().startPosition;
     }
 }

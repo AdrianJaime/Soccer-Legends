@@ -29,6 +29,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public bool onMove = false, stunned = false, colliding = false;
     public string fightDir;
     public Vector3 playerObjective = Vector3.zero;
+    public Vector2 startPosition = Vector2.zero;
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine;
@@ -41,8 +42,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
+        stats = new Stats(0, 0, 0);
+        int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
+        photonView.RPC("SetStats", RpcTarget.AllViaServer, starr);
         fightDir = null;
-        stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
         if (photonView.IsMine && gameObject.name != "GoalKeeper")
         {
             GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -56,6 +59,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine && gameObject.name != "GoalKeeper") //Check if we're the local player
         {
+            if (startPosition == Vector2.zero) startPosition = transform.position;
             ProcessInputs();
             if (playerObjective != Vector3.zero) transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
             else if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
@@ -65,6 +69,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             smoothMovement();
         }
+
     }
 
     private void smoothMovement()
@@ -308,5 +313,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (P1.transform.parent == P2.transform.parent) return true;
         else return false;
+    }
+
+    [PunRPC]
+    private void SetStats(int[] arr)
+    {
+        Debug.Log("Sent:" + arr[0] + arr[1] + arr[2]);
+        stats = new Stats(arr[0], arr[1], arr[2]);
+        if(transform.GetChild(0).GetComponentInChildren<Text>().text != stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString()) photonView.RPC("SetName", RpcTarget.AllViaServer, stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString());
     }
 }

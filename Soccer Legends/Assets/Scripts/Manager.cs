@@ -8,9 +8,10 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = false;
     public MyPlayer player1, player2;
+    public float eneregyFill;
 
     private float timeStart = 0;
     private string fightDir;
@@ -42,12 +43,32 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 if (!shooting) player1.fightDir = fightDir;
                 else
                 {
-                    if (PhotonNetwork.IsMasterClient && player1.fightDir == null) player1.fightDir = fightDir;
-                    else if(player2.fightDir == null) player2.fightDir = fightDir;
+                    if (PhotonNetwork.IsMasterClient && player1.fightDir == null)
+                    {
+                        if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
+                        {
+                            player1.fightDir = fightDir;
+                            energyBar.GetComponent<Scrollbar>().size = 0;
+                        }
+                        else if (fightDir == "Normal") player1.fightDir = fightDir;
+                    }
+                    else if (!PhotonNetwork.IsMasterClient && player2.fightDir == null)
+                    {
+                        if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
+                        {
+                            player2.fightDir = fightDir;
+                            energyBar.GetComponent<Scrollbar>().size = 0;
+                        }
+                        else if (fightDir == "Normal") player2.fightDir = fightDir;
+                    }
                 }
 
                 fightDir = null;
             }
+        }
+        else if (GameStarted && GameOn)
+        {
+           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
         }
     }
 
@@ -138,24 +159,44 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     private void Fight(bool shoot, int ballPlayer)
     {
-        Debug.Log("Chutamos, chabales");
         if (shoot)
         {
-            Debug.Log("Chutamos, chabales");
+            if (player1.fightDir == "Special")
+            {
+                Debug.Log("1 special");
+                player1.stats.shoot *= 10;
+                player1.stats.defense *= 10;
+            }
+
+            if (player2.fightDir == "Special")
+            {
+                Debug.Log("2 special");
+                player2.stats.shoot *= 10;
+                player2.stats.defense *= 10;
+            }
             switch (ballPlayer)
             {
                 case 1:
-                    Debug.Log("Chutamos, chabales");
                     if (player1.stats.shoot >= player2.stats.defense) Goal(true); //GOAL player 1
                     else Debug.Log("Parada");
                     break;
                 case 2:
-                    Debug.Log("Chutamos, chabales");
                     if (player2.stats.shoot >= player1.stats.defense) Goal(false); //GOAL player 2
                     else Debug.Log("Parada");
                     break;
             }
             shooting = false;
+            if (player1.fightDir == "Special")
+            {
+                player1.stats.shoot /= 10;
+                player1.stats.defense /= 10;
+            }
+
+            if (player2.fightDir == "Special")
+            {
+                player2.stats.shoot /= 10;
+                player2.stats.defense /= 10;
+            }
         }
         else
         {

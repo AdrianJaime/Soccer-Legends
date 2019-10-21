@@ -177,12 +177,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
             switch (ballPlayer)
             {
                 case 1:
-                    if (player1.stats.shoot >= player2.stats.defense) Goal(true); //GOAL player 1
-                    else Debug.Log("Parada");
+                    if (player1.stats.shoot >= player2.stats.defense && !player1.stunned && !player2.stunned) Goal(true); //GOAL player 1
+                    else if (!player1.stunned && !player2.stunned)
+                    {
+                        player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        player2.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                    }
                     break;
                 case 2:
-                    if (player2.stats.shoot >= player1.stats.defense) Goal(false); //GOAL player 2
-                    else Debug.Log("Parada");
+                    if (player2.stats.shoot >= player1.stats.defense && !player1.stunned && !player2.stunned) Goal(false); //GOAL player 2
+                    else if (!player1.stunned && !player2.stunned)
+                    {
+                        player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                    }
                     break;
             }
             shooting = false;

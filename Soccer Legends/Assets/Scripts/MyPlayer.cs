@@ -46,10 +46,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         photonView.RPC("SetStats", RpcTarget.AllViaServer, starr);
         fightDir = null;
-        if (photonView.IsMine && gameObject.name != "GoalKeeper")
+        if (photonView.IsMine)
         {
-            GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
-            playerCamera.SetActive(true);
+            if (gameObject.name != "GoalKeeper")
+            {
+                GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+                playerCamera.SetActive(true);
+            }
             mg = GameObject.Find("Manager").GetComponent<Manager>();
             goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
         }
@@ -57,7 +60,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
     private void Update()
     {
-        if (photonView.IsMine && gameObject.name != "GoalKeeper") //Check if we're the local player
+        if (photonView.IsMine) //Check if we're the local player
         {
             if (startPosition == Vector2.zero) startPosition = transform.position;
             ProcessInputs();
@@ -87,7 +90,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             {
                 touchTime = Time.time;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                if (Vector3.Distance(aux, transform.position) < characterRad)
+                if (Vector3.Distance(aux, transform.position) < characterRad && gameObject.name != "GoalKeeper")
                 {
                     points.Clear();
                     onMove = false;
@@ -99,7 +102,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
                 }
             }
-            if (actualLine != null && TrailDistance() < maxSize)
+            if (actualLine != null && TrailDistance() < maxSize && gameObject.name != "GoalKeeper")
             {
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 if (IsPointCorrect(aux))
@@ -115,7 +118,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
                     
-                    if (goal.bounds.Contains(aux))
+                    if (goal.bounds.Contains(aux) && gameObject.name != "GoalKeeper")
                     {
                         //Goal
                         if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);

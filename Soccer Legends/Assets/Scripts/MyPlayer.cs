@@ -183,10 +183,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if(other.tag == "Ball" && other.transform.parent == null && !stunned && GameObject.Find("Manager").GetComponent<Manager>().GameStarted)
         {
-            ball = other.gameObject;
-            ball.transform.SetParent(transform);
-            ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            ball.transform.position = transform.position;
+            //ball = other.gameObject;
+            //ball.transform.SetParent(transform);
+            //ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            //ball.transform.position = transform.position;
+            photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }
 
         if(other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
@@ -194,7 +195,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             if (ball || other.GetComponent<MyPlayer>().ball)
             {
                 fightDir = null;
-                mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+                //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+                if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
+                else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
             }
         }
     }
@@ -291,6 +294,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.localPosition = Vector3.zero;
+        ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
     [PunRPC]
@@ -324,5 +328,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         Debug.Log("Sent:" + arr[0] + arr[1] + arr[2]);
         stats = new Stats(arr[0], arr[1], arr[2]);
         if(transform.GetChild(0).GetComponentInChildren<Text>().text != stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString()) photonView.RPC("SetName", RpcTarget.AllViaServer, stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString());
+    }
+
+    public void RepositionPlayer()
+    {
+        transform.position = startPosition;
+        Lose();
+        GameObject.Destroy(actualLine);
+        onMove = false;
     }
 }

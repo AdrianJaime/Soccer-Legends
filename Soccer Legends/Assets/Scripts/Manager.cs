@@ -50,7 +50,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
             else if (fightDir != null)
             {
-                if (!shooting) player1.fightDir = fightDir;
+                if (!shooting)
+                {
+                    if (PhotonNetwork.IsMasterClient && player1.fightDir == null) player1.fightDir = fightDir;
+                    else if (!PhotonNetwork.IsMasterClient && player2.fightDir == null)player2.fightDir = fightDir;
+                    Debug.Log(player1.fightDir + player2.fightDir);
+                }
                 else
                 {
                     if (PhotonNetwork.IsMasterClient && player1.fightDir == null)
@@ -72,7 +77,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         else if (fightDir == "Normal") player2.fightDir = fightDir;
                     }
                 }
-
                 fightDir = null;
             }
         }
@@ -81,6 +85,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
            if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
         }
     }
+
 
     void SpawnPlayer()
     {
@@ -127,7 +132,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
 
-    public void chooseDirection(MyPlayer _player1, MyPlayer _player2)
+    public void chooseDirectionLocal(MyPlayer _player1, MyPlayer _player2)
     {
         if (!directionButtons.activeSelf)
         {
@@ -140,6 +145,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
             directionButtons.SetActive(true);
             player1 = _player1;
             player2 = _player2;
+        }
+    }
+
+    [PunRPC]
+    public void chooseDirection(int _player1, int _player2)
+    {
+        if (!directionButtons.activeSelf)
+        {
+            GameOn = false;
+            directionButtons.SetActive(true);
+            if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+            if(player2 == null) player2 = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+            player1.fightDir = null;
+            player2.fightDir = null;
         }
     }
 
@@ -160,8 +179,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         GameOn = false;
         shootButtons.SetActive(true);
-        Debug.Log(_player1 + "    " + _player2);
-        Debug.Log(PhotonView.Find(_player1).gameObject.name + "    " + PhotonView.Find(_player2).gameObject.name);
         if (player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
         if (player2 == null) player2 = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
         player1.fightDir = null;
@@ -272,8 +289,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         for (int i = 0; i < players.Length; i++)
         {
-            players[i].transform.position = players[i].GetComponent<MyPlayer>().startPosition;
-            players[i].GetComponent<MyPlayer>().Lose();
+            players[i].GetComponent<MyPlayer>().RepositionPlayer();
         }
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);

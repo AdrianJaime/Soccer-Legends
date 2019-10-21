@@ -32,8 +32,18 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 if (player1.fightDir == "Normal" || player1.fightDir == "Special") Fight(true, HasTheBall());
                 else if (player1.fightDir == player2.fightDir) Fight(false, HasTheBall());
-                else if(HasTheBall() == 1) player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
-                else if(HasTheBall() == 2) player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                else if (HasTheBall() == 1)
+                {
+                    player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                    player1 = null;
+                    player2 = null;
+                }
+                else if (HasTheBall() == 2)
+                {
+                    player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+                    player1 = null;
+                    player2 = null;
+                }
                 GameOn = true; //Start Fight
                 directionButtons.SetActive(false);
                 shootButtons.SetActive(false);

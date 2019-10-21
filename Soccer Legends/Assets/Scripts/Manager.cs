@@ -140,7 +140,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         else score[1]++;
 
         UpdateScoreBoard();
-        photonView.RPC("Reposition", RpcTarget.AllViaServer);
+        Reposition();
+        //photonView.RPC("UpdateScoreBoard", RpcTarget.AllViaServer);
+        //photonView.RPC("Reposition", RpcTarget.AllViaServer);
     }
 
     [PunRPC]
@@ -177,7 +179,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             switch (ballPlayer)
             {
                 case 1:
-                    if (player1.stats.shoot >= player2.stats.defense && !player1.stunned && !player2.stunned) Goal(true); //GOAL player 1
+                    if (player1.stats.shoot >= player2.stats.defense && !player1.stunned && !player2.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, true); //GOAL player 1
                     else if (!player1.stunned && !player2.stunned)
                     {
                         player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
@@ -185,7 +187,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     break;
                 case 2:
-                    if (player2.stats.shoot >= player1.stats.defense && !player1.stunned && !player2.stunned) Goal(false); //GOAL player 2
+                    if (player2.stats.shoot >= player1.stats.defense && !player1.stunned && !player2.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, false); //GOAL player 2
                     else if (!player1.stunned && !player2.stunned)
                     {
                         player2.photonView.RPC("Lose", RpcTarget.AllViaServer);
@@ -245,17 +247,25 @@ public class Manager : MonoBehaviourPun, IPunObservable
         else return 0;
     }
 
-    private void UpdateScoreBoard()
+    [PunRPC]
+    public void UpdateScoreBoard()
     {
         scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
         scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
+        Debug.Log(score[0].ToString() + score[1].ToString());
     }
 
     [PunRPC]
-    private void Reposition()
+    public void Reposition()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        for (int i = 0; i < players.Length; i++) players[i].transform.position = players[i].GetComponent<MyPlayer>().startPosition;
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Reposition();
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
+        for (int i = 0; i < players.Length; i++)
+        {
+            players[i].transform.position = players[i].GetComponent<MyPlayer>().startPosition;
+            players[i].GetComponent<MyPlayer>().Lose();
+        }
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
+        //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
 }

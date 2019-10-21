@@ -43,12 +43,13 @@ public class Ball : MonoBehaviourPun, IPunObservable
     }
     private void smoothMovement()
     {
-        
+
         if (transform.parent != null)
         {
             transform.position = transform.parent.position;
         }
-        else transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
+        else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
+        else transform.position = -smoothMove;
     }
 
     public void ShootBall(float[] _dir)
@@ -63,7 +64,8 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void Reposition()
+    [PunRPC]
+    public void RepositionBall()
     {
         transform.parent = null;
         transform.position = Vector3.zero;

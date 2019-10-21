@@ -207,5 +207,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         for (int i = 0; i < players.Length; i++) players[i].transform.position = players[i].GetComponent<MyPlayer>().startPosition;
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Reposition();
     }
 }

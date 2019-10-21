@@ -63,6 +63,12 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
     }
 
+    public void Reposition()
+    {
+        transform.parent = null;
+        transform.position = Vector3.zero;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Wall" && photonView.IsMine)

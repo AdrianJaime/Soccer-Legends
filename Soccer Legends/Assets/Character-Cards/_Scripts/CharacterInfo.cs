@@ -24,6 +24,7 @@ public class CharacterInfo : ScriptableObject
     public string nameCharacter;
     public string description;
     public int level;
+    public int power;
     public Rarity rarity;
     public Type type;
 
@@ -35,5 +36,8 @@ public class CharacterInfo : ScriptableObject
 
     //info special attack
     public SpecialAttackInfo specialAttackInfo;
+
+    //info user
+    public bool owned;
 
 }

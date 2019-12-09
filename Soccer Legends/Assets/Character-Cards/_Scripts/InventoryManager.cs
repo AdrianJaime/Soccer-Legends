@@ -9,6 +9,7 @@ public class InventoryManager : MonoBehaviour
     public Transform locationCharacterSpawn;
     public GameObject inventoryPrefabUnit;
 
+    int counterIdentifier = 0;
     private void Start()
     {
         CreateInventory();
@@ -21,6 +22,8 @@ public class InventoryManager : MonoBehaviour
         {
             GameObject actualCard=Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
             actualCard.GetComponent<InventoryCardRender>().characterInfo = characterUnit;
+            actualCard.GetComponent<InventoryCardRender>().identifierSlot = counterIdentifier;
+            counterIdentifier++;
         }
     }
 

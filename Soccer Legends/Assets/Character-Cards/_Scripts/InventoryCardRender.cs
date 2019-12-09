@@ -9,16 +9,19 @@ public class InventoryCardRender : MonoBehaviour
     //display objects from de prefab
     public Text nameText;
     public Image artworkImage;
+    public int identifierSlot = -1;
 
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
     public Image[] starSprites;
+    EquipamentManager manager;
 
-
-    public void Start()
+    private void Start()
     {
+        manager = FindObjectOfType<EquipamentManager>();
+
         if (characterInfo != null)
         {
             nameText.text = characterInfo.nameCharacter;
@@ -30,5 +33,10 @@ public class InventoryCardRender : MonoBehaviour
             }
 
         }
+    }
+
+    public void OnClickSlot()
+    {
+          manager.EquipCharacter(characterInfo);     
     }
 }

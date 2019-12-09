@@ -37,6 +37,7 @@ public class InventoryCardRender : MonoBehaviour
 
     public void OnClickSlot()
     {
+        if(characterInfo.owned)
           manager.EquipCharacter(characterInfo);     
     }
 }

@@ -597,6 +597,22 @@ PrefabInstance:
       propertyPath: identifier
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2052460423, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052460423, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052460423, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052460423, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 716566048}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
 --- !u!224 &80324907 stripped
@@ -641,8 +657,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 632.4}
-  m_SizeDelta: {x: 0, y: -1264.9}
+  m_AnchoredPosition: {x: 0, y: 612.17}
+  m_SizeDelta: {x: 0, y: -1224.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &86377920
 MonoBehaviour:
@@ -946,6 +962,41 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f57540f9c81ce8f4bba324fadf17e883, type: 3}
+--- !u!1 &716566043 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4713189240103176474, guid: f57540f9c81ce8f4bba324fadf17e883,
+    type: 3}
+  m_PrefabInstance: {fileID: 55551138}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &716566048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716566043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10bf73ec1a1870a4693e07f8392d920c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tap: 2
+  myEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1020162234}
+        m_MethodName: DisEquip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &782815517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,12 +1927,12 @@ MonoBehaviour:
   m_Padding:
     m_Left: 50
     m_Right: 0
-    m_Top: 50
+    m_Top: 30
     m_Bottom: 0
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 230, y: 350}
+  m_CellSize: {x: 230, y: 400}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2

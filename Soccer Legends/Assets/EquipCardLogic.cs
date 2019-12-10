@@ -34,4 +34,9 @@ public class EquipCardLogic : MonoBehaviour
         render.characterInfo = _character;
         render.UpdateRender();
     }
+
+    public void DisEquip()
+    {
+        manager.DisEquipCharacter(render.characterInfo);
+    }
 }

@@ -58,5 +58,21 @@ public class EquipamentManager : MonoBehaviour
 
 
     }
+    public void DisEquipCharacter(CharacterInfo _character)
+    {
+        int characterUsed = actualEquip.isUsed(_character);
+
+
+        if (characterUsed != -1)//usado
+        {
+            actualEquip.arrayEquiped[characterUsed] = false;
+            actualEquip.listOfCharacters[characterUsed] = null;
+            arraySlots[characterUsed].Set(null);
+
+            identifierCurrentSlotInventory = -1;
+            identifierCurrentSlotEquipament = -1;
+
+        }
+    }
 
 }

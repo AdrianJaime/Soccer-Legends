@@ -40,4 +40,8 @@ public class InventoryCardRender : MonoBehaviour
         if(characterInfo.owned)
           manager.EquipCharacter(characterInfo);     
     }
+    public void DisEquip()
+    {
+        manager.DisEquipCharacter(characterInfo);
+    }
 }

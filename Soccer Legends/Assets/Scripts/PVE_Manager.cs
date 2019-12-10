@@ -7,10 +7,10 @@ using UnityEngine.UI;
 
 public class PVE_Manager : MonoBehaviour
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar, lastMainCamera;
     public bool GameStarted = false, GameOn = false;
-    public MyPlayer_PVE player1;
-    public IA_Player_PVE IA_Player;
+    public GameObject[] myPlayers;
+    public GameObject[] myIA_Players;
     public float eneregyFill;
 
     private float timeStart = 0;
@@ -90,14 +90,20 @@ public class PVE_Manager : MonoBehaviour
     void SpawnPlayers()
     {
         GameObject localPlayer = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
+        myPlayers = new GameObject[4];
         Instantiate(ballPrefab.gameObject, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
-        //player1 = localPlayer.GetComponent<MyPlayer_PVE>();
+        for (int i = 0; i < 4; i++)
+        {
+            myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
+        }
 
         //IA Rival
-       GameObject IA_Rival =  Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+        GameObject IA_Rival =  Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+        myIA_Players = new GameObject[4];
         for (int i = 0; i < 4; i++)
         {
             IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1;
+            myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
         }
         //player.transform.GetChild(0).GetComponent<MyPlayer>().photonView.RPC("SetName", RpcTarget.AllBufferedViaServer, PhotonNetwork.LocalPlayer.NickName);       
     }
@@ -140,15 +146,17 @@ public class PVE_Manager : MonoBehaviour
 
     public void chooseDirection(int _player1, int _player2)
     {
-        if (!directionButtons.activeSelf)
-        {
-            GameOn = false;
-            directionButtons.SetActive(true);
-            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-            player1.fightDir = null;
-            IA_Player.fightDir = null;
-        }
+        //MyPlayer_PVE player1;
+        //IA_Player_PVE IA_Player;
+        //if (!directionButtons.activeSelf)
+        //{
+        //    GameOn = false;
+        //    directionButtons.SetActive(true);
+        //    //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+        //    //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+        //    player1.fightDir = null;
+        //    IA_Player.fightDir = null;
+        //}
     }
 
     public void Goal(bool isLocal)
@@ -165,101 +173,111 @@ public class PVE_Manager : MonoBehaviour
 
     public void ChooseShoot(int _player1, int _player2)
     {
-        GameOn = false;
-        shootButtons.SetActive(true);
-        //if (player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-        //if (IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-        player1.fightDir = null;
-        IA_Player.fightDir = null;
-        shooting = true;
+        //MyPlayer_PVE player1;
+        //IA_Player_PVE IA_Player;
+        //GameOn = false;
+        //shootButtons.SetActive(true);
+        ////if (player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+        ////if (IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+        //player1.fightDir = null;
+        //IA_Player.fightDir = null;
+        //shooting = true;
     }
 
     private void Fight(bool shoot, int ballPlayer)
     {
-        if (shoot)
-        {
-            if (player1.fightDir == "Special")
-            {
-                Debug.Log("1 special");
-                player1.stats.shoot *= 10;
-                player1.stats.defense *= 10;
-            }
+        //MyPlayer_PVE player1;
+        //IA_Player_PVE IA_Player;
+        //if (shoot)
+        //{
+        //    if (player1.fightDir == "Special")
+        //    {
+        //        Debug.Log("1 special");
+        //        player1.stats.shoot *= 10;
+        //        player1.stats.defense *= 10;
+        //    }
 
-            if (IA_Player.fightDir == "Special")
-            {
-                Debug.Log("2 special");
-                IA_Player.stats.shoot *= 10;
-                IA_Player.stats.defense *= 10;
-            }
-            //switch (ballPlayer)
-            //{
-            //    case 1:
-            //        if (player1.stats.shoot >= IA_Player.stats.defense && !player1.stunned && !IA_Player.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, true); //GOAL player 1
-            //        else if (!player1.stunned && !IA_Player.stunned)
-            //        {
-            //            player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
-            //            IA_Player.photonView.RPC("GetBall", RpcTarget.AllViaServer);
-            //        }
-            //        break;
-            //    case 2:
-            //        if (IA_Player.stats.shoot >= player1.stats.defense && !player1.stunned && !IA_Player.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, false); //GOAL player 2
-            //        else if (!player1.stunned && !IA_Player.stunned)
-            //        {
-            //            IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
-            //            player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
-            //        }
-            //        break;
-            //}
-            shooting = false;
-            if (player1.fightDir == "Special")
-            {
-                player1.stats.shoot /= 10;
-                player1.stats.defense /= 10;
-            }
+        //    if (IA_Player.fightDir == "Special")
+        //    {
+        //        Debug.Log("2 special");
+        //        IA_Player.stats.shoot *= 10;
+        //        IA_Player.stats.defense *= 10;
+        //    }
+        //    //switch (ballPlayer)
+        //    //{
+        //    //    case 1:
+        //    //        if (player1.stats.shoot >= IA_Player.stats.defense && !player1.stunned && !IA_Player.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, true); //GOAL player 1
+        //    //        else if (!player1.stunned && !IA_Player.stunned)
+        //    //        {
+        //    //            player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+        //    //            IA_Player.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        //    //        }
+        //    //        break;
+        //    //    case 2:
+        //    //        if (IA_Player.stats.shoot >= player1.stats.defense && !player1.stunned && !IA_Player.stunned) photonView.RPC("Goal", RpcTarget.AllViaServer, false); //GOAL player 2
+        //    //        else if (!player1.stunned && !IA_Player.stunned)
+        //    //        {
+        //    //            IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
+        //    //            player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        //    //        }
+        //    //        break;
+        //    //}
+        //    shooting = false;
+        //    if (player1.fightDir == "Special")
+        //    {
+        //        player1.stats.shoot /= 10;
+        //        player1.stats.defense /= 10;
+        //    }
 
-            if (IA_Player.fightDir == "Special")
-            {
-                IA_Player.stats.shoot /= 10;
-                IA_Player.stats.defense /= 10;
-            }
-        }
-        else
-        {
-            switch (ballPlayer)
-            {
-                case 1:
-                    Debug.Log("2:" + IA_Player.stats.defense);
-                    Debug.Log("1:" + player1.stats.technique);
-                    if (player1.stats.technique >= IA_Player.stats.defense) IA_Player.Lose(); //Ball player 1
-                    else if (!player1.stunned && !IA_Player.stunned)
-                    {
-                        //player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        //IA_Player.photonView.RPC("GetBall", RpcTarget.AllViaServer);
-                    }
-                    break;
-                case 2:
-                    Debug.Log("1:" + player1.stats.defense);
-                    Debug.Log("2:" + IA_Player.stats.technique);
-                    if (IA_Player.stats.technique >= player1.stats.defense) player1.Lose(); //Ball player 2
-                    else if (!player1.stunned && !IA_Player.stunned)
-                    {
-                        //IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        //player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
-                    }
-                    break;
-            }
-        }
-        player1 = null;
-        IA_Player = null;
+        //    if (IA_Player.fightDir == "Special")
+        //    {
+        //        IA_Player.stats.shoot /= 10;
+        //        IA_Player.stats.defense /= 10;
+        //    }
+        //}
+        //else
+        //{
+        //    switch (ballPlayer)
+        //    {
+        //        case 1:
+        //            Debug.Log("2:" + IA_Player.stats.defense);
+        //            Debug.Log("1:" + player1.stats.technique);
+        //            if (player1.stats.technique >= IA_Player.stats.defense) IA_Player.Lose(); //Ball player 1
+        //            else if (!player1.stunned && !IA_Player.stunned)
+        //            {
+        //                //player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+        //                //IA_Player.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        //            }
+        //            break;
+        //        case 2:
+        //            Debug.Log("1:" + player1.stats.defense);
+        //            Debug.Log("2:" + IA_Player.stats.technique);
+        //            if (IA_Player.stats.technique >= player1.stats.defense) player1.Lose(); //Ball player 2
+        //            else if (!player1.stunned && !IA_Player.stunned)
+        //            {
+        //                //IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
+        //                //player1.photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        //            }
+        //            break;
+        //    }
+        //}
+        //player1 = null;
+        //IA_Player = null;
     }
 
     public void setFightDir(string dir) { fightDir = dir; }
 
     public int HasTheBall()
     {
-        if (player1.ball != null) return 1;
-        else if (IA_Player.ball != null) return 2;
-        else return 0;
+        if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null) return 0;
+        for (int i = 0; i < myPlayers.Length; i++)
+        {
+            MyPlayer_PVE player1 = myPlayers[i].GetComponent<MyPlayer_PVE>();
+            IA_Player_PVE IA_Player = myIA_Players[i].GetComponent<IA_Player_PVE>();
+            if (player1.ball != null) return 1;
+            else if (IA_Player.ball != null) return 2;
+        }
+        return 0;
     }
 
     public void UpdateScoreBoard()
@@ -271,11 +289,10 @@ public class PVE_Manager : MonoBehaviour
 
     public void Reposition()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
-            players[i].GetComponent<MyPlayer>().RepositionPlayer();
+            myPlayers[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
+            myIA_Players[i].GetComponent<IA_Player_PVE>().RepositionPlayer();
         }
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);

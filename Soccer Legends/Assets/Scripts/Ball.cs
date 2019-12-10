@@ -43,13 +43,22 @@ public class Ball : MonoBehaviourPun, IPunObservable
     }
     private void smoothMovement()
     {
-
-        if (transform.parent != null)
+        if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null)
         {
-            transform.localPosition = new Vector3(0, -0.5f, 0);
+            if (transform.parent != null)
+            {
+                transform.position =transform.parent.position;
+            }
+            else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
+            else transform.position = -smoothMove;
         }
-        else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
-        else transform.position = -smoothMove;
+        else
+        {
+            if (transform.parent != null)
+            {
+                transform.localPosition = new Vector3(0, -0.5f, 0);
+            }
+        }
     }
 
     public void ShootBall(float[] _dir)
@@ -59,6 +68,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if(shooterIsMaster)GetComponent<Rigidbody2D>().AddForce(-shootDir * kick, ForceMode2D.Impulse);
             else  GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
+            Debug.Log(shootDir);
             shoot = false;
             direction = Vector2.zero;
         }

@@ -61,7 +61,7 @@ public class MyPlayer_PVE : MonoBehaviour
             ProcessInputs();
         if (playerObjective != Vector3.zero)
         {
-            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
+            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
         }
         else if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
@@ -121,6 +121,7 @@ public class MyPlayer_PVE : MonoBehaviour
                     if (goal.bounds.Contains(aux) && gameObject.name != "GoalKeeper")
                     {
                         //Goal
+                        mg.Goal(true);
                         //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                         //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
@@ -128,6 +129,7 @@ public class MyPlayer_PVE : MonoBehaviour
                     {
                         //Pass
                         float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
+                        ShootBall(dir);
                         //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                 }
@@ -241,7 +243,10 @@ public class MyPlayer_PVE : MonoBehaviour
                 //if(info.Sender.IsMasterClient)ball.GetComponent<Ball>().shooterIsMaster = true;
                 //else ball.GetComponent<Ball>().shooterIsMaster = false;
                 ball.GetComponent<Ball>().shoot = true;
+                ball.GetComponent<Ball>().shooterIsMaster = false;
+                ball.GetComponent<Ball>().ShootBall(_dir);
             }
+            mg.lastMainCamera = playerCamera;
             ball.transform.parent = null;
             ball = null;
         }
@@ -288,6 +293,8 @@ public class MyPlayer_PVE : MonoBehaviour
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        mg.lastMainCamera.SetActive(false);
+        playerCamera.SetActive(true);
     }
 
 

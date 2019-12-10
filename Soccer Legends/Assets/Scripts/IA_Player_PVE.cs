@@ -59,7 +59,7 @@ public class IA_Player_PVE : MonoBehaviour
         //if (photonView.IsMine)
         //{
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
-        goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
+        goal = GameObject.Find("Goal 1").GetComponent<Collider2D>();
         //}
         points = new List<Vector3>();
     }
@@ -70,11 +70,17 @@ public class IA_Player_PVE : MonoBehaviour
         if (startPosition == Vector2.zero) startPosition = transform.position;
         if (playerObjective != Vector3.zero)
         {
-            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
+            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
         }
-        rePositionBall(); 
-
+        rePositionBall();
+        if (ball != null && goal.bounds.Contains(ball.transform.position) && gameObject.name != "GoalKeeper")
+        {
+            //Goal
+            mg.Goal(false);
+            //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
+            //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
+        }
     }
 
     private void smoothMovement()

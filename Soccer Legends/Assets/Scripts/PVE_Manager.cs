@@ -9,7 +9,8 @@ public class PVE_Manager : MonoBehaviour
 {
     public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = false;
-    public MyPlayer player1, IA_Player;
+    public MyPlayer_PVE player1;
+    public IA_Player_PVE IA_Player;
     public float eneregyFill;
 
     private float timeStart = 0;
@@ -90,6 +91,7 @@ public class PVE_Manager : MonoBehaviour
     {
         GameObject localPlayer = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
         Instantiate(ballPrefab.gameObject, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+        //player1 = localPlayer.GetComponent<MyPlayer_PVE>();
 
         //IA Rival
        GameObject IA_Rival =  Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
@@ -114,26 +116,27 @@ public class PVE_Manager : MonoBehaviour
 
     public void StartButton()
     {
-       // if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
+        // if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
+        StartGame();
     }
 
     public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
 
-    public void chooseDirectionLocal(MyPlayer _player1, MyPlayer _player2)
-    {
-        if (!directionButtons.activeSelf)
-        {
-            if (!_player2.colliding && _player2.playerObjective != Vector3.zero)
-            {
-                float[] arr = { _player1.transform.position.x, _player1.transform.position.y, _player1.transform.position.z};
-                //_player2.photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
-            }
-            GameOn = false;
-            directionButtons.SetActive(true);
-            player1 = _player1;
-            IA_Player = _player2;
-        }
-    }
+    //public void chooseDirectionLoal(MyPlayer _player1, MyPlayer _player2)
+    //{
+    //    if (!directionButtons.activeSelf)
+    //    {
+    //        if (!_player2.colliding && _player2.playerObjective != Vector3.zero)
+    //        {
+    //            float[] arr = { _player1.transform.position.x, _player1.transform.position.y, _player1.transform.position.z};
+    //            //_player2.photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
+    //        }
+    //        GameOn = false;
+    //        directionButtons.SetActive(true);
+    //        player1 = _player1;
+    //        IA_Player = _player2;
+    //    }
+    //}
 
     public void chooseDirection(int _player1, int _player2)
     {
@@ -252,7 +255,7 @@ public class PVE_Manager : MonoBehaviour
 
     public void setFightDir(string dir) { fightDir = dir; }
 
-    private int HasTheBall()
+    public int HasTheBall()
     {
         if (player1.ball != null) return 1;
         else if (IA_Player.ball != null) return 2;

@@ -31,7 +31,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine;
-    private Manager mg;
+    private PVE_Manager mg;
     private List<Vector3> points;
     private Collider2D goal;
     private float touchTime;
@@ -48,7 +48,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
                 playerCamera.SetActive(true);
             }
-            mg = GameObject.Find("Manager").GetComponent<Manager>();
+            mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
             goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
         //}
         points = new List<Vector3>();
@@ -59,9 +59,13 @@ public class MyPlayer_PVE : MonoBehaviour
         //{
             if (startPosition == Vector2.zero) startPosition = transform.position;
             ProcessInputs();
-            if (playerObjective != Vector3.zero) transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
-            else if (actualLine && points.Count > 1 && mg.GameOn && !stunned) FollowLine();
-            rePositionBall(); //To be implemented
+        if (playerObjective != Vector3.zero)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * 0.5f);
+            if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+        }
+        else if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
+        rePositionBall(); //To be implemented
         //}
         //else if(!photonView.IsMine)
         //{
@@ -86,10 +90,11 @@ public class MyPlayer_PVE : MonoBehaviour
                 touchTime = Time.time;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 if (Vector3.Distance(aux, transform.position) < characterRad && gameObject.name != "GoalKeeper")
-                {
+                {                    
                     points.Clear();
                     onMove = false;
-                    if (actualLine) Destroy(actualLine); //Clear
+                    MoveTo(new float[] { 0, 0, 0 }); //Clear from other objectives
+                    if (actualLine) Destroy(actualLine); //Clear line
 
                     points.Add(transform.position);
                     actualLine = Instantiate(line, points[0], transform.rotation);
@@ -174,28 +179,25 @@ public class MyPlayer_PVE : MonoBehaviour
 
     private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, 0); }
 
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if(other.tag == "Ball" && other.transform.parent == null && !stunned && GameObject.Find("Manager").GetComponent<Manager>().GameStarted)
-    //    {
-    //        //ball = other.gameObject;
-    //        //ball.transform.SetParent(transform);
-    //        //ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-    //        //ball.transform.position = transform.position;
-    //        photonView.RPC("GetBall", RpcTarget.AllViaServer);
-    //    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted)
+        {
+            GetBall();
+            //photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        }
 
-    //    if(other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
-    //    {
-    //        if (ball || other.GetComponent<MyPlayer>().ball)
-    //        {
-    //            fightDir = null;
-    //            //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
-    //            if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
-    //            else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
-    //        }
-    //    }
-    //}
+        //if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
+        //{
+        //    if (ball || other.GetComponent<MyPlayer>().ball)
+        //    {
+        //        fightDir = null;
+        //        //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+        //        if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
+        //        else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
+        //    }
+        //}
+    }
 
     //private void OnTriggerExit2D(Collider2D other)
     //{
@@ -285,7 +287,6 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
-        ball.transform.localPosition = Vector3.zero;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
@@ -325,5 +326,10 @@ public class MyPlayer_PVE : MonoBehaviour
         Lose();
         GameObject.Destroy(actualLine);
         onMove = false;
+    }
+
+    void OnBecameInvisible()
+    {
+        MoveTo(new float[] { startPosition.x, startPosition.y, 0.0f});
     }
 }

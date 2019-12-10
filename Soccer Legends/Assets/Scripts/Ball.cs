@@ -46,7 +46,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
         if (transform.parent != null)
         {
-            transform.position = transform.parent.position;
+            transform.localPosition = new Vector3(0, -0.5f, 0);
         }
         else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
         else transform.position = -smoothMove;

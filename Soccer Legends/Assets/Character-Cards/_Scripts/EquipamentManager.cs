@@ -9,7 +9,8 @@ public class EquipamentManager : MonoBehaviour
 
     public InventoryManager inventoryManager;
 
-    int identifierEquip = 0;
+    public DanielLochner.Assets.SimpleScrollSnap.SimpleScrollSnap SimpleScrollSnap;
+
     public int identifierCurrentSlotEquipament = -1;
     public int identifierCurrentSlotInventory = -1;
 
@@ -81,27 +82,10 @@ public class EquipamentManager : MonoBehaviour
         }
     }
 
-    public void ChangeEquip(bool _rightSide)
+    public void ChangeEquipSlide()
     {
-        if (_rightSide)
-        {
-            identifierEquip++;
-            if (identifierEquip > equips.Length-1)
-            {
-                identifierEquip = 0;
-            }
-            actualEquip = equips[identifierEquip];
-        }
-        else
-        {
-            identifierEquip--;
-            if (identifierEquip < 0)
-            {
-                identifierEquip = equips.Length-1;
-            }
-            actualEquip = equips[identifierEquip];
-        }
 
+        actualEquip = equips[SimpleScrollSnap.TargetPanel];
         LoadEquipInSlots();
 
     }
@@ -111,7 +95,7 @@ public class EquipamentManager : MonoBehaviour
         int aux = 0;
         foreach (EquipCardLogic card in actualEquip.arraySlots)
         {
-            card.render.characterInfo = equips[identifierEquip].equipData.listOfCharacters[aux];
+            card.render.characterInfo = actualEquip.equipData.listOfCharacters[aux];
             card.render.UpdateRender();
             aux++;
         }

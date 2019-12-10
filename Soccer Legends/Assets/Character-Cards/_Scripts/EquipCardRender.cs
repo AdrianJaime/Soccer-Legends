@@ -26,7 +26,7 @@ public class EquipCardRender : MonoBehaviour
     {
         if (characterInfo != null)
         {
-            Color opaque = Color.clear;
+            Color opaque = Color.white;
             opaque.a = 1;
             artworkImage.color = opaque;
 

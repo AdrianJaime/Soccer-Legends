@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class EquipamentManager : MonoBehaviour
 {
+    public EquipObject actualEquip;
+    public EquipObject []equips;//array of characters
 
-    public EquipData actualEquip;//array of characters
-    public EquipData []equips;//array of characters
-    public EquipCardLogic [] arraySlots=new EquipCardLogic[8];
     public InventoryManager inventoryManager;
 
     int identifierEquip = 0;
@@ -17,6 +16,7 @@ public class EquipamentManager : MonoBehaviour
 
     private void Start()
     {
+        actualEquip = equips[0];
         LoadEquipInSlots();
     }
 
@@ -27,12 +27,8 @@ public class EquipamentManager : MonoBehaviour
             identifierCurrentSlotEquipament = _identifier;
         else
         {
-            arraySlots[identifierCurrentSlotEquipament].DiselectedRender();
+            actualEquip.arraySlots[identifierCurrentSlotEquipament].DiselectedRender();
             identifierCurrentSlotEquipament = _identifier;
-
-
-
-
         }
     }
 
@@ -42,26 +38,26 @@ public class EquipamentManager : MonoBehaviour
         if (identifierCurrentSlotEquipament != -1)//si tenemos un slot seleccionado
         {
 
-            int characterUsed = actualEquip.isUsed(_character);
+            int characterUsed = actualEquip.equipData.isUsed(_character);
 
 
             if (characterUsed == -1)
             {
-                actualEquip.arrayEquiped[identifierCurrentSlotEquipament] = true;
-                actualEquip.listOfCharacters[identifierCurrentSlotEquipament] = _character;
-                arraySlots[identifierCurrentSlotEquipament].Set(_character);
+                actualEquip.equipData.arrayEquiped[identifierCurrentSlotEquipament] = true;
+                actualEquip.equipData.listOfCharacters[identifierCurrentSlotEquipament] = _character;
+                actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
 
             }
             else
             {
-                actualEquip.arrayEquiped[characterUsed] = false;
-                actualEquip.listOfCharacters[characterUsed] = null;
-                arraySlots[characterUsed].Set(null);
+                actualEquip.equipData.arrayEquiped[characterUsed] = false;
+                actualEquip.equipData.listOfCharacters[characterUsed] = null;
+                actualEquip.arraySlots[characterUsed].Set(null);
 
 
-                actualEquip.arrayEquiped[identifierCurrentSlotEquipament] = true;
-                actualEquip.listOfCharacters[identifierCurrentSlotEquipament] = _character;
-                arraySlots[identifierCurrentSlotEquipament].Set(_character);
+                actualEquip.equipData.arrayEquiped[identifierCurrentSlotEquipament] = true;
+                actualEquip.equipData.listOfCharacters[identifierCurrentSlotEquipament] = _character;
+                actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
             }
         }
 
@@ -70,14 +66,14 @@ public class EquipamentManager : MonoBehaviour
 
     public void DisEquipCharacter(CharacterInfo _character)
     {
-        int characterUsed = actualEquip.isUsed(_character);
+        int characterUsed = actualEquip.equipData.isUsed(_character);
 
 
         if (characterUsed != -1)//usado
         {
-            actualEquip.arrayEquiped[characterUsed] = false;
-            actualEquip.listOfCharacters[characterUsed] = null;
-            arraySlots[characterUsed].Set(null);
+            actualEquip.equipData.arrayEquiped[characterUsed] = false;
+            actualEquip.equipData.listOfCharacters[characterUsed] = null;
+            actualEquip.arraySlots[characterUsed].Set(null);
 
             identifierCurrentSlotInventory = -1;
             identifierCurrentSlotEquipament = -1;
@@ -113,9 +109,9 @@ public class EquipamentManager : MonoBehaviour
     public void LoadEquipInSlots()
     {
         int aux = 0;
-        foreach (EquipCardLogic card in arraySlots)
+        foreach (EquipCardLogic card in actualEquip.arraySlots)
         {
-            card.render.characterInfo = equips[identifierEquip].listOfCharacters[aux];
+            card.render.characterInfo = equips[identifierEquip].equipData.listOfCharacters[aux];
             card.render.UpdateRender();
             aux++;
         }

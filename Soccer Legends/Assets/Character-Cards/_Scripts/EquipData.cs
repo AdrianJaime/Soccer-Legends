@@ -6,6 +6,7 @@ using UnityEngine;
 public class EquipData : ScriptableObject
 {
     public CharacterInfo[] listOfCharacters =new CharacterInfo[8];
+
     public bool[] arrayEquiped =new bool[8];
 
    // public bool preferent;

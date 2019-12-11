@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 6522264891936032010}
   - component: {fileID: 8861057586618872438}
   - component: {fileID: 2241822164623391389}
-  - component: {fileID: 8105996117430205114}
+  - component: {fileID: 2052558489103988590}
   m_Layer: 0
   m_Name: Forward 1
   m_TagString: Player
@@ -602,7 +602,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.54, y: 0.9}
   m_EdgeRadius: 0
---- !u!114 &8105996117430205114
+--- !u!114 &2052558489103988590
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -611,10 +611,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2839815237575861691}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 292e055caa7c4ea4a9b3e05da99f8587, type: 3}
+  m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ia_formationPos: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -631,6 +630,7 @@ MonoBehaviour:
   fightDir: 
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
+  formationPos: 0
 --- !u!1 &3270396010983694919
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,7 +900,7 @@ GameObject:
   - component: {fileID: 3981013601855209109}
   - component: {fileID: 4315600174936999466}
   - component: {fileID: 8929388356311116796}
-  - component: {fileID: 6664500869248228138}
+  - component: {fileID: 6088339673272547007}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Player
@@ -1019,7 +1019,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.54, y: 0.9}
   m_EdgeRadius: 0
---- !u!114 &6664500869248228138
+--- !u!114 &6088339673272547007
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1028,10 +1028,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3981013601855209107}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 292e055caa7c4ea4a9b3e05da99f8587, type: 3}
+  m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ia_formationPos: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -1048,6 +1047,7 @@ MonoBehaviour:
   fightDir: 
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
+  formationPos: 0
 --- !u!1 &3981013602569086292
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,6 +1104,7 @@ MonoBehaviour:
   - {fileID: 3981013601855209107}
   - {fileID: 2839815237575861691}
   - {fileID: 5991316129975660377}
+  playerTeam: 0
 --- !u!1 &5574519092842008057
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,7 +1204,7 @@ GameObject:
   - component: {fileID: 5875338207653328695}
   - component: {fileID: 7581174214234704125}
   - component: {fileID: 7600841251344286607}
-  - component: {fileID: 5681080969886206001}
+  - component: {fileID: 152920605280153736}
   m_Layer: 0
   m_Name: Forward 2
   m_TagString: Player
@@ -1322,7 +1323,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.54, y: 0.9}
   m_EdgeRadius: 0
---- !u!114 &5681080969886206001
+--- !u!114 &152920605280153736
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1331,10 +1332,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5991316129975660377}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 292e055caa7c4ea4a9b3e05da99f8587, type: 3}
+  m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ia_formationPos: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -1351,6 +1351,7 @@ MonoBehaviour:
   fightDir: 
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
+  formationPos: 0
 --- !u!1 &7159913482221468076
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1443,7 @@ GameObject:
   - component: {fileID: 7276447991828144707}
   - component: {fileID: 4826797937057894208}
   - component: {fileID: 4989256877389021996}
-  - component: {fileID: 6662170876743496323}
+  - component: {fileID: 699849856920859107}
   m_Layer: 0
   m_Name: GoalKeeper
   m_TagString: GoalKeeper
@@ -1560,7 +1561,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.54, y: 0.9}
   m_EdgeRadius: 0
---- !u!114 &6662170876743496323
+--- !u!114 &699849856920859107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1569,10 +1570,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7975296050309485964}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 292e055caa7c4ea4a9b3e05da99f8587, type: 3}
+  m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ia_formationPos: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -1589,6 +1589,7 @@ MonoBehaviour:
   fightDir: 
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
+  formationPos: 0
 --- !u!1 &9188004561698288252
 GameObject:
   m_ObjectHideFlags: 0

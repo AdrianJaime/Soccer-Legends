@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PVE_Manager : MonoBehaviour
 {
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar, lastMainCamera;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = false;
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
@@ -147,7 +147,7 @@ public class PVE_Manager : MonoBehaviour
     public void chooseDirection(int _player1, int _player2)
     {
         //MyPlayer_PVE player1;
-        //IA_Player_PVE IA_Player;
+        //MyPlayer_PVE IA_Player;
         //if (!directionButtons.activeSelf)
         //{
         //    GameOn = false;
@@ -174,7 +174,7 @@ public class PVE_Manager : MonoBehaviour
     public void ChooseShoot(int _player1, int _player2)
     {
         //MyPlayer_PVE player1;
-        //IA_Player_PVE IA_Player;
+        //MyPlayer_PVE IA_Player;
         //GameOn = false;
         //shootButtons.SetActive(true);
         ////if (player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
@@ -187,7 +187,7 @@ public class PVE_Manager : MonoBehaviour
     private void Fight(bool shoot, int ballPlayer)
     {
         //MyPlayer_PVE player1;
-        //IA_Player_PVE IA_Player;
+        //MyPlayer_PVE IA_Player;
         //if (shoot)
         //{
         //    if (player1.fightDir == "Special")
@@ -273,7 +273,7 @@ public class PVE_Manager : MonoBehaviour
         for (int i = 0; i < myPlayers.Length; i++)
         {
             MyPlayer_PVE player1 = myPlayers[i].GetComponent<MyPlayer_PVE>();
-            IA_Player_PVE IA_Player = myIA_Players[i].GetComponent<IA_Player_PVE>();
+            MyPlayer_PVE IA_Player = myIA_Players[i].GetComponent<MyPlayer_PVE>();
             if (player1.ball != null) return 1;
             else if (IA_Player.ball != null) return 2;
         }
@@ -292,7 +292,7 @@ public class PVE_Manager : MonoBehaviour
         for (int i = 0; i < myPlayers.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
-            myIA_Players[i].GetComponent<IA_Player_PVE>().RepositionPlayer();
+            myIA_Players[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
         }
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);

@@ -29,6 +29,8 @@ public class MyPlayer_PVE : MonoBehaviour
     public Vector3 playerObjective = Vector3.zero;
     public Vector2 startPosition = Vector2.zero;
 
+    public IA_manager.formationPositions formationPos;
+
     private Vector3 smoothMove, aux;
     private GameObject actualLine;
     private PVE_Manager mg;
@@ -36,17 +38,36 @@ public class MyPlayer_PVE : MonoBehaviour
     private Collider2D goal;
     private float touchTime;
 
+    //IA
+    bool iaPlayer;
+
     private void Start()
     {
+        if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
+        else iaPlayer = false;
+        switch (gameObject.name.Substring(0, 5))
+        {
+            case "Pivot":
+                formationPos = IA_manager.formationPositions.PIVOT;
+                break;
+            case "Forwa":
+                formationPos = IA_manager.formationPositions.FORWARD;
+                break;
+            case "Goalk":
+                formationPos = IA_manager.formationPositions.GOALKEEPER;
+                break;
+            default:
+                break;
+        }
         stats = new Stats(0, 0, 0);
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         fightDir = null;
         //if (photonView.IsMine)
         //{
-            if (gameObject.name != "GoalKeeper")
+            if (!iaPlayer && gameObject.name != "GoalKeeper")
             {
-                GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
-                playerCamera.SetActive(true);
+                //GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+                playerCamera.SetActive(false);
             }
             mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
             goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
@@ -58,13 +79,13 @@ public class MyPlayer_PVE : MonoBehaviour
         //if (photonView.IsMine) //Check if we're the local player
         //{
             if (startPosition == Vector2.zero) startPosition = transform.position;
-            ProcessInputs();
-        if (playerObjective != Vector3.zero)
+            if(!iaPlayer)ProcessInputs();
+        if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
+        else if (playerObjective != Vector3.zero && (playerCamera == null || !playerCamera.activeSelf))
         {
             transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
         }
-        else if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
         rePositionBall(); //To be implemented
         //}
         //else if(!photonView.IsMine)
@@ -246,7 +267,9 @@ public class MyPlayer_PVE : MonoBehaviour
                 ball.GetComponent<Ball>().shooterIsMaster = false;
                 ball.GetComponent<Ball>().ShootBall(_dir);
             }
-            mg.lastMainCamera = playerCamera;
+            //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null)) {
+            //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+            //    }
             ball.transform.parent = null;
             ball = null;
         }
@@ -293,8 +316,11 @@ public class MyPlayer_PVE : MonoBehaviour
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        mg.lastMainCamera.SetActive(false);
-        playerCamera.SetActive(true);
+        //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
+        //{
+        //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+        //    playerCamera.SetActive(true);
+        //}
     }
 
 
@@ -333,10 +359,5 @@ public class MyPlayer_PVE : MonoBehaviour
         Lose();
         GameObject.Destroy(actualLine);
         onMove = false;
-    }
-
-    void OnBecameInvisible()
-    {
-        MoveTo(new float[] { startPosition.x, startPosition.y, 0.0f});
     }
 }

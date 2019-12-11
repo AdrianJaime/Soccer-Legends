@@ -14,6 +14,8 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public bool shooterIsMaster;
     public int kick;
 
+    GameObject mainCamera;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -28,6 +30,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             float[] dir = { direction.x, direction.y };
             ShootBall(dir);
         }
+        checkClosestToCam();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -83,10 +86,56 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Wall" && photonView.IsMine)
+        if (collision.tag == "Wall" && (photonView.IsMine || GameObject.Find("Manager").GetComponent<PVE_Manager>() != null))
         {
             if (collision.name == "U_Wall" || collision.name == "D_Wall") rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
             if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+        }
+    }
+
+    void checkClosestToCam()
+    {
+        if (transform.parent != null)
+        {
+            if (GameObject.FindGameObjectWithTag("MainCamera") != null) GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+            transform.parent.GetChild(1).gameObject.SetActive(true);
+            return;
+        }
+        if(Time.frameCount % 30 != 0) return;
+        GameObject[] players = new GameObject[4];
+        float minDist;
+        int shortestDistIdx;
+
+        if(GameObject.Find("Manager").GetComponent<Manager>() != null)
+        {
+            //GameObject.Find("Manager").GetComponent<Manager>().
+        }
+        else
+        {
+            players = GameObject.Find("Manager").GetComponent<PVE_Manager>().myPlayers;
+        }
+
+        minDist = Vector2.Distance(transform.position, players[0].transform.position);
+        shortestDistIdx = 0;
+
+        for(int i = 1; i < players.Length - 2; i++)
+        {
+            if(Vector2.Distance(transform.position, players[i].transform.position) < minDist)
+            {
+                minDist = Vector2.Distance(transform.position, players[i].transform.position);
+                shortestDistIdx = i;
+            }
+        }
+
+        if(GameObject.FindGameObjectWithTag("MainCamera") != null) GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+
+        if (GameObject.Find("Manager").GetComponent<Manager>() != null)
+        {
+            ;//GameObject.Find("Manager").GetComponent<Manager>().
+        }
+        else
+        {
+            players[shortestDistIdx].GetComponent<MyPlayer_PVE>().playerCamera.SetActive(true);
         }
     }
 }

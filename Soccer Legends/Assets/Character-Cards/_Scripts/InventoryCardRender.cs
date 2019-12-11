@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class InventoryCardRender : MonoBehaviour
 {
@@ -43,5 +44,11 @@ public class InventoryCardRender : MonoBehaviour
     public void DisEquip()
     {
         manager.DisEquipCharacter(characterInfo);
+    }
+    public void OpenVharacterInfo()
+    {
+        StaticInfo.characterToAcces = characterInfo;
+        SceneManager.LoadScene(2);
+
     }
 }

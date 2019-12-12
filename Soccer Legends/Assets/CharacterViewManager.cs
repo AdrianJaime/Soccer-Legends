@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CharacterViewManager : MonoBehaviour
 {
@@ -32,6 +33,10 @@ public class CharacterViewManager : MonoBehaviour
 
     }
 
+    public void LoadPreviousScene()
+    {
+        SceneManager.LoadScene(StaticInfo.previousScene);
+    }
 
 
 }

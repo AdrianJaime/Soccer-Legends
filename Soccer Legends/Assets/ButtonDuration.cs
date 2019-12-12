@@ -8,16 +8,19 @@ public class ButtonDuration : MonoBehaviour, IPointerDownHandler, IPointerExitHa
 {
 
     public float timeToHold=1f;
-
+    public float spearationRatio = 3f;
     bool isDown;
     float timeDown;
-
+    Vector2 positionDown;
     public UnityEvent onButtonHold;
 
     public void OnPointerDown(PointerEventData eventData)
     {
         isDown = true;
         timeDown = Time.time;
+
+        positionDown = Input.GetTouch(0).position;
+        Debug.Log(positionDown);
     }
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -38,6 +41,11 @@ public class ButtonDuration : MonoBehaviour, IPointerDownHandler, IPointerExitHa
                     ResetParameters();
                     onButtonHold.Invoke();
                 }
+            }
+            if (Vector2.Distance(positionDown, Input.GetTouch(0).position) > spearationRatio)
+            {
+                Debug.Log(Vector2.Distance(positionDown, Input.GetTouch(0).position));
+                ResetParameters();
             }
         }
     }

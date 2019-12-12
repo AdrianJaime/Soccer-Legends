@@ -9,7 +9,9 @@ public class InventoryManager : MonoBehaviour
     public Transform locationCharacterSpawn;
     public GameObject inventoryPrefabUnit;
 
-    int counterIdentifier = 0;
+    public List<GameObject> listOfSlots = new List<GameObject>();
+
+
     private void Start()
     {
         CreateInventory();
@@ -18,14 +20,33 @@ public class InventoryManager : MonoBehaviour
 
     public void CreateInventory()
     {
-        foreach(CharacterInfo characterUnit in inventoryInfo.listOfCharacters)
+        int counterIdentifier = 0;
+
+        foreach (CharacterInfo characterUnit in inventoryInfo.listOfCharacters)
         {
-            GameObject actualCard=Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
+            GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
             actualCard.GetComponent<InventoryCardRender>().characterInfo = characterUnit;
             actualCard.GetComponent<InventoryCardRender>().identifierSlot = counterIdentifier;
+            listOfSlots.Add(actualCard);
             counterIdentifier++;
         }
     }
+    public void SortInventoryCaharactersByAtribute(string aux)
+    {
+        int counterIdentifier = 0;
+
+        inventoryInfo.SortByAtribute(aux);
+        foreach(GameObject slot in listOfSlots)
+        {
+            
+            slot.GetComponent<InventoryCardRender>().characterInfo=inventoryInfo.listOfCharacters[counterIdentifier];
+            slot.GetComponent<InventoryCardRender>().UpdateSlotRender();
+            counterIdentifier++;
+
+        }
+    }
+
+
 
 
 }

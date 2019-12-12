@@ -8,7 +8,7 @@ public class SceneManagerScript : MonoBehaviour
 
     public void ChangeScene(int _sceneBuildID)
     {
-        if( SceneManager.sceneCount>=_sceneBuildID)
+        if( SceneManager.sceneCountInBuildSettings >= _sceneBuildID)
             SceneManager.LoadScene(_sceneBuildID);
     }
 }

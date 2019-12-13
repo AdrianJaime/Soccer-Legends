@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class CharacterViewManager : MonoBehaviour
 {
-    private CharacterInfo actualCharacter;
+    private CharacterBasic actualCharacter;
 
     public Text pivotStat, defenseStat, technicalStat, nameCharacter, levelCharacter;
     public Image imageCharacter;
@@ -26,9 +26,9 @@ public class CharacterViewManager : MonoBehaviour
             pivotStat.text = actualCharacter.stats.shot.ToString();
             defenseStat.text = actualCharacter.stats.defense.ToString();
             technicalStat.text = actualCharacter.stats.technique.ToString();
-            nameCharacter.text = actualCharacter.nameCharacter;
+            nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
             levelCharacter.text = actualCharacter.level.ToString();
-            imageCharacter.sprite = actualCharacter.artwork;
+            imageCharacter.sprite = actualCharacter.basicInfo.artwork;
         }
 
     }

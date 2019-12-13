@@ -29,7 +29,7 @@ public class EquipCardLogic : MonoBehaviour
         render.UpdateRender();
     }
 
-    public void Set(CharacterInfo _character)
+    public void Set(CharacterBasic _character)
     {
         render.characterInfo = _character;
         render.UpdateRender();

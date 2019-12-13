@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class CharacterRender : MonoBehaviour
 {
-    public CharacterInfo characterInfo;
+    public CharacterBasic characterInfo;
 
     //display objects from de prefab
     public Text nameText;
@@ -23,11 +23,11 @@ public class CharacterRender : MonoBehaviour
 
     public void Start()
     {
-        nameText.text = characterInfo.nameCharacter;
-        descriptionText.text = characterInfo.description;
+        nameText.text = characterInfo.basicInfo.nameCharacter;
+        descriptionText.text = characterInfo.basicInfo.description;
         shotText.text = characterInfo.stats.shot.ToString();
         defenseText.text = characterInfo.stats.defense.ToString();
         techinqueText.text = characterInfo.stats.technique.ToString();
-        artworkImage.sprite = characterInfo.artwork;
+        artworkImage.sprite = characterInfo.basicInfo.artwork;
     }
 }

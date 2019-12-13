@@ -5,12 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class InventoryCardRender : MonoBehaviour
 {
-    public CharacterInfo characterInfo;
+    public CharacterBasic characterInfo;
 
     //display objects from de prefab
     public Text nameText;
     public Image artworkImage;
-    public int identifierSlot = -1;
 
 
     //init resources
@@ -42,12 +41,13 @@ public class InventoryCardRender : MonoBehaviour
         SceneManager.LoadScene(2);
 
     }
+
     public void UpdateSlotRender()
     {
         if (characterInfo != null)
         {
-            nameText.text = characterInfo.nameCharacter;
-            artworkImage.sprite = characterInfo.artwork;
+            nameText.text = characterInfo.basicInfo.nameCharacter;
+            artworkImage.sprite = characterInfo.basicInfo.artwork;
 
             if (!characterInfo.owned)
             {

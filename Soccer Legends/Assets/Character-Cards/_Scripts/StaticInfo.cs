@@ -2,7 +2,7 @@
 
 public static class StaticInfo 
 {
-    public static CharacterInfo characterToAcces;
+    public static CharacterBasic characterToAcces;
 
     public static int previousScene;
 

@@ -5,11 +5,12 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
 
-    public InventoryData inventoryInfo;
     public Transform locationCharacterSpawn;
     public GameObject inventoryPrefabUnit;
 
-    public List<GameObject> listOfSlots = new List<GameObject>();
+    public List<GameObject> listOfSlots = new List<GameObject>();//list of slots with the info of player
+
+    public List<CharacterInfo> listOfCharacters = new List<CharacterInfo>();
 
 
     private void Start()
@@ -22,31 +23,99 @@ public class InventoryManager : MonoBehaviour
     {
         int counterIdentifier = 0;
 
-        foreach (CharacterInfo characterUnit in inventoryInfo.listOfCharacters)
+        //por cada jgador en la lista de jugadores (CharacterInfo)
+        foreach (CharacterInfo characterUnit in listOfCharacters)
         {
+            //vamos a crear un objeto "Carta" que contiene la info completa de un cvharacter (characterBasic)
             GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
-            actualCard.GetComponent<InventoryCardRender>().characterInfo = characterUnit;
-            actualCard.GetComponent<InventoryCardRender>().identifierSlot = counterIdentifier;
+            //Le asignamos una informacion basica de jugador
+            actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
+            //con la infromación basica cargamos los datos con el ID del personaje.
+            actualCard.GetComponent<CharacterBasic>().SaveCharacter();
+            actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
+
             listOfSlots.Add(actualCard);
             counterIdentifier++;
         }
     }
-    public void SortInventoryCaharactersByAtribute(string aux)
+
+
+
+
+    public void SortByAtribute(string _aux)
     {
-        int counterIdentifier = 0;
+        listOfSlots.Sort(new SortCharacter(_aux));
+        listOfSlots.Reverse();
 
-        inventoryInfo.SortByAtribute(aux);
-        foreach(GameObject slot in listOfSlots)
-        {
-            
-            slot.GetComponent<InventoryCardRender>().characterInfo=inventoryInfo.listOfCharacters[counterIdentifier];
-            slot.GetComponent<InventoryCardRender>().UpdateSlotRender();
-            counterIdentifier++;
-
-        }
     }
 
+    public class SortCharacter : IComparer<GameObject>
+    {
+        public string characterAtributeToSort;
 
+        int IComparer<GameObject>.Compare(GameObject _objA, GameObject _objB)
+        {
+            switch (characterAtributeToSort)
+            {
+
+                case "level":
+                    {
+                        Debug.Log("level");
+
+                        int t1 = _objA.GetComponent<CharacterBasic>().level;
+                        int t2 = _objB.GetComponent<CharacterBasic>().level;
+                        return t1.CompareTo(t2);
+                    }
+                case "rarity":
+                    {
+                        int t1 = (int)_objA.GetComponent<CharacterBasic>().basicInfo.rarity;
+                        int t2 = (int)_objB.GetComponent<CharacterBasic>().basicInfo.rarity;
+                        return t1.CompareTo(t2);
+                    }
+                case "power":
+                    {
+                        int t1 = _objA.GetComponent<CharacterBasic>().power;
+                        int t2 = _objB.GetComponent<CharacterBasic>().power;
+                        return t1.CompareTo(t2);
+                    }
+                case "stats-shot":
+                    {
+                        int t1 = _objA.GetComponent<CharacterBasic>().stats.shot;
+                        int t2 = _objB.GetComponent<CharacterBasic>().stats.shot;
+                        return t1.CompareTo(t2);
+                    }
+                case "stats-defense":
+                    {
+                        int t1 = _objA.GetComponent<CharacterBasic>().stats.defense;
+                        int t2 = _objB.GetComponent<CharacterBasic>().stats.defense;
+                        return t1.CompareTo(t2);
+                    }
+                case "stats-technique":
+                    {
+                        int t1 = _objA.GetComponent<CharacterBasic>().stats.technique;
+                        int t2 = _objB.GetComponent<CharacterBasic>().stats.technique;
+                        return t1.CompareTo(t2);
+                    }
+                case "type":
+                    {
+
+                        int t1 = (int)_objA.GetComponent<CharacterBasic>().basicInfo.type;
+                        int t2 = (int)_objB.GetComponent<CharacterBasic>().basicInfo.type;
+                        return t1.CompareTo(t2);
+                    }
+                default:
+                    Debug.Log("level");
+                    return 0;
+
+
+            }
+
+        }
+        public SortCharacter(string _characterAtributeToSort)
+        {
+            characterAtributeToSort = _characterAtributeToSort;
+        }
+    }
 
 
 }

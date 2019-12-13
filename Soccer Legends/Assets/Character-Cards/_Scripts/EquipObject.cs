@@ -10,10 +10,5 @@ public class EquipObject : MonoBehaviour
     
     
 
-    private void Start()
-    {
-        EditorUtility.SetDirty(equipData);
-
-    }
 
 }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class EquipCardRender : MonoBehaviour
 {
-    public CharacterInfo characterInfo;
+    public CharacterBasic characterInfo;
 
     //display objects from de prefab
     public Text nameText;
@@ -30,8 +30,8 @@ public class EquipCardRender : MonoBehaviour
             opaque.a = 1;
             artworkImage.color = opaque;
 
-            nameText.text = characterInfo.nameCharacter;
-            artworkImage.sprite = characterInfo.artwork;
+            nameText.text = characterInfo.basicInfo.nameCharacter;
+            artworkImage.sprite = characterInfo.basicInfo.artwork;
             powerText.text = characterInfo.power.ToString();
         }
         else

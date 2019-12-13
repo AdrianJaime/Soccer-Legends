@@ -5,12 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New_EquipInfo", menuName = "Equip/NewEquip")]
 public class EquipData : ScriptableObject
 {
-    public CharacterInfo[] listOfCharacters =new CharacterInfo[8];
+    public CharacterBasic[] listOfCharacters =new CharacterBasic[8];
 
     public bool[] arrayEquiped =new bool[8];
 
    // public bool preferent;
-   public int isUsed(CharacterInfo _aux)
+   public int isUsed(CharacterBasic _aux)
     {
         for(int i = 0; i < 8; i++)
         {

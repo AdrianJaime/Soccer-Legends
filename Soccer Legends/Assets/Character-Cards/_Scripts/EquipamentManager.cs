@@ -33,7 +33,7 @@ public class EquipamentManager : MonoBehaviour
         }
     }
 
-    public void EquipCharacter(CharacterInfo _character)
+    public void EquipCharacter(CharacterBasic _character)
     {
 
         if (identifierCurrentSlotEquipament != -1)//si tenemos un slot seleccionado
@@ -65,7 +65,7 @@ public class EquipamentManager : MonoBehaviour
 
     }
 
-    public void DisEquipCharacter(CharacterInfo _character)
+    public void DisEquipCharacter(CharacterBasic _character)
     {
         int characterUsed = actualEquip.equipData.isUsed(_character);
 

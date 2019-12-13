@@ -163,6 +163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2032708742014849038}
   - component: {fileID: 2032708742014849039}
+  - component: {fileID: 7252370132445239413}
   m_Layer: 5
   m_Name: InventoryCard
   m_TagString: Untagged
@@ -202,11 +203,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee5953bcfcce168458571e46b7b59a0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterInfo: {fileID: 0}
+  characterInfo: {fileID: 7252370132445239413}
   nameText: {fileID: 2032708741061402781}
   artworkImage: {fileID: 2032708741185276904}
-  identifierSlot: -1
   starSprites: []
+--- !u!114 &7252370132445239413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032708742014849041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b27bf846f0b00f44ab18f0772a10d2b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicInfo: {fileID: 0}
+  stats:
+    shot: 0
+    technique: 0
+    defense: 0
+  level: 0
+  power: 0
+  owned: 0
 --- !u!1 &2032708742456527331
 GameObject:
   m_ObjectHideFlags: 0

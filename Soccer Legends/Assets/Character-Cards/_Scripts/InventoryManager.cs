@@ -26,15 +26,22 @@ public class InventoryManager : MonoBehaviour
         //por cada jgador en la lista de jugadores (CharacterInfo)
         foreach (CharacterInfo characterUnit in listOfCharacters)
         {
-            //vamos a crear un objeto "Carta" que contiene la info completa de un cvharacter (characterBasic)
-            GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
-            //Le asignamos una informacion basica de jugador
-            actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
-            //con la infromación basica cargamos los datos con el ID del personaje.
-            actualCard.GetComponent<CharacterBasic>().SaveCharacter();
-            actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
+            if (characterUnit != null)
+            {
+                //vamos a crear un objeto "Carta" que contiene la info completa de un cvharacter (characterBasic)
+                GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
+                //Le asignamos una informacion basica de jugador
+                actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
+                //con la infromación basica cargamos los datos con el ID del personaje.
+                if (!actualCard.GetComponent<CharacterBasic>().LoadCharacterStats())
+                {
+                    actualCard.GetComponent<CharacterBasic>().SaveCharacter();
+                    actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
 
-            listOfSlots.Add(actualCard);
+                }
+
+                listOfSlots.Add(actualCard);
+            }
             counterIdentifier++;
         }
     }

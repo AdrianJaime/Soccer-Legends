@@ -17,16 +17,16 @@ public class CharacterBasic : MonoBehaviour
 
     //info user
     public Stats stats;
-    public int level;
-    public int power;
-    public bool owned;
+    public int level=1;
+    public int power=1;
+    public bool owned=true;//no se inicializa a estos valores
 
     public void SaveCharacter()
     {
 
         string ecryptedKey = EncriptScript.Encrypt(basicInfo.ID);
         Debug.Log(ecryptedKey);
-        StoredCharacterData dataCharacter = new StoredCharacterData(stats, level, power, owned);
+        StoredCharacterData dataCharacter = new StoredCharacterData(stats, level, power, true);
         Serializer.Save(ecryptedKey, dataCharacter);
 
 

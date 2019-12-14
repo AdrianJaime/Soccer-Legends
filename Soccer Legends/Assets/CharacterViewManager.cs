@@ -15,13 +15,14 @@ public class CharacterViewManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        actualCharacter = StaticInfo.characterToAcces; UpdateInterface();
+        actualCharacter = StaticInfo.characterToAcces;
+        UpdateInterface();
     }
 
 
     public void UpdateInterface()
     {
-        if (actualCharacter!=null)
+        if (actualCharacter != null)
         {
             pivotStat.text = actualCharacter.stats.shot.ToString();
             defenseStat.text = actualCharacter.stats.defense.ToString();

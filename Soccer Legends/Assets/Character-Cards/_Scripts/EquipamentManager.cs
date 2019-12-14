@@ -12,7 +12,7 @@ public class EquipamentManager : MonoBehaviour
     public DanielLochner.Assets.SimpleScrollSnap.SimpleScrollSnap SimpleScrollSnap;
 
     public int identifierCurrentSlotEquipament = -1;
-    public int identifierCurrentSlotInventory = -1;
+    //public int identifierCurrentSlotInventory = -1;
 
 
     private void Start()
@@ -48,6 +48,7 @@ public class EquipamentManager : MonoBehaviour
                 actualEquip.equipData.listOfCharacters[identifierCurrentSlotEquipament] = _character;
                 actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
 
+
             }
             else
             {
@@ -60,6 +61,7 @@ public class EquipamentManager : MonoBehaviour
                 actualEquip.equipData.listOfCharacters[identifierCurrentSlotEquipament] = _character;
                 actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
             }
+            identifierCurrentSlotEquipament = -1;
         }
 
 
@@ -76,7 +78,7 @@ public class EquipamentManager : MonoBehaviour
             actualEquip.equipData.listOfCharacters[characterUsed] = null;
             actualEquip.arraySlots[characterUsed].Set(null);
 
-            identifierCurrentSlotInventory = -1;
+            //identifierCurrentSlotInventory = -1;
             identifierCurrentSlotEquipament = -1;
 
         }

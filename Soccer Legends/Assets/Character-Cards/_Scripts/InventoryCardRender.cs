@@ -34,7 +34,7 @@ public class InventoryCardRender : MonoBehaviour
     {
         manager.DisEquipCharacter(characterInfo);
     }
-    public void OpenVharacterInfo()
+    public void OpenCharacterInfo()
     {
         StaticInfo.characterToAcces = characterInfo;
         StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;

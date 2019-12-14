@@ -11,7 +11,7 @@ public static class Serializer
         {
             try
             {
-                using (Stream stream = File.OpenRead(Application.streamingAssetsPath +"/encryptedData"+ filename))
+                using (Stream stream = File.OpenRead(Application.persistentDataPath + filename))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
                     return formatter.Deserialize(stream) as T;
@@ -27,8 +27,9 @@ public static class Serializer
 
     public static void Save<T>(string filename, T data) where T : class
     {
-        using (Stream stream = File.OpenWrite(Application.streamingAssetsPath + "/encryptedData" + filename))
+        using (Stream stream = File.OpenWrite(Application.persistentDataPath + filename))
         {
+
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(stream, data);
         }

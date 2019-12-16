@@ -16,6 +16,7 @@ public class CharacterInfo : ScriptableObject
 {
     //info player
     public string ID;
+    public int index;
     public string nameCharacter;
     public string description;
 

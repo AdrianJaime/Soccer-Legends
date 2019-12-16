@@ -51,8 +51,9 @@ public class InventoryManager : MonoBehaviour
 
     public void SortByAtribute(string _aux)
     {
+        listActualCharacters.Sort(new SortCharacter("index"));
         listActualCharacters.Sort(new SortCharacter(_aux));
-        listActualCharacters.Reverse();
+        listActualCharacters.Reverse(); //sino los oredna de menos a mas
 
         int counterIdentifier = 0;
 
@@ -80,46 +81,52 @@ public class InventoryManager : MonoBehaviour
                     {
                         Debug.Log("level");
 
-                        int t1 = _objA.GetComponent<CharacterBasic>().level;
-                        int t2 = _objB.GetComponent<CharacterBasic>().level;
+                        int t1 = _objA.level;
+                        int t2 = _objB.level;
                         return t1.CompareTo(t2);
                     }
                 case "rarity":
                     {
-                        int t1 = (int)_objA.GetComponent<CharacterBasic>().basicInfo.rarity;
-                        int t2 = (int)_objB.GetComponent<CharacterBasic>().basicInfo.rarity;
+                        int t1 = (int)_objA.basicInfo.rarity;
+                        int t2 = (int)_objB.basicInfo.rarity;
                         return t1.CompareTo(t2);
                     }
                 case "power":
                     {
-                        int t1 = _objA.GetComponent<CharacterBasic>().power;
-                        int t2 = _objB.GetComponent<CharacterBasic>().power;
+                        int t1 = _objA.power;
+                        int t2 = _objB.power;
                         return t1.CompareTo(t2);
                     }
                 case "stats-shot":
                     {
-                        int t1 = _objA.GetComponent<CharacterBasic>().stats.shot;
-                        int t2 = _objB.GetComponent<CharacterBasic>().stats.shot;
+                        int t1 = _objA.stats.shot;
+                        int t2 = _objB.stats.shot;
                         return t1.CompareTo(t2);
                     }
                 case "stats-defense":
                     {
-                        int t1 = _objA.GetComponent<CharacterBasic>().stats.defense;
-                        int t2 = _objB.GetComponent<CharacterBasic>().stats.defense;
+                        int t1 = _objA.stats.defense;
+                        int t2 = _objB.stats.defense;
                         return t1.CompareTo(t2);
                     }
                 case "stats-technique":
                     {
-                        int t1 = _objA.GetComponent<CharacterBasic>().stats.technique;
-                        int t2 = _objB.GetComponent<CharacterBasic>().stats.technique;
+                        int t1 = _objA.stats.technique;
+                        int t2 = _objB.stats.technique;
                         return t1.CompareTo(t2);
                     }
                 case "type":
                     {
 
-                        int t1 = (int)_objA.GetComponent<CharacterBasic>().basicInfo.type;
-                        int t2 = (int)_objB.GetComponent<CharacterBasic>().basicInfo.type;
+                        int t1 = (int)_objA.basicInfo.type;
+                        int t2 = (int)_objB.basicInfo.type;
                         return t1.CompareTo(t2);
+                    }
+                case "index":
+                    {
+                        int t1 = _objA.basicInfo.index;
+                        int t2 = _objB.basicInfo.index;
+                        return -(t1.CompareTo(t2));//cambio el signo al resultado para hacer un sort de menos a mas en este orden
                     }
                 default:
                     Debug.Log("level");

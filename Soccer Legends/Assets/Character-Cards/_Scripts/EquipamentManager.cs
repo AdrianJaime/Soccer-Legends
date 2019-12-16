@@ -12,7 +12,6 @@ public class EquipamentManager : MonoBehaviour
     public DanielLochner.Assets.SimpleScrollSnap.SimpleScrollSnap SimpleScrollSnap;
 
     public int identifierCurrentSlotEquipament = -1;
-    //public int identifierCurrentSlotInventory = -1;
 
 
     private void Start()
@@ -78,7 +77,6 @@ public class EquipamentManager : MonoBehaviour
             actualEquip.equipData.listOfCharacters[characterUsed] = null;
             actualEquip.arraySlots[characterUsed].Set(null);
 
-            //identifierCurrentSlotInventory = -1;
             identifierCurrentSlotEquipament = -1;
 
         }

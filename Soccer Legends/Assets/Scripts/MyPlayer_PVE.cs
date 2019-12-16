@@ -86,6 +86,12 @@ public class MyPlayer_PVE : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
         }
+
+        if(iaPlayer)
+        {
+
+        }
+
         rePositionBall(); //To be implemented
         //}
         //else if(!photonView.IsMine)
@@ -316,6 +322,8 @@ public class MyPlayer_PVE : MonoBehaviour
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+
+        stablishNewShootCheck();
         //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
         //{
         //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -359,5 +367,54 @@ public class MyPlayer_PVE : MonoBehaviour
         Lose();
         GameObject.Destroy(actualLine);
         onMove = false;
+    }
+
+    IEnumerator checkIA_Shoot(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        Vector3 shootingTarget;
+        List<Vector3> closePlayers = new List<Vector3>();
+
+        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        {
+            if (Vector2.Distance(transform.position, mg.myIA_Players[i].transform.position) < 4 && mg.myIA_Players[i] != gameObject) closePlayers.Add(mg.myIA_Players[i].transform.position);
+        }
+        while (closePlayers.Count != 0)
+        {
+            shootingTarget = closePlayers[0];
+            float minDist = Vector2.Distance(shootingTarget, transform.position); 
+            if(closePlayers.Count > 1)
+            {
+                for(int i = 1; i < closePlayers.Count; i++)
+                {
+                    if (Vector2.Distance(transform.position, closePlayers[i]) < minDist)
+                    {
+                        shootingTarget = closePlayers[i];
+                        minDist = Vector2.Distance(transform.position, closePlayers[i]);
+                    }                  
+                }
+            }
+            RaycastHit2D hit;
+            Vector3 dir = shootingTarget - transform.position;
+            hit = Physics2D.Raycast(ball.transform.position, dir, 5);
+            if (hit.transform.parent == transform.parent)
+            {
+                ShootBall(new float[] { dir.x, dir.y, 0.0f });
+                closePlayers.Clear();
+            }
+            else
+            {
+                closePlayers.Remove(shootingTarget);
+            }
+        }
+
+        if (ball != null) stablishNewShootCheck();
+
+    }
+
+    void stablishNewShootCheck()
+    {
+        StartCoroutine(checkIA_Shoot(Random.Range(0.0f, 3.0f)));
     }
 }

@@ -41,8 +41,8 @@ public class CharacterBasic : MonoBehaviour
         if (aux != null)
         {
             stats = aux.stats;
-            level = aux.level;
-            power = aux.power;
+            level = 10;
+            power = 10;
             owned = aux.owned;
             return true;
         }

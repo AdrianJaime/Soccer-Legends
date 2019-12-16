@@ -22,7 +22,7 @@ public class CharacterViewManager : MonoBehaviour
 
     public void UpdateInterface()
     {
-        if (actualCharacter != null)
+        if (actualCharacter.basicInfo != null)
         {
             pivotStat.text = actualCharacter.stats.shot.ToString();
             defenseStat.text = actualCharacter.stats.defense.ToString();

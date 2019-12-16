@@ -10,6 +10,7 @@ public class InventoryManager : MonoBehaviour
 
     public List<GameObject> listOfSlots = new List<GameObject>();//list of slots with the info of player
 
+    public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();
     public List<CharacterInfo> listOfCharacters = new List<CharacterInfo>();
 
 
@@ -39,7 +40,7 @@ public class InventoryManager : MonoBehaviour
                     actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
 
                 }
-
+                listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());
                 listOfSlots.Add(actualCard);
             }
             counterIdentifier++;
@@ -48,19 +49,29 @@ public class InventoryManager : MonoBehaviour
 
 
 
-
     public void SortByAtribute(string _aux)
     {
-        listOfSlots.Sort(new SortCharacter(_aux));
-        listOfSlots.Reverse();
+        listActualCharacters.Sort(new SortCharacter(_aux));
+        listActualCharacters.Reverse();
+
+        int counterIdentifier = 0;
+
+        foreach (GameObject slot in listOfSlots)
+        {
+
+            slot.GetComponent<InventoryCardRender>().characterInfo = listActualCharacters[counterIdentifier];
+            slot.GetComponent<InventoryCardRender>().UpdateSlotRender();
+            counterIdentifier++;
+
+        }
 
     }
 
-    public class SortCharacter : IComparer<GameObject>
+    public class SortCharacter : IComparer<CharacterBasic>
     {
         public string characterAtributeToSort;
 
-        int IComparer<GameObject>.Compare(GameObject _objA, GameObject _objB)
+        int IComparer<CharacterBasic>.Compare(CharacterBasic _objA, CharacterBasic _objB)
         {
             switch (characterAtributeToSort)
             {

@@ -9,17 +9,12 @@ using Firebase.Storage;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
+
 public class DBManager : MonoBehaviour
 {
     public Text text;
     Uri url = null;
     public Image image;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -36,8 +31,10 @@ public class DBManager : MonoBehaviour
     }
     public void PostDB()
     {
-        User user = new User("Player1", 10);
+        Test test=new Test("Test", 999);
+        User user = new User("Player1", 10, new Status(11,12,13), test);
         RestClient.Put("https://soccer-legends-d86c7.firebaseio.com/"+user.userName+".json", user);
+        
     }
     public void DownloadDB()
     {
@@ -73,4 +70,6 @@ public class DBManager : MonoBehaviour
 
         }
     }
+
+    
 }

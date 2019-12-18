@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class EquipCardRender : MonoBehaviour
 {
-    public CharacterBasic characterInfo;
+    //public CharacterBasic characterInfo;
 
     //display objects from de prefab
     public Text nameText;
@@ -17,12 +17,7 @@ public class EquipCardRender : MonoBehaviour
     //como marcos o cosas asi
     public Image[] starSprites;
 
-
-    public void Start()
-    {
-        UpdateRender();
-    }
-    public void UpdateRender()
+    public void UpdateRender(CharacterBasic characterInfo)
     {
         if (characterInfo != null)
         {

@@ -7,80 +7,201 @@ using UnityEngine.UI;
 
 public class PVE_Manager : MonoBehaviour
 {
+    enum fightState { FIGHT, SHOOT };
+
     public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
-    public bool GameStarted = false, GameOn = false;
+    public bool GameStarted = false, GameOn = true;
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
 
     private float timeStart = 0;
+    private int fightingPlayer = 0, fightingIA = 0;
     private string fightDir;
     private bool shooting = false;
     private Vector2 score = new Vector2( 0, 0 );
+    fightState state = fightState.FIGHT;
+
+    Vector2[] swipes;
 
     // Start is called before the first frame update
     void Start()
     {
+        swipes = new Vector2[2];
         SpawnPlayers();
     }
 
     private void Update()
     {
-        //if (!GameOn && player1 != null)
-        //{
-        //    if (player1.fightDir != null && IA_Player.fightDir != null)
-        //    {
-        //        if (player1.fightDir == "Normal" || player1.fightDir == "Special") Fight(true, HasTheBall());
-        //        else if (player1.fightDir == IA_Player.fightDir) Fight(false, HasTheBall());
-        //        else if (HasTheBall() == 1)
-        //        {
-        //            IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
-        //            player1 = null;
-        //            IA_Player = null;
-        //        }
-        //        else if (HasTheBall() == 2)
-        //        {
-        //            player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
-        //            player1 = null;
-        //            IA_Player = null;
-        //        }
-        //        GameOn = true; //Start Fight
-        //        directionButtons.SetActive(false);
-        //        shootButtons.SetActive(false);
-        //    }
-        //    else if (fightDir != null)
-        //    {
-        //        if (!shooting)
-        //        {
-        //            if (PhotonNetwork.IsMasterClient && player1.fightDir == null) player1.fightDir = fightDir;
-        //            else if (!PhotonNetwork.IsMasterClient && IA_Player.fightDir == null)IA_Player.fightDir = fightDir;
-        //            Debug.Log(player1.fightDir + IA_Player.fightDir);
-        //        }
-        //        else
-        //        {
-        //            if (PhotonNetwork.IsMasterClient && player1.fightDir == null)
-        //            {
-        //                if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
-        //                {
-        //                    player1.fightDir = fightDir;
-        //                    energyBar.GetComponent<Scrollbar>().size = 0;
-        //                }
-        //                else if (fightDir == "Normal") player1.fightDir = fightDir;
-        //            }
-        //            else if (!PhotonNetwork.IsMasterClient && IA_Player.fightDir == null)
-        //            {
-        //                if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
-        //                {
-        //                    IA_Player.fightDir = fightDir;
-        //                    energyBar.GetComponent<Scrollbar>().size = 0;
-        //                }
-        //                else if (fightDir == "Normal") IA_Player.fightDir = fightDir;
-        //            }
-        //        }
-        //        fightDir = null;
-        //    }
-        //}
-        //else if (GameStarted && GameOn)
+        if (!GameOn && Input.touchCount > 0)
+        {
+            switch(state)
+            {
+                case fightState.FIGHT:
+                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
+                    Touch swipe = Input.GetTouch(0);
+                    if (swipe.phase == TouchPhase.Began)
+                    {
+                        swipes[0] = swipe.position;
+                    }
+                    else if(swipe.phase == TouchPhase.Moved)
+                    {
+                        swipes[1] = swipe.position;
+                        if (swipes[0].x > swipes[1].x) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Left";
+                        else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Right";
+
+                        Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
+                            " chose direction " + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir);
+                        Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
+                            " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir);
+
+                        GameOn = true;
+                        directionButtons.SetActive(false);
+                        GameObject playerWithBall, playerWithoutBall;
+                        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
+                        {
+                            playerWithBall = myPlayers[fightingPlayer];
+                            playerWithoutBall = myIA_Players[fightingIA];
+                        }
+                        else
+                        {
+                            playerWithoutBall = myPlayers[fightingPlayer];
+                            playerWithBall = myIA_Players[fightingIA];
+                        }
+                        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir)
+                        {
+                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
+                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
+                            Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name +
+                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
+                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 
+                            playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
+                            Debug.Log("Random value-> " + randomValue.ToString());
+                            if (randomValue > playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique)
+                            {
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            }
+                            else playerWithoutBall.GetComponent<MyPlayer_PVE>().Lose();
+
+                        }
+                        else playerWithoutBall.GetComponent<MyPlayer_PVE>().Lose();
+                    }      
+                    break;
+                case fightState.SHOOT:
+                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && energyBar.GetComponent<Scrollbar>().size == 1 ? "Special" : "Normal";
+                    swipe = Input.GetTouch(0);
+                    if (swipe.phase == TouchPhase.Began)
+                    {
+                        swipes[0] = swipe.position;
+                    }
+                    else if (swipe.phase == TouchPhase.Moved)
+                    {
+                        swipes[1] = swipe.position;
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size == 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                        else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
+
+                        Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
+                            " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir);
+                        Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
+                            " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir);
+
+                        GameOn = true;
+                        shootButtons.SetActive(false);
+                        GameObject playerWithBall, goalkeeper;
+                        if (fightingPlayer != 3)
+                        {
+                            playerWithBall = myPlayers[fightingPlayer];
+                            goalkeeper = myIA_Players[fightingIA];
+                        }
+                        else
+                        {
+                            goalkeeper = myPlayers[fightingPlayer];
+                            playerWithBall = myIA_Players[fightingIA];
+                        }
+                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == goalkeeper.GetComponent<MyPlayer_PVE>().fightDir)
+                        {
+                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
+                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
+                            Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name +
+                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
+                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique +
+                            goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
+                            Debug.Log("Random value-> " + randomValue.ToString());
+                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size = 0;
+                            if(randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
+                            {
+                                Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                            }
+                            else
+                            {
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            }
+                        }
+                        else
+                        {
+                            if(playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                            else playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            energyBar.GetComponent<Scrollbar>().size = 0;
+                        }
+                    }
+                    break;
+
+            }
+            //if (player1.fightDir != null && IA_Player.fightDir != null)
+            //{
+            //    if (player1.fightDir == "Normal" || player1.fightDir == "Special") Fight(true, HasTheBall());
+            //    else if (player1.fightDir == IA_Player.fightDir) Fight(false, HasTheBall());
+            //    else if (HasTheBall() == 1)
+            //    {
+            //        IA_Player.photonView.RPC("Lose", RpcTarget.AllViaServer);
+            //        player1 = null;
+            //        IA_Player = null;
+            //    }
+            //    else if (HasTheBall() == 2)
+            //    {
+            //        player1.photonView.RPC("Lose", RpcTarget.AllViaServer);
+            //        player1 = null;
+            //        IA_Player = null;
+            //    }
+            //    GameOn = true; //Start Fight
+            //    directionButtons.SetActive(false);
+            //    shootButtons.SetActive(false);
+            //}
+            //else if (fightDir != null)
+            //{
+            //    if (!shooting)
+            //    {
+            //        if (PhotonNetwork.IsMasterClient && player1.fightDir == null) player1.fightDir = fightDir;
+            //        else if (!PhotonNetwork.IsMasterClient && IA_Player.fightDir == null) IA_Player.fightDir = fightDir;
+            //        Debug.Log(player1.fightDir + IA_Player.fightDir);
+            //    }
+            //    else
+            //    {
+            //        if (PhotonNetwork.IsMasterClient && player1.fightDir == null)
+            //        {
+            //            if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
+            //            {
+            //                player1.fightDir = fightDir;
+            //                energyBar.GetComponent<Scrollbar>().size = 0;
+            //            }
+            //            else if (fightDir == "Normal") player1.fightDir = fightDir;
+            //        }
+            //        else if (!PhotonNetwork.IsMasterClient && IA_Player.fightDir == null)
+            //        {
+            //            if (fightDir == "Special" && energyBar.GetComponent<Scrollbar>().size == 1)
+            //            {
+            //                IA_Player.fightDir = fightDir;
+            //                energyBar.GetComponent<Scrollbar>().size = 0;
+            //            }
+            //            else if (fightDir == "Normal") IA_Player.fightDir = fightDir;
+            //        }
+            //    }
+            //    fightDir = null;
+            //}
+        }
+        else if (GameStarted && GameOn)
         {
            if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
         }
@@ -146,17 +267,20 @@ public class PVE_Manager : MonoBehaviour
 
     public void chooseDirection(int _player1, int _player2)
     {
-        //MyPlayer_PVE player1;
-        //MyPlayer_PVE IA_Player;
-        //if (!directionButtons.activeSelf)
-        //{
-        //    GameOn = false;
-        //    directionButtons.SetActive(true);
-        //    //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-        //    //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-        //    player1.fightDir = null;
-        //    IA_Player.fightDir = null;
-        //}
+        MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
+        MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
+        if (!directionButtons.activeSelf)
+        {
+            GameOn = false;
+            directionButtons.SetActive(true);
+            state = fightState.FIGHT;
+            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+            player1.fightDir = null;
+            IA_Player.fightDir = null;
+            fightingPlayer = _player1;
+            fightingIA = _player2;
+        }
     }
 
     public void Goal(bool isLocal)
@@ -173,6 +297,20 @@ public class PVE_Manager : MonoBehaviour
 
     public void ChooseShoot(int _player1, int _player2)
     {
+        MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
+        MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
+        if (!directionButtons.activeSelf)
+        {
+            GameOn = false;
+            shootButtons.SetActive(true);
+            state = fightState.SHOOT;
+            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+            player1.fightDir = null;
+            IA_Player.fightDir = null;
+            fightingPlayer = _player1;
+            fightingIA = _player2;
+        }
         //MyPlayer_PVE player1;
         //MyPlayer_PVE IA_Player;
         //GameOn = false;

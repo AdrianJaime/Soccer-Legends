@@ -24,7 +24,7 @@ public class MyPlayer_PVE : MonoBehaviour
     public Stats stats;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject playerCamera, ball, line;
-    public bool onMove = false, stunned = false, colliding = false;
+    public bool onMove = false, stunned = false, colliding = false, covered = false;
     public string fightDir;
     public Vector3 playerObjective = Vector3.zero;
     public Vector2 startPosition = Vector2.zero;
@@ -37,6 +37,7 @@ public class MyPlayer_PVE : MonoBehaviour
     private List<Vector3> points;
     private Collider2D goal;
     private float touchTime;
+    private int shootFramesRef;
 
     //IA
     bool iaPlayer;
@@ -59,7 +60,7 @@ public class MyPlayer_PVE : MonoBehaviour
             default:
                 break;
         }
-        stats = new Stats(0, 0, 0);
+        stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         fightDir = null;
         //if (photonView.IsMine)
@@ -70,29 +71,45 @@ public class MyPlayer_PVE : MonoBehaviour
                 playerCamera.SetActive(false);
             }
             mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
-            goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
+            if (iaPlayer) goal = GameObject.Find("Goal 1").GetComponent<Collider2D>();
+            else goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
         //}
         points = new List<Vector3>();
+        shootFramesRef = Time.frameCount - 5;
     }
     private void Update()
     {
         //if (photonView.IsMine) //Check if we're the local player
         //{
+        if (mg.GameOn && !stunned)
+        {
             if (startPosition == Vector2.zero) startPosition = transform.position;
-            if(!iaPlayer)ProcessInputs();
-        if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
-        else if (playerObjective != Vector3.zero && (playerCamera == null || !playerCamera.activeSelf))
-        {
-            transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
-            if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+            if (!iaPlayer) ProcessInputs();
+            if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
+            else if (playerObjective != Vector3.zero && (playerCamera == null || !playerCamera.activeSelf))
+            {
+                transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+            }
+
+            if (iaPlayer && ball != null && goal.bounds.Contains(ball.transform.position))
+            {
+                int ia_Idx = 0;
+                int playerIdx = 3;
+                fightDir = null;
+                for (int i = 0; i < mg.myPlayers.Length; i++)
+                {
+                        if (gameObject == mg.myIA_Players[i])
+                        {
+                            ia_Idx = i;
+                            break;
+                        }
+                }
+                mg.ChooseShoot(playerIdx, ia_Idx);
+            }
+
+            rePositionBall(); //To be implemented
         }
-
-        if(iaPlayer)
-        {
-
-        }
-
-        rePositionBall(); //To be implemented
         //}
         //else if(!photonView.IsMine)
         //{
@@ -148,7 +165,19 @@ public class MyPlayer_PVE : MonoBehaviour
                     if (goal.bounds.Contains(aux) && gameObject.name != "GoalKeeper")
                     {
                         //Goal
-                        mg.Goal(true);
+                        int ia_Idx = 3;
+                        int playerIdx = 0;
+                        fightDir = null;
+                        for (int i = 0; i < mg.myPlayers.Length; i++)
+                        {
+
+                            if (gameObject == mg.myPlayers[i])
+                            {
+                                playerIdx = i;
+                                break;
+                            }
+                        }                        
+                        mg.ChooseShoot(playerIdx, ia_Idx);
                         //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                         //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
@@ -173,7 +202,7 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         if (actualLine.GetComponent<LineRenderer>().positionCount > 0 && points.Count > 0 && onMove)
         {
-           transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed);
+           transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed * 2);
             
            if(Vector3.Distance(transform.position, points[0]) < dist ) 
             {
@@ -210,44 +239,111 @@ public class MyPlayer_PVE : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted)
+        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }
 
-        //if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
+        if (other.transform.GetComponent<MyPlayer_PVE>() != null && other.transform.parent.name.Substring(0, 7) != "Team IA" && Math.Abs(other.transform.position.y - transform.position.y) < 0.25f)
+        {
+            covered = true;
+            if (ball) check_IA_Shoot();
+        }
+        //if (other.tag == "Player" && !stunned && !other.GetComponent<MyPlayer_PVE>().stunned && other.transform.parent != transform.parent)
         //{
-        //    if (ball || other.GetComponent<MyPlayer>().ball)
+        //    if (ball != null || other.GetComponent<MyPlayer_PVE>().ball != null)
         //    {
+        //        int ia_Idx = 0;
+        //        int playerIdx = 0;
         //        fightDir = null;
+        //        for (int i = 0; i < mg.myPlayers.Length; i++)
+        //        {
+        //            if(iaPlayer)
+        //            {
+        //                if (gameObject == mg.myIA_Players[i]) ia_Idx = i;
+        //                if (other.gameObject == mg.myPlayers[i]) playerIdx = i;
+        //            }
+        //            else
+        //            {
+        //                if (other.gameObject == mg.myIA_Players[i]) ia_Idx = i;
+        //                if (gameObject == mg.myPlayers[i]) playerIdx = i;
+        //            }
+        //        }
+        //        Debug.Log("Player-> " + playerIdx.ToString());
+        //        Debug.Log("IA-> " + ia_Idx.ToString());
+        //        mg.chooseDirection(playerIdx, ia_Idx);
         //        //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
-        //        if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
-        //        else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
+        //        //if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
+        //        //else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
         //    }
         //}
     }
 
-    //private void OnTriggerExit2D(Collider2D other)
-    //{
-    //    if (other.tag == "Player" && photonView.IsMine && !SameTeam(other.gameObject, gameObject))
-    //    {
-    //        if (ball || other.GetComponent<MyPlayer>().ball)
-    //        {
-    //            photonView.RPC("IsColliding", RpcTarget.AllViaServer, false);
-    //        }
-    //    }
-    //}
-    //private void OnTriggerStay2D(Collider2D other)
-    //{
-    //    if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
-    //    {
-    //        if (ball || other.GetComponent<MyPlayer>().ball)
-    //        {
-    //            photonView.RPC("IsColliding", RpcTarget.AllViaServer, true);
-    //        }
-    //    }
-    //}
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        //if (other.tag == "Player" && photonView.IsMine && !SameTeam(other.gameObject, gameObject))
+        //{
+        //    if (ball || other.GetComponent<MyPlayer>().ball)
+        //    {
+        //        photonView.RPC("IsColliding", RpcTarget.AllViaServer, false);
+        //    }
+        //}
+        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        {
+            GetBall();
+            //photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        }
+
+        if (other.transform.GetComponent<MyPlayer_PVE>() != null && other.transform.parent.name.Substring(0, 7) != "Team IA")
+        {
+            covered = false;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if(other.transform.GetComponent<MyPlayer_PVE>() != null && other.transform.parent.name.Substring(0, 7) != "Team IA" && Math.Abs(other.transform.position.y - transform.position.y) < 0.25f)
+        {
+            covered = true;
+        }
+        else if (other.transform.GetComponent<MyPlayer_PVE>() != null && other.transform.parent.name.Substring(0, 7) != "Team IA" && Math.Abs(other.transform.position.y - transform.position.y) >= 0.25f)
+        {
+            covered = false;
+        }
+        if (other.tag == "Player" && !stunned && !other.GetComponent<MyPlayer_PVE>().stunned && other.transform.parent != transform.parent && Math.Abs(other.transform.position.y - transform.position.y) < 0.25f)
+        {
+            if (ball != null || other.GetComponent<MyPlayer_PVE>().ball != null)
+            {
+                int ia_Idx = 0;
+                int playerIdx = 0;
+                fightDir = null;
+                for (int i = 0; i < mg.myPlayers.Length; i++)
+                {
+                    if (iaPlayer)
+                    {
+                        if (gameObject == mg.myIA_Players[i]) ia_Idx = i;
+                        if (other.gameObject == mg.myPlayers[i]) playerIdx = i;
+                    }
+                    else
+                    {
+                        if (other.gameObject == mg.myIA_Players[i]) ia_Idx = i;
+                        if (gameObject == mg.myPlayers[i]) playerIdx = i;
+                    }
+                }
+                mg.chooseDirection(playerIdx, ia_Idx);
+                //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
+                //if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
+                //else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
+            }
+        }
+        //if (other.tag == "Player" && photonView.IsMine && !stunned && !other.GetComponent<MyPlayer>().stunned && !SameTeam(other.gameObject, gameObject))
+        //{
+        //    if (ball || other.GetComponent<MyPlayer>().ball)
+        //    {
+        //        photonView.RPC("IsColliding", RpcTarget.AllViaServer, true);
+        //    }
+        //}
+    }
 
     private MyPlayer findGoalKeeper()
     {
@@ -272,12 +368,14 @@ public class MyPlayer_PVE : MonoBehaviour
                 ball.GetComponent<Ball>().shoot = true;
                 ball.GetComponent<Ball>().shooterIsMaster = false;
                 ball.GetComponent<Ball>().ShootBall(_dir);
+                shootFramesRef = Time.frameCount;
             }
             //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null)) {
             //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
             //    }
             ball.transform.parent = null;
             ball = null;
+            transform.gameObject.layer = 0;
         }
     }
 
@@ -295,6 +393,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void Lose()
     {
+        Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
         if (ball)
         {
@@ -321,9 +420,16 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
+        if(ball.transform.localPosition.y > 0)
+        {
+            ball.transform.parent = null;
+            ball = null;
+            return;
+        }
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        transform.gameObject.layer = 2;
 
-        stablishNewShootCheck();
+        if(iaPlayer)stablishNewShootCheck();
         //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
         //{
         //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -363,58 +469,71 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void RepositionPlayer()
     {
+        transform.gameObject.layer = 0;
         transform.position = startPosition;
         Lose();
         GameObject.Destroy(actualLine);
         onMove = false;
     }
 
-    IEnumerator checkIA_Shoot(float time)
+    IEnumerator checkIA_Shoot_After_Time(float time)
     {
         yield return new WaitForSeconds(time);
 
+        if (!ball) yield break;
+
+        check_IA_Shoot();
+    }
+
+    void stablishNewShootCheck()
+    {
+        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(0.1f, 1.0f)));
+    }
+
+    void check_IA_Shoot()
+    {
         Vector3 shootingTarget;
         List<Vector3> closePlayers = new List<Vector3>();
 
         for (int i = 0; i < mg.myIA_Players.Length; i++)
         {
-            if (Vector2.Distance(transform.position, mg.myIA_Players[i].transform.position) < 4 && mg.myIA_Players[i] != gameObject) closePlayers.Add(mg.myIA_Players[i].transform.position);
+            if (Vector2.Distance(transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != gameObject) closePlayers.Add(mg.myIA_Players[i].transform.position);
         }
         while (closePlayers.Count != 0)
         {
             shootingTarget = closePlayers[0];
-            float minDist = Vector2.Distance(shootingTarget, transform.position); 
-            if(closePlayers.Count > 1)
+            float minDist = Vector2.Distance(shootingTarget, transform.position);
+            if (closePlayers.Count > 1)
             {
-                for(int i = 1; i < closePlayers.Count; i++)
+                for (int i = 0; i < closePlayers.Count; i++)
                 {
+                    Debug.Log("Player " + (i + 1).ToString() + "-> " + Vector2.Distance(transform.position, closePlayers[i]).ToString());
                     if (Vector2.Distance(transform.position, closePlayers[i]) < minDist)
                     {
+                        Debug.Log("Target change to-> " + (i + 1).ToString());
                         shootingTarget = closePlayers[i];
                         minDist = Vector2.Distance(transform.position, closePlayers[i]);
-                    }                  
+                    }
                 }
             }
             RaycastHit2D hit;
-            Vector3 dir = shootingTarget - transform.position;
-            hit = Physics2D.Raycast(ball.transform.position, dir, 5);
-            if (hit.transform.parent == transform.parent)
+            Vector3 dir = shootingTarget - ball.transform.position;
+            Debug.Log("Final distance-> " + Vector2.Distance(transform.position, shootingTarget).ToString());
+            hit = Physics2D.Raycast(ball.transform.position, dir, 10);
+            if (hit && hit.transform.parent == transform.parent && hit.transform.name != transform.name && !hit.transform.GetComponent<MyPlayer_PVE>().covered)
             {
-                ShootBall(new float[] { dir.x, dir.y, 0.0f });
+                Debug.Log(hit.transform.name);
+                Debug.Log("Shoot distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
+                ShootBall(new float[] { hit.transform.position.x, hit.transform.position.y, transform.position.x, transform.position.y });
                 closePlayers.Clear();
             }
             else
             {
+                Debug.Log("Unable to pass to player with distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
                 closePlayers.Remove(shootingTarget);
             }
         }
 
         if (ball != null) stablishNewShootCheck();
-
-    }
-
-    void stablishNewShootCheck()
-    {
-        StartCoroutine(checkIA_Shoot(Random.Range(0.0f, 3.0f)));
     }
 }

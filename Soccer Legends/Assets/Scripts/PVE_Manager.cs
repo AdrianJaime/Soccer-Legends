@@ -14,6 +14,7 @@ public class PVE_Manager : MonoBehaviour
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
+    private float enemySpecialBar = 0;
 
     private float timeStart = 0;
     private int fightingPlayer = 0, fightingIA = 0;
@@ -70,13 +71,13 @@ public class PVE_Manager : MonoBehaviour
                         }
                         if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir)
                         {
-                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense);
-                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
-                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
-                            Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name +
-                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
+                            int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() +
+                            " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
+                            Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name + "has a deffense of " + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
+                            " and a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
                             (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 
-                            playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
+                            playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense).ToString());
                             Debug.Log("Random value-> " + randomValue.ToString());
                             if (randomValue > playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique)
                             {
@@ -89,7 +90,7 @@ public class PVE_Manager : MonoBehaviour
                     }      
                     break;
                 case fightState.SHOOT:
-                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && energyBar.GetComponent<Scrollbar>().size == 1 ? "Special" : "Normal";
+                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar >= 1 ? "Special" : "Normal";
                     swipe = Input.GetTouch(0);
                     if (swipe.phase == TouchPhase.Began)
                     {
@@ -98,7 +99,7 @@ public class PVE_Manager : MonoBehaviour
                     else if (swipe.phase == TouchPhase.Moved)
                     {
                         swipes[1] = swipe.position;
-                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size == 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                         else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
                         Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
@@ -121,15 +122,14 @@ public class PVE_Manager : MonoBehaviour
                         }
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == goalkeeper.GetComponent<MyPlayer_PVE>().fightDir)
                         {
-                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense);
-                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
-                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
-                            Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name +
-                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
-                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique +
-                            goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
-                            Debug.Log("Random value-> " + randomValue.ToString());
-                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size = 0;
+                            int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() +
+                            " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString());
+                            Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name + "has a deffense of " + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
+                            " and a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + 1).ToString() + " and " +
+                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot +
+                            goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense).ToString());
+                            Debug.Log("Random value-> " + randomValue.ToString());          
                             if(randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
                             {
                                 Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
@@ -145,6 +145,8 @@ public class PVE_Manager : MonoBehaviour
                             else playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
                             energyBar.GetComponent<Scrollbar>().size = 0;
                         }
+                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size = 0;
+                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar = 0;
                     }
                     break;
 
@@ -204,6 +206,7 @@ public class PVE_Manager : MonoBehaviour
         else if (GameStarted && GameOn)
         {
            if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
+            if (enemySpecialBar != 1) enemySpecialBar += eneregyFill * Time.deltaTime;
         }
     }
 
@@ -280,6 +283,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Player.fightDir = null;
             fightingPlayer = _player1;
             fightingIA = _player2;
+            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
     }
 
@@ -310,6 +314,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Player.fightDir = null;
             fightingPlayer = _player1;
             fightingIA = _player2;
+            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
         //MyPlayer_PVE player1;
         //MyPlayer_PVE IA_Player;
@@ -416,6 +421,18 @@ public class PVE_Manager : MonoBehaviour
             else if (IA_Player.ball != null) return 2;
         }
         return 0;
+    }
+
+    public GameObject FindWhoHasTheBall()
+    {
+        for (int i = 0; i < myPlayers.Length; i++)
+        {
+            MyPlayer_PVE player1 = myPlayers[i].GetComponent<MyPlayer_PVE>();
+            MyPlayer_PVE IA_Player = myIA_Players[i].GetComponent<MyPlayer_PVE>();
+            if (player1.ball != null) return player1.gameObject;
+            else if (IA_Player.ball != null) return IA_Player.gameObject;
+        }
+        return null;
     }
 
     public void UpdateScoreBoard()

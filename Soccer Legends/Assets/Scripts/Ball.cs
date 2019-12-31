@@ -19,6 +19,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y});
     }
     private void Update()
     {
@@ -60,6 +61,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
             if (transform.parent != null)
             {
                 transform.localPosition = new Vector3(0, -0.5f, 0);
+            }
+            else if(GameObject.Find("Manager").GetComponent<PVE_Manager>().FindWhoHasTheBall() != null)
+            {
+                transform.parent = GameObject.Find("Manager").GetComponent<PVE_Manager>().FindWhoHasTheBall().transform;
             }
         }
     }

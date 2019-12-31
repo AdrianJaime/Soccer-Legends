@@ -58,8 +58,10 @@ public class MyPlayer_PVE : MonoBehaviour
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 break;
             default:
+
                 break;
         }
+        SetName(gameObject.name);
         stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         fightDir = null;
@@ -88,10 +90,14 @@ public class MyPlayer_PVE : MonoBehaviour
             if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
             else if (playerObjective != Vector3.zero && (playerCamera == null || !playerCamera.activeSelf))
             {
+                //Vector3 nextPos;
                 transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
                 if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
             }
-
+            else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            checkBallGetter();
             if (iaPlayer && ball != null && goal.bounds.Contains(ball.transform.position))
             {
                 int ia_Idx = 0;
@@ -99,21 +105,22 @@ public class MyPlayer_PVE : MonoBehaviour
                 fightDir = null;
                 for (int i = 0; i < mg.myPlayers.Length; i++)
                 {
-                        if (gameObject == mg.myIA_Players[i])
-                        {
-                            ia_Idx = i;
-                            break;
-                        }
+                    if (gameObject == mg.myIA_Players[i])
+                    {
+                        ia_Idx = i;
+                        break;
+                    }
                 }
                 mg.ChooseShoot(playerIdx, ia_Idx);
             }
 
             rePositionBall(); //To be implemented
         }
+        else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}
         //else if(!photonView.IsMine)
         //{
-           // smoothMovement();
+        // smoothMovement();
         //}
 
     }
@@ -162,7 +169,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
                     
-                    if (goal.bounds.Contains(aux) && gameObject.name != "GoalKeeper")
+                    if (goal.bounds.Contains(aux) && ball != null && goal.bounds.Contains(ball.transform.position) && gameObject.name != "GoalKeeper")
                     {
                         //Goal
                         int ia_Idx = 3;
@@ -181,7 +188,7 @@ public class MyPlayer_PVE : MonoBehaviour
                         //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                         //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
-                    else
+                    else if(ball != null)
                     {
                         //Pass
                         float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
@@ -239,12 +246,6 @@ public class MyPlayer_PVE : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
-        {
-            GetBall();
-            //photonView.RPC("GetBall", RpcTarget.AllViaServer);
-        }
-
         if (other.transform.GetComponent<MyPlayer_PVE>() != null && other.transform.parent.name.Substring(0, 7) != "Team IA" && Math.Abs(other.transform.position.y - transform.position.y) < 0.25f)
         {
             covered = true;
@@ -289,7 +290,7 @@ public class MyPlayer_PVE : MonoBehaviour
         //        photonView.RPC("IsColliding", RpcTarget.AllViaServer, false);
         //    }
         //}
-        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        if (other.tag == "Ball" && other.transform.parent == null && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount && Math.Abs(other.transform.position.y - transform.position.y - 0.5f) < 0.25f)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);
@@ -312,7 +313,7 @@ public class MyPlayer_PVE : MonoBehaviour
         }
         if (other.tag == "Player" && !stunned && !other.GetComponent<MyPlayer_PVE>().stunned && other.transform.parent != transform.parent && Math.Abs(other.transform.position.y - transform.position.y) < 0.25f)
         {
-            if (ball != null || other.GetComponent<MyPlayer_PVE>().ball != null)
+            if (ball != null && other.GetComponent<MyPlayer_PVE>().ball == null)
             {
                 int ia_Idx = 0;
                 int playerIdx = 0;
@@ -481,7 +482,6 @@ public class MyPlayer_PVE : MonoBehaviour
         yield return new WaitForSeconds(time);
 
         if (!ball) yield break;
-
         check_IA_Shoot();
     }
 
@@ -492,6 +492,12 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void check_IA_Shoot()
     {
+        if (!mg.GameOn)
+        {
+            stablishNewShootCheck();
+            return;
+        }
+
         Vector3 shootingTarget;
         List<Vector3> closePlayers = new List<Vector3>();
 
@@ -507,10 +513,10 @@ public class MyPlayer_PVE : MonoBehaviour
             {
                 for (int i = 0; i < closePlayers.Count; i++)
                 {
-                    Debug.Log("Player " + (i + 1).ToString() + "-> " + Vector2.Distance(transform.position, closePlayers[i]).ToString());
+                    //Debug.Log("Player " + (i + 1).ToString() + "-> " + Vector2.Distance(transform.position, closePlayers[i]).ToString());
                     if (Vector2.Distance(transform.position, closePlayers[i]) < minDist)
                     {
-                        Debug.Log("Target change to-> " + (i + 1).ToString());
+                       // Debug.Log("Target change to-> " + (i + 1).ToString());
                         shootingTarget = closePlayers[i];
                         minDist = Vector2.Distance(transform.position, closePlayers[i]);
                     }
@@ -518,22 +524,32 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             RaycastHit2D hit;
             Vector3 dir = shootingTarget - ball.transform.position;
-            Debug.Log("Final distance-> " + Vector2.Distance(transform.position, shootingTarget).ToString());
+            //Debug.Log("Final distance-> " + Vector2.Distance(transform.position, shootingTarget).ToString());
             hit = Physics2D.Raycast(ball.transform.position, dir, 10);
             if (hit && hit.transform.parent == transform.parent && hit.transform.name != transform.name && !hit.transform.GetComponent<MyPlayer_PVE>().covered)
             {
-                Debug.Log(hit.transform.name);
-                Debug.Log("Shoot distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
-                ShootBall(new float[] { hit.transform.position.x, hit.transform.position.y, transform.position.x, transform.position.y });
+                //Debug.Log(hit.transform.name);
+                //Debug.Log("Shoot distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
+                ShootBall(new float[] { hit.transform.position.x, hit.transform.position.y - 0.25f, transform.position.x, transform.position.y });
                 closePlayers.Clear();
             }
             else
             {
-                Debug.Log("Unable to pass to player with distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
+               // Debug.Log("Unable to pass to player with distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
                 closePlayers.Remove(shootingTarget);
             }
         }
 
         if (ball != null) stablishNewShootCheck();
+    }
+
+    void checkBallGetter()
+    {
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < 0.25f && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount && GameObject.FindGameObjectWithTag("Ball").transform.position.y < transform.position.y)
+        {
+            GetBall();
+            //photonView.RPC("GetBall", RpcTarget.AllViaServer);
+        }
+        else ball = null;
     }
 }

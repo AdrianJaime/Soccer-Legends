@@ -16,6 +16,9 @@ public class IA_manager : MonoBehaviour
     [SerializeField]
     bool playerTeam;
 
+    [SerializeField]
+    float separationDist;
+
     PVE_Manager manager;
 
     private void Start()
@@ -28,6 +31,11 @@ public class IA_manager : MonoBehaviour
     {
         checkIA_State();
         processIA();
+    }
+
+    private void LateUpdate()
+    {
+        processSeparation();
     }
 
     void checkIA_State()
@@ -62,14 +70,17 @@ public class IA_manager : MonoBehaviour
         Vector2 IA_ObjectivePos = Vector2.zero;
         for (int i = 0; i < ia_players.Length; i++)
         {
-            if (ia_players[i].GetComponent<MyPlayer_PVE>().formationPos == formationPositions.PIVOT)
+            if (ia_players[i].GetComponent<MyPlayer_PVE>().formationPos == formationPositions.PIVOT &&
+                (Vector2.Distance(ia_players[i].transform.position, ballPos) > Vector2.Distance(ia_players[i + 1].transform.position, ballPos) ||
+                    Vector2.Distance(ia_players[i].transform.position, ballPos) > Vector2.Distance(ia_players[i + 2].transform.position, ballPos)))
             {
+
                 IA_ObjectivePos = new Vector2(ballPos.x + ia_players[i].GetComponent<MyPlayer_PVE>().startPosition.x,
                     ballPos.y + ia_players[i].GetComponent<MyPlayer_PVE>().startPosition.y) / 2.0f;
             }
-            else if (ia_players[i].GetComponent<MyPlayer_PVE>().formationPos == formationPositions.FORWARD)
+            else
             {
-                IA_ObjectivePos = ballPos;
+                IA_ObjectivePos = new Vector2(ballPos.x, ballPos.y + 0.5f);
             }
             ia_players[i].GetComponent<MyPlayer_PVE>().MoveTo(new float[] { IA_ObjectivePos.x, IA_ObjectivePos.y, 0.0f });
         }
@@ -205,6 +216,25 @@ public class IA_manager : MonoBehaviour
         else
         {
             pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivot.GetComponent<MyPlayer_PVE>().startPosition.x, pivot.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
+        }
+    }
+
+    void processSeparation()
+    {
+        if (!manager.GameOn) return;
+        for (int i = 0; i < ia_players.Length; i++)
+        {
+            Vector2 iaSparationForce, playerSeparationForce;
+            iaSparationForce = playerSeparationForce = Vector2.zero;
+            for (int j = 0; j < ia_players.Length; j++)
+            {
+                if (ia_players[j] != ia_players[i] && Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position) < separationDist)
+                {
+                    ia_players[i].GetComponent<Rigidbody2D>().AddForce((ia_players[j].transform.position - ia_players[i].transform.position).normalized *
+                        (separationDist - Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position)) * -20, ForceMode2D.Force);
+                }
+                else ia_players[i].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            }
         }
     }
 }

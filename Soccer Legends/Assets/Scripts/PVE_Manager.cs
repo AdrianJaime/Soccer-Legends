@@ -9,7 +9,7 @@ public class PVE_Manager : MonoBehaviour
 {
     enum fightState { FIGHT, SHOOT };
 
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, fullFieldCamera, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = true;
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;

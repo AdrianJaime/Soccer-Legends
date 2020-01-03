@@ -89,12 +89,12 @@ public class IA_manager : MonoBehaviour
     void deffendAlgorithm(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         bool rival_in_our_Camp = false;
-        Vector2[] playerPositions = new Vector2[rivalPlayers.Length - 1];
+        Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject pivot, closeForward, farForward, playerWithBall, playerCloseToBall;
         pivot = closeForward = farForward = playerWithBall = playerCloseToBall = playerWithBall = null;
 
         //Find player with Ball
-        for (int i = 0; i < rivalPlayers.Length - 1; i++)
+        for (int i = 0; i < rivalPlayers.Length; i++)
         {
             playerPositions[i] = rivalPlayers[i].transform.position;
             //We also check if there is any player inside the IA team field for the pivot position
@@ -105,7 +105,7 @@ public class IA_manager : MonoBehaviour
                 //Now find the closest player to this player with the ball
                 int closestIdx = -1;
                 float closestDist = -1.0f;
-                for (int j = 0; j < rivalPlayers.Length - 1; j++)
+                for (int j = 0; j < rivalPlayers.Length; j++)
                 {
                     if (j != i)
                     {

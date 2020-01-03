@@ -19,7 +19,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y});
+        RepositionBall();
     }
     private void Update()
     {
@@ -87,6 +87,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         transform.parent = null;
         transform.position = Vector3.zero;
+        ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y });
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -100,7 +101,8 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
     void checkClosestToCam()
     {
-        if (transform.parent != null)
+        GameObject fullFieldCamera = null;
+        if (transform.parent != null && transform.parent.name != "GoalKeeper")
         {
             if (GameObject.FindGameObjectWithTag("MainCamera") != null) GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
             transform.parent.GetChild(1).gameObject.SetActive(true);
@@ -118,6 +120,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         else
         {
             players = GameObject.Find("Manager").GetComponent<PVE_Manager>().myPlayers;
+            fullFieldCamera = GameObject.Find("Manager").GetComponent<PVE_Manager>().fullFieldCamera;
         }
 
         minDist = Vector2.Distance(transform.position, players[0].transform.position);
@@ -132,7 +135,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             }
         }
 
-        if(GameObject.FindGameObjectWithTag("MainCamera") != null) GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
+        if(fullFieldCamera.activeSelf) fullFieldCamera.SetActive(false);
 
         if (GameObject.Find("Manager").GetComponent<Manager>() != null)
         {

@@ -430,7 +430,9 @@ public class MyPlayer_PVE : MonoBehaviour
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
 
-        if(iaPlayer)stablishNewShootCheck();
+        if (gameObject.name == "GoalKeeper") mg.fullFieldCamera.SetActive(true);
+
+        if (iaPlayer)stablishNewShootCheck();
         //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
         //{
         //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);

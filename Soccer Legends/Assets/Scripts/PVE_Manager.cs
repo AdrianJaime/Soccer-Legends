@@ -439,7 +439,6 @@ public class PVE_Manager : MonoBehaviour
     {
         scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
         scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
-        Debug.Log(score[0].ToString() + score[1].ToString());
     }
 
     public void Reposition()

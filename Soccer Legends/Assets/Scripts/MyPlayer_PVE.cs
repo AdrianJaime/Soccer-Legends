@@ -487,12 +487,13 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void stablishNewShootCheck()
     {
-        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(0.1f, 1.0f)));
+        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(0.75f, 2.00f)));
     }
 
     void check_IA_Shoot()
     {
-        if (!mg.GameOn)
+        if (!mg.GameOn || (transform.position.y < 0 && mg.myPlayers[0].transform.position.y > transform.position.y
+            && mg.myPlayers[1].transform.position.y > transform.position.y && mg.myPlayers[2].transform.position.y > transform.position.y))
         {
             stablishNewShootCheck();
             return;

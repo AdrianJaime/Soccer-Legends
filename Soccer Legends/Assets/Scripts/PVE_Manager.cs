@@ -9,12 +9,13 @@ public class PVE_Manager : MonoBehaviour
 {
     enum fightState { FIGHT, SHOOT };
 
-    public GameObject player1Prefab, player2Prefab, ballPrefab, fullFieldCamera, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = true;
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
     private float enemySpecialBar = 0;
+    private int energySegments;
 
     private float timeStart = 0;
     private int fightingPlayer = 0, fightingIA = 0;
@@ -29,6 +30,8 @@ public class PVE_Manager : MonoBehaviour
     void Start()
     {
         swipes = new Vector2[2];
+        energySegments = energyBar.transform.GetChild(1).childCount - 1;
+        Debug.Log(energySegments);
         SpawnPlayers();
     }
 
@@ -90,7 +93,7 @@ public class PVE_Manager : MonoBehaviour
                     }      
                     break;
                 case fightState.SHOOT:
-                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar >= 1 ? "Special" : "Normal";
+                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar * energySegments >= 1 ? "Special" : "Normal";
                     swipe = Input.GetTouch(0);
                     if (swipe.phase == TouchPhase.Began)
                     {
@@ -99,7 +102,7 @@ public class PVE_Manager : MonoBehaviour
                     else if (swipe.phase == TouchPhase.Moved)
                     {
                         swipes[1] = swipe.position;
-                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                         else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
                         Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
@@ -143,10 +146,10 @@ public class PVE_Manager : MonoBehaviour
                         {
                             if(playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
                             else playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
-                            energyBar.GetComponent<Scrollbar>().size = 0;
+                            energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                         }
-                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size = 0;
-                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar = 0;
+                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
+                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
                     }
                     break;
 
@@ -205,8 +208,8 @@ public class PVE_Manager : MonoBehaviour
         }
         else if (GameStarted && GameOn)
         {
-           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
-            if (enemySpecialBar != 1) enemySpecialBar += eneregyFill * Time.deltaTime;
+           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += (eneregyFill * Time.deltaTime) / energySegments;
+            if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / energySegments;
         }
     }
 

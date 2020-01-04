@@ -23,7 +23,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public Stats stats;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
-    public GameObject playerCamera, ball, line;
+    public GameObject ball, line;
     public bool onMove = false, stunned = false, colliding = false, covered = false;
     public string fightDir;
     public Vector3 playerObjective = Vector3.zero;
@@ -67,11 +67,6 @@ public class MyPlayer_PVE : MonoBehaviour
         fightDir = null;
         //if (photonView.IsMine)
         //{
-            if (!iaPlayer && gameObject.name != "GoalKeeper")
-            {
-                //GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
-                playerCamera.SetActive(false);
-            }
             mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
             if (iaPlayer) goal = GameObject.Find("Goal 1").GetComponent<Collider2D>();
             else goal = GameObject.FindGameObjectWithTag("Goal").GetComponent<Collider2D>();
@@ -88,7 +83,7 @@ public class MyPlayer_PVE : MonoBehaviour
             if (startPosition == Vector2.zero) startPosition = transform.position;
             if (!iaPlayer) ProcessInputs();
             if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
-            else if (playerObjective != Vector3.zero && (playerCamera == null || !playerCamera.activeSelf))
+            else if (playerObjective != Vector3.zero && (ball == null || iaPlayer))
             {
                 //Vector3 nextPos;
                 transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
@@ -430,8 +425,6 @@ public class MyPlayer_PVE : MonoBehaviour
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
 
-        if (gameObject.name == "GoalKeeper") mg.fullFieldCamera.SetActive(true);
-
         if (iaPlayer)stablishNewShootCheck();
         //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
         //{
@@ -548,7 +541,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void checkBallGetter()
     {
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < 0.25f && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount && GameObject.FindGameObjectWithTag("Ball").transform.position.y < transform.position.y)
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < 0.35f && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount && GameObject.FindGameObjectWithTag("Ball").transform.position.y < transform.position.y)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);

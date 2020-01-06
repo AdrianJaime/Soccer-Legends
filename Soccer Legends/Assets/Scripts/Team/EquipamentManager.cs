@@ -104,7 +104,7 @@ public class EquipamentManager : MonoBehaviour
 
     void GetFirebaseData()
     {
-        EquipObject[] reult=DBManager.EquipsDBM.GetAllEquipsDB();
+        //EquipObject[] reult=DBManager.EquipsDBM.GetAllEquipsDB();
     }
 
 }

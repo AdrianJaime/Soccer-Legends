@@ -71,36 +71,36 @@ public static class DBManager
     //    }
     //}
 
-    public static class EquipsDBM
-    {
+    //public static class EquipsDBM
+    //{
        
-        public static EquipObject GetEquipDB(int _equipIndex)
-        {
-            RestClient.Get<EquipObject>("https://soccer-legends-d86c7.firebaseio.com/-LvaWZe8QhmQSlQJ8Njp.json").Then(response =>
-            {
-                return response;
-            });
-           // return null;
-        }
-        public static EquipObject[] GetAllEquipsDB()
-        {
-            EquipObject[] aux=new EquipObject[4];
+    //    public static EquipObject GetEquipDB(int _equipIndex)
+    //    {
+    //        RestClient.Get<EquipObject>("https://soccer-legends-d86c7.firebaseio.com/-LvaWZe8QhmQSlQJ8Njp.json").Then(response =>
+    //        {
+    //            return response;
+    //        });
+    //       // return null;
+    //    }
+    //    public static EquipObject[] GetAllEquipsDB()
+    //    {
+    //        EquipObject[] aux=new EquipObject[4];
 
-            aux[0]=GetEquipDB(0);
-            aux[1]=GetEquipDB(1);
-            aux[2]=GetEquipDB(2);
-            aux[3]=GetEquipDB(3);
+    //        aux[0]=GetEquipDB(0);
+    //        aux[1]=GetEquipDB(1);
+    //        aux[2]=GetEquipDB(2);
+    //        aux[3]=GetEquipDB(3);
 
-            return aux;
+    //        return aux;
 
-        }
-        public static void PostDB( EquipObject _equipToStore)
-        {
+    //    }
+    //    public static void PostDB( EquipObject _equipToStore)
+    //    {
 
-            RestClient.Put("https://soccer-legends-d86c7.firebaseio.com/" + _equipToStore.identifierEquip + ".json", _equipToStore.listOfCharacters);
+    //        RestClient.Put("https://soccer-legends-d86c7.firebaseio.com/" + _equipToStore.identifierEquip + ".json", _equipToStore.listOfCharacters);
 
-        }
+    //    }
 
-    }
+    //}
     
 }

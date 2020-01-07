@@ -20,7 +20,6 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
-        localCamPos = transform.GetChild(0).localPosition;
         rb = GetComponent<Rigidbody2D>();
         RepositionBall();
     }
@@ -69,8 +68,6 @@ public class Ball : MonoBehaviourPun, IPunObservable
                 transform.parent = GameObject.Find("Manager").GetComponent<PVE_Manager>().FindWhoHasTheBall().transform;
             }
         }
-        transform.GetChild(0).position = Vector3.Lerp(lastCamPosition, transform.position + localCamPos, 2*Time.deltaTime);
-        lastCamPosition = transform.GetChild(0).position;
     }
 
     public void ShootBall(float[] _dir)

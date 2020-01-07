@@ -14,6 +14,8 @@ public class PVE_Manager : MonoBehaviour
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
+    private List<int> touchesIdx;
+    private int fingerIdx = -1;
     private float enemySpecialBar = 0;
     private int energySegments;
 
@@ -29,6 +31,8 @@ public class PVE_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        touchesIdx = new List<int>();
+        fingerIdx = -1;
         swipes = new Vector2[2];
         energySegments = energyBar.transform.GetChild(1).childCount - 1;
         Debug.Log(energySegments);
@@ -37,13 +41,14 @@ public class PVE_Manager : MonoBehaviour
 
     private void Update()
     {
-        if (!GameOn && Input.touchCount > 0)
+        if (!GameOn && (Input.touchCount > getTotalTouches() || fingerIdx != -1))
         {
             switch(state)
             {
                 case fightState.FIGHT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
-                    Touch swipe = Input.GetTouch(0);
+                    if (fingerIdx == -1) fingerIdx = getTouchIdx();
+                    Touch swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
                         swipes[0] = swipe.position;
@@ -90,11 +95,14 @@ public class PVE_Manager : MonoBehaviour
 
                         }
                         else playerWithoutBall.GetComponent<MyPlayer_PVE>().Lose();
+                        releaseTouchIdx(fingerIdx);
+                        fingerIdx = -1;
                     }      
                     break;
                 case fightState.SHOOT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar * energySegments >= 1 ? "Special" : "Normal";
-                    swipe = Input.GetTouch(0);
+                    if (fingerIdx == -1) fingerIdx = getTouchIdx();
+                    swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
                         swipes[0] = swipe.position;
@@ -150,6 +158,8 @@ public class PVE_Manager : MonoBehaviour
                         }
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                         if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
+                        releaseTouchIdx(fingerIdx);
+                        fingerIdx = -1;
                     }
                     break;
 
@@ -454,4 +464,28 @@ public class PVE_Manager : MonoBehaviour
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
+
+    public int getTouchIdx()
+    {
+        if (touchesIdx.Count == 0)
+        {
+            touchesIdx.Add(0);
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (!touchesIdx.Contains(i))
+                {
+                    touchesIdx.Add(i);
+                    return i;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void releaseTouchIdx(int idx) {  touchesIdx.Remove(idx); }
+
+    public int getTotalTouches() { return touchesIdx.Count; }
 }

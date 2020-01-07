@@ -38,6 +38,7 @@ public class MyPlayer_PVE : MonoBehaviour
     private Collider2D goal;
     private float touchTime;
     private int shootFramesRef;
+    private int fingerIdx = -1;
 
     //IA
     bool iaPlayer;
@@ -117,7 +118,7 @@ public class MyPlayer_PVE : MonoBehaviour
         //{
         // smoothMovement();
         //}
-
+        Debug.Log(fingerIdx);
     }
 
     private void smoothMovement()
@@ -128,9 +129,10 @@ public class MyPlayer_PVE : MonoBehaviour
     private void ProcessInputs()
     {
         //Movement
-        if (Input.touchCount > 0)
+        if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
-            Touch swipe = Input.GetTouch(0);
+            if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
+            Touch swipe = Input.GetTouch(fingerIdx);
             if (swipe.phase == TouchPhase.Began)
             {
                 touchTime = Time.time;
@@ -161,6 +163,8 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             if(swipe.phase == TouchPhase.Ended)
             {
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
                 if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
                     

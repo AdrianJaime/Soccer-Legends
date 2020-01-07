@@ -65,7 +65,7 @@ public class SignInScript : MonoBehaviour
 
                 Firebase.Auth.FirebaseUser newUser = task.Result;
                 Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
-                txt.text = newUser.DisplayName;
+                txt.text = newUser.UserId;
             });
         });
     }

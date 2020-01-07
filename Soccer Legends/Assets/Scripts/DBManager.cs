@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,12 +20,16 @@ public class DBManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(url != null) StartCoroutine(GetImage());
+        if (url != null)
+        {
+            Debug.Log("YYYYY");
+            StartCoroutine(GetImage());
+        }
     }
 
     public void GetDB()
     {
-        RestClient.Get<User>("https://soccer-legends-d86c7.firebaseio.com/-LvaWZe8QhmQSlQJ8Njp.json").Then(response =>
+        RestClient.Get<User>("https://soccer-legends-db.firebaseio.com/-LvaWZe8QhmQSlQJ8Njp.json").Then(response =>
         {
             text.text = response.userName;
         });
@@ -33,20 +38,19 @@ public class DBManager : MonoBehaviour
     {
         Test test=new Test("Test", 999);
         User user = new User("Player1", 10, new Status(11,12,13), test);
-        RestClient.Put("https://soccer-legends-d86c7.firebaseio.com/"+user.userName+".json", user);
+        RestClient.Put("https://soccer-legends-db.firebaseio.com/"+user.userName+".json", user);
         
     }
     public void DownloadDB()
     {
 
         FirebaseStorage storage = FirebaseStorage.DefaultInstance;
-        StorageReference gs_reference = storage.GetReferenceFromUrl("gs://soccer-legends-d86c7.appspot.com/Captura.PNG");
+        StorageReference gs_reference = storage.GetReferenceFromUrl("gs://soccer-legends-db.appspot.com/Image.jpg");
         gs_reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) =>
         {
             if (!task.IsFaulted && !task.IsCanceled)
             {
-                Debug.Log("Download URL: " + task.Result);
-                url = task.Result;
+                url = task.Result;  
             }
         });
     }
@@ -64,12 +68,22 @@ public class DBManager : MonoBehaviour
         }
         else
         {
-            Texture2D myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            Texture2D myTexture = new Texture2D(8,8);
+            if (!File.Exists(Application.persistentDataPath + "/Image.JPG"))
+            {
+                Debug.Log("Don't Have it");
+             myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+             byte[] bytes = myTexture.EncodeToJPG();
+              File.WriteAllBytes(Application.persistentDataPath + "/Image.JPG", bytes);
+            }
+           else {
+                Debug.Log(Application.persistentDataPath);
+                byte[] byteArr = File.ReadAllBytes(Application.persistentDataPath + "/Image.JPG");
+                myTexture.LoadImage(byteArr);
+            }
             Sprite spr = Sprite.Create(myTexture, new Rect(0, 0, myTexture.width, myTexture.height), Vector2.zero, 1);
             image.sprite = spr;
-
         }
     }
-
     
 }

@@ -99,20 +99,20 @@ public class InventoryManager : MonoBehaviour
                     }
                 case "stats-shot":
                     {
-                        int t1 = _objA.stats.shot;
-                        int t2 = _objB.stats.shot;
+                        int t1 = _objA.stats.atq;
+                        int t2 = _objB.stats.atq;
                         return t1.CompareTo(t2);
                     }
                 case "stats-defense":
                     {
-                        int t1 = _objA.stats.defense;
-                        int t2 = _objB.stats.defense;
+                        int t1 = _objA.stats.def;
+                        int t2 = _objB.stats.def;
                         return t1.CompareTo(t2);
                     }
                 case "stats-technique":
                     {
-                        int t1 = _objA.stats.technique;
-                        int t2 = _objB.stats.technique;
+                        int t1 = _objA.stats.teq;
+                        int t2 = _objB.stats.teq;
                         return t1.CompareTo(t2);
                     }
                 case "type":

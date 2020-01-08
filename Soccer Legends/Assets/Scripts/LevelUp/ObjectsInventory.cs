@@ -56,4 +56,19 @@ public class ObjectsInventory : MonoBehaviour
             slot.GetComponent<SlotConsum>().UpdateUI();
         }
     }
+
+    public void ConfirmSelection()
+    {
+        foreach (GameObject slot in listOfInteractuable)
+        {
+            slot.GetComponent<SlotConsum>().Confirm();
+        }
+    }
+    public void ResetSelection()
+    {
+        foreach (GameObject slot in listOfInteractuable)
+        {
+            slot.GetComponent<SlotConsum>().ResetConsum();
+        }
+    }
 }

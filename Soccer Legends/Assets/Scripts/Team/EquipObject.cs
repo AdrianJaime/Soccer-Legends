@@ -17,9 +17,12 @@ public class EquipObject : MonoBehaviour
     {
         for (int i = 0; i < 8; i++)
         {
-            if (listOfCharacters[i].basicInfo.ID == _aux.basicInfo.ID)
-                if (arrayEquiped[i] == true)
-                    return i;
+            if (listOfCharacters[i] != null)
+            {
+                if (listOfCharacters[i].basicInfo.ID == _aux.basicInfo.ID)
+                    if (arrayEquiped[i] == true)
+                        return i;
+            }
         }
         return -1;
     }

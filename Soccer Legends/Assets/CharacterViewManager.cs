@@ -24,9 +24,9 @@ public class CharacterViewManager : MonoBehaviour
     {
         if (actualCharacter.basicInfo != null)
         {
-            pivotStat.text = actualCharacter.stats.shot.ToString();
-            defenseStat.text = actualCharacter.stats.defense.ToString();
-            technicalStat.text = actualCharacter.stats.technique.ToString();
+            pivotStat.text = actualCharacter.stats.atq.ToString();
+            defenseStat.text = actualCharacter.stats.def.ToString();
+            technicalStat.text = actualCharacter.stats.teq.ToString();
             nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
             levelCharacter.text = actualCharacter.level.ToString();
             imageCharacter.sprite = actualCharacter.basicInfo.artwork;

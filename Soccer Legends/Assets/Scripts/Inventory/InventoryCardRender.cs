@@ -41,6 +41,20 @@ public class InventoryCardRender : MonoBehaviour
         SceneManager.LoadScene(2);
 
     }
+    public void OpenLevelUpMenu()
+    {
+        StaticInfo.characterToAcces = characterInfo;
+        StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene("LevelUpScene");
+
+    }
+    public void OpenAwakenMenu()
+    {
+        StaticInfo.characterToAcces = characterInfo;
+        StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene("AwakenScene");
+
+    }
 
     public void UpdateSlotRender()
     {

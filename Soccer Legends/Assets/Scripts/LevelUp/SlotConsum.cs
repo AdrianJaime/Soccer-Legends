@@ -15,11 +15,17 @@ public class SlotConsum : MonoBehaviour
     public Button substractButton;
 
     public ConsumBaseInfo consumBaseInfo;
+    public CharacterLevelUp characterLevelUp;
+    public CharacterAwaken characterAwaken;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        if(consumBaseInfo.type==TypeConsum.TRAINING)
+            characterLevelUp= FindObjectOfType<CharacterLevelUp>();
+        else
+            characterAwaken = FindObjectOfType<CharacterAwaken>();
         //Image Update
         imageLocation.sprite = consumBaseInfo.image;
     }
@@ -67,6 +73,11 @@ public class SlotConsum : MonoBehaviour
     {
         if (quantity != 0)
         {
+            if(consumBaseInfo.type==TypeConsum.TRAINING)
+                characterLevelUp.AddExp(consumBaseInfo.expReward);
+            else
+                characterAwaken.AddExpAwakening(consumBaseInfo.expReward);
+
             quantity--;
             usedQuantity++;
         }
@@ -79,9 +90,26 @@ public class SlotConsum : MonoBehaviour
     {
         if (usedQuantity != 0)
         {
-            quantity++;
+            if (consumBaseInfo.type == TypeConsum.TRAINING)
+                characterLevelUp.SubstractExp(consumBaseInfo.expReward);
+            else
+                characterAwaken.SubstractExpAwakening(consumBaseInfo.expReward); quantity++;
             usedQuantity--;
         }
         UpdateUI();
     }
+
+    public void Confirm()
+    {
+        usedQuantity = 0;
+        UpdateUI();
+    }
+    public void ResetConsum()
+    {
+        quantity += usedQuantity;
+        usedQuantity = 0;
+        UpdateUI();
+
+    }
+
 }

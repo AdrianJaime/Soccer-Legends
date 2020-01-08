@@ -25,9 +25,9 @@ public class CharacterRender : MonoBehaviour
     {
         nameText.text = characterInfo.basicInfo.nameCharacter;
         descriptionText.text = characterInfo.basicInfo.description;
-        shotText.text = characterInfo.stats.shot.ToString();
-        defenseText.text = characterInfo.stats.defense.ToString();
-        techinqueText.text = characterInfo.stats.technique.ToString();
+        shotText.text = characterInfo.stats.atq.ToString();
+        defenseText.text = characterInfo.stats.def.ToString();
+        techinqueText.text = characterInfo.stats.teq.ToString();
         artworkImage.sprite = characterInfo.basicInfo.artwork;
     }
 }

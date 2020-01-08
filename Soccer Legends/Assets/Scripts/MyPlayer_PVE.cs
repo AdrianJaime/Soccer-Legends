@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -112,7 +112,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
             rePositionBall(); //To be implemented
         }
-        else if(fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
+        else if(!stunned && fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
         {
             mg.releaseTouchIdx(fingerIdx);
             fingerIdx = -1;
@@ -172,12 +172,10 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             if(swipe.phase == TouchPhase.Ended)
             {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
-                if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
+                if (mg.GameOn && !stunned)
                 {
                     
-                    if (goal.bounds.Contains(aux) && ball != null && goal.bounds.Contains(ball.transform.position) && gameObject.name != "GoalKeeper")
+                    if (goal.bounds.Contains(aux) && ball != null && actualLine != null && points.Count > 0 && gameObject.name != "GoalKeeper")
                     {
                         //Goal
                         int ia_Idx = 3;
@@ -191,18 +189,22 @@ public class MyPlayer_PVE : MonoBehaviour
                                 playerIdx = i;
                                 break;
                             }
-                        }                        
+                        }
                         mg.ChooseShoot(playerIdx, ia_Idx);
                         //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                         //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
-                    else if(ball != null)
+                    else if (ball != null && touchTime + 0.5f > Time.time)
                     {
+                        GameObject.Destroy(actualLine);
+                        onMove = false;
                         //Pass
                         float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
                         ShootBall(dir);
                         //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
+                    mg.releaseTouchIdx(fingerIdx);
+                    fingerIdx = -1;
                 }
                 if (points.Count == 1)
                 {
@@ -215,6 +217,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void FollowLine()
     {
+        Debug.Log(points.Count);
         if (actualLine.GetComponent<LineRenderer>().positionCount > 0 && points.Count > 0 && onMove)
         {
            transform.position = Vector3.MoveTowards(transform.position, points[0], Time.deltaTime * speed * 2);
@@ -449,7 +452,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void SetName(string name)
     {
-        transform.GetChild(0).GetComponentInChildren<Text>().text = name;
+        transform.GetChild(0).GetComponentInChildren<Text>().text = " ";
     }
 
     public void IsColliding(bool isIt)

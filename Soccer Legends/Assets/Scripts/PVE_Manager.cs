@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Photon.Realtime;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PVE_Manager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class PVE_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        timeStart = Time.time;
         touchesIdx = new List<int>();
         fingerIdx = -1;
         swipes = new Vector2[2];
@@ -53,6 +55,7 @@ public class PVE_Manager : MonoBehaviour
                 frameCount = 0;
             }
         }
+        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Debug.Log("Finger idx->" + fingerIdx.ToString());
         Debug.Log("Touches->" + touchesIdx.Count.ToString());
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
@@ -162,13 +165,20 @@ public class PVE_Manager : MonoBehaviour
                             }
                             else
                             {
-                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose(); 
                             }
                         }
                         else
                         {
-                            if(playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
-                            else playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                            else
+                            {
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            }
                             energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                         }
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;

@@ -65,7 +65,7 @@ public class cameraMovement : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos, 2 * Time.deltaTime);
+            transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos, Time.deltaTime);
             lastCamPosition = transform.position;
         }
     }

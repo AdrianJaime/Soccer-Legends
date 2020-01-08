@@ -38,7 +38,7 @@ public class MyPlayer_PVE : MonoBehaviour
     private Collider2D goal;
     private float touchTime;
     private int shootFramesRef;
-    private int fingerIdx = -1;
+    public int fingerIdx = -1;
 
     //IA
     bool iaPlayer;
@@ -112,13 +112,18 @@ public class MyPlayer_PVE : MonoBehaviour
 
             rePositionBall(); //To be implemented
         }
+        else if(fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
+        {
+            mg.releaseTouchIdx(fingerIdx);
+            fingerIdx = -1;
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}
         //else if(!photonView.IsMine)
         //{
         // smoothMovement();
         //}
-        Debug.Log(fingerIdx);
     }
 
     private void smoothMovement()
@@ -131,7 +136,10 @@ public class MyPlayer_PVE : MonoBehaviour
         //Movement
         if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
-            if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
+            if (fingerIdx == -1 && Input.GetTouch(Input.touchCount - 1).phase == TouchPhase.Began &&
+                Vector3.Distance(putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(Input.touchCount - 1).position.x, Input.GetTouch(Input.touchCount - 1).position.y, 0))),
+                transform.position) < characterRad && gameObject.name != "GoalKeeper") fingerIdx = mg.getTouchIdx();
+            else if(fingerIdx == -1)return;
             Touch swipe = Input.GetTouch(fingerIdx);
             if (swipe.phase == TouchPhase.Began)
             {
@@ -150,6 +158,7 @@ public class MyPlayer_PVE : MonoBehaviour
                     actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
                 }
             }
+
             if (actualLine != null && TrailDistance() < maxSize && gameObject.name != "GoalKeeper")
             {
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));

@@ -28,6 +28,9 @@ public class PVE_Manager : MonoBehaviour
 
     Vector2[] swipes;
 
+    //Hardcoded bug fixes
+    int frameCount = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,13 +44,25 @@ public class PVE_Manager : MonoBehaviour
 
     private void Update()
     {
-        if (!GameOn && (Input.touchCount > getTotalTouches() || fingerIdx != -1))
+        if (touchesIdx.Count == 1 && Input.touchCount == 0)
+        {
+            frameCount++;
+            if (frameCount == 2)
+            {
+                touchesIdx.Clear();
+                frameCount = 0;
+            }
+        }
+        Debug.Log("Finger idx->" + fingerIdx.ToString());
+        Debug.Log("Touches->" + touchesIdx.Count.ToString());
+        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
             switch(state)
             {
                 case fightState.FIGHT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
-                    if (fingerIdx == -1) fingerIdx = getTouchIdx();
+                    if (fingerIdx != 0) fingerIdx = getTouchIdx();
+                    Debug.Log("Inside " + fingerIdx.ToString());
                     Touch swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
@@ -101,7 +116,7 @@ public class PVE_Manager : MonoBehaviour
                     break;
                 case fightState.SHOOT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar * energySegments >= 1 ? "Special" : "Normal";
-                    if (fingerIdx == -1) fingerIdx = getTouchIdx();
+                    if (fingerIdx != 0) fingerIdx = getTouchIdx();
                     swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
@@ -218,6 +233,11 @@ public class PVE_Manager : MonoBehaviour
         }
         else if (GameStarted && GameOn)
         {
+            if(fingerIdx != -1)
+            {
+                releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+            }
            if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += (eneregyFill * Time.deltaTime) / energySegments;
             if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / energySegments;
         }
@@ -261,6 +281,8 @@ public class PVE_Manager : MonoBehaviour
     {
         // if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
         StartGame();
+        releaseTouchIdx(fingerIdx);
+        fingerIdx = -1;
     }
 
     public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
@@ -485,7 +507,20 @@ public class PVE_Manager : MonoBehaviour
         return 0;
     }
 
-    public void releaseTouchIdx(int idx) {  touchesIdx.Remove(idx); }
+    public void releaseTouchIdx(int idx)
+    {
+        touchesIdx.Remove(idx);
+        //Camera
+        if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx > idx)
+            GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx--;
+        //Manager
+        if (fingerIdx > idx) fingerIdx--;
+
+        //Players
+        if (myPlayers[0].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[0].GetComponent<MyPlayer_PVE>().fingerIdx--;
+        if (myPlayers[1].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[1].GetComponent<MyPlayer_PVE>().fingerIdx--;
+        if (myPlayers[2].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[2].GetComponent<MyPlayer_PVE>().fingerIdx--;
+    }
 
     public int getTotalTouches() { return touchesIdx.Count; }
 }

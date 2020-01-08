@@ -8,7 +8,7 @@ public class cameraMovement : MonoBehaviour
     private Vector3 lastCamPosition;
     private Vector3 localCamPos;
     PVE_Manager mg;
-    int fingerIdx;
+    public int fingerIdx;
 
     // Start is called before the first frame update
     void Start()
@@ -21,9 +21,13 @@ public class cameraMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInputs();
-        Debug.Log(fingerIdx);
-    }
+        if (mg.GameOn) ProcessInputs();
+        else if (fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
+        {
+            mg.releaseTouchIdx(fingerIdx);
+            fingerIdx = -1;
+        }
+        }
 
     private void ProcessInputs()
     {

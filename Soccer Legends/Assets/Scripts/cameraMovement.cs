@@ -31,8 +31,28 @@ public class cameraMovement : MonoBehaviour
 
     private void ProcessInputs()
     {
+        bool found = false;
+        if (fingerIdx == -1)
+        {
+            foreach (Touch t in Input.touches)
+            {
+                if (t.phase == TouchPhase.Moved)
+                {
+                    foreach (GameObject p in mg.myPlayers)
+                    {
+                        if (p.GetComponent<MyPlayer_PVE>().fingerIdx != t.fingerId) found = true;
+                        else
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        Debug.Log(found);
         //Movement
-        if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
+        if ((Input.touchCount > mg.getTotalTouches() && found || fingerIdx != -1))
         {
             if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
             Touch swipe = Input.GetTouch(fingerIdx);

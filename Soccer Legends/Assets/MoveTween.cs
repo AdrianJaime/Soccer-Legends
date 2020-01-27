@@ -6,19 +6,20 @@ public class MoveTween : MonoBehaviour
 {
     public float time = 0;
     public Vector3 movement;
+    public bool sameButton=false;
 
-    Transform initialPosition;
+    Vector3 initialPosition;
 
     private void Start()
     {
-        initialPosition = gameObject.transform;
+        initialPosition = gameObject.transform.position;
     }
     public void Move()
     {
-        LeanTween.move(gameObject, movement, time);
+        LeanTween.move(gameObject, initialPosition+movement, time);
     }
     public void ResetMove()
     {
-        LeanTween.moveY(gameObject,initialPosition.position.y, time);
+        LeanTween.moveY(gameObject,initialPosition.y, time);
     }
 }

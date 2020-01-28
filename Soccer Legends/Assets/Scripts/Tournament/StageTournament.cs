@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public class StageTournament : MonoBehaviour
 {
     public Text description, nameStage;
-    public Image artStage,artReward,clearPanel;
-
+    public Image artStage,artReward, clearPanel;
     public StageInfo basicInfo;
 
-    bool clear = false;
+    public bool clear = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,9 +21,8 @@ public class StageTournament : MonoBehaviour
     void UpdateUI()
     {
         if (clear)
-            clearPanel.color = new Color (0,0,0,120);
-        else
-            clearPanel.color = new Color(0, 0, 0, 0);
+            Destroy(clearPanel); 
+
 
         description.text = basicInfo.description;
         nameStage.text = basicInfo.nameStage;

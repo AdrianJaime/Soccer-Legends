@@ -8,8 +8,10 @@ public class StageTournament : MonoBehaviour
     public Text description, nameStage;
     public Image artStage,artReward, clearPanel;
     public StageInfo basicInfo;
+    public RewardLogic reward;
 
     public bool clear = true;
+    bool ownedReward = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +23,14 @@ public class StageTournament : MonoBehaviour
     void UpdateUI()
     {
         if (clear)
-            Destroy(clearPanel); 
+        {
+            if (ownedReward)
+                reward.SetReclaimed();
+            else
+                reward.UnlockReward();
+
+            Destroy(clearPanel);
+        }
 
 
         description.text = basicInfo.description;

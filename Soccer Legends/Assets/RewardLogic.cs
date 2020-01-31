@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class RewardLogic : MonoBehaviour
 {
-    public bool canReclaim, reclaimed;
+    private bool canReclaim, reclaimed;
 
     public Image blockRewardImage, reclaimedImage;
     private void Start()

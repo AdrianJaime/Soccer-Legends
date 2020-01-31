@@ -22,6 +22,7 @@ public class Stages_PB : MonoBehaviour
         gameObject.GetComponent<Slider>().maxValue = stagesCount;
 
         int clearedStages = 0;
+        //estos clearedSta¡ges se deberian leer de BD teniendo cada stage un int 
         foreach (StageTournament stage in stagesManager.Stages)
         {
             if (stage.clear)

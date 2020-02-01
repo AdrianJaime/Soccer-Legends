@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EquipCardLogic : MonoBehaviour
 {
-    public CharacterBasic characterInfo;
     public int identifier = -1;
     public EquipCardRender render;
     EquipamentManager manager;
@@ -26,18 +25,13 @@ public class EquipCardLogic : MonoBehaviour
     }
     public void DiselectedRender()
     {
-        render.UpdateRender(characterInfo);
+        render.Diselected();
     }
 
     public void Set(CharacterBasic _character)
     {
-        characterInfo = _character;
-        render.UpdateRender(characterInfo);
-    }
-
-    public void CallUpdateRender()
-    {
-        render.UpdateRender(characterInfo);
+        render.characterInfo = _character;
+        render.UpdateRender();
     }
 
 }

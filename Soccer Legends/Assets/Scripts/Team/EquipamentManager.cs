@@ -96,8 +96,7 @@ public class EquipamentManager : MonoBehaviour
         int aux = 0;
         foreach (EquipCardLogic card in actualEquip.arraySlots)
         {
-            card.characterInfo = actualEquip.listOfCharacters[aux];
-            card.CallUpdateRender();
+            card.Set(actualEquip.listOfCharacters[aux]);
             aux++;
         }
     }

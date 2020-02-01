@@ -9,6 +9,7 @@ public class Stages_PB : MonoBehaviour
     public StagesManager stagesManager;
     public Image rewardTeamStages;
     public RewardLogic reward;
+    public Text percent;
 
     private void Start()
     {
@@ -29,6 +30,11 @@ public class Stages_PB : MonoBehaviour
                 clearedStages++;
         }
         gameObject.GetComponent<Slider>().value = clearedStages;
+
+        if(stagesCount!=0)
+            percent.text = ((clearedStages / stagesCount) * 100).ToString()+"%";
+        else
+            percent.text = "0%";
 
         if (!stagesManager.ownedReward)
         {

@@ -10,6 +10,7 @@ public class EquipCardRender : MonoBehaviour
     public Text nameText;
     public Image artworkImage;
     public Text powerText;
+    public CharacterBasic characterInfo;
 
 
     //init resources
@@ -17,7 +18,7 @@ public class EquipCardRender : MonoBehaviour
     //como marcos o cosas asi
     public Image[] starSprites;
 
-    public void UpdateRender(CharacterBasic characterInfo)
+    public void UpdateRender()
     {
         if (characterInfo != null)
         {
@@ -42,14 +43,14 @@ public class EquipCardRender : MonoBehaviour
     }
     public void Slected()
     {
-        Color aux = new Color();
+        Color aux = (Color.clear);
         aux.a = 0.5f;
         artworkImage.color = aux;
     }
     public void Diselected()
     {
-        Color aux = new Color();
-        aux.a = 1;
+        Color aux = (Color.clear);
+        aux.a =0;
         artworkImage.color = aux;
     }
 }

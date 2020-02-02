@@ -34,13 +34,9 @@ public class InventoryManager : MonoBehaviour
                 //Le asignamos una informacion basica de jugador
                 actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
                 //con la infromación basica cargamos los datos con el ID del personaje.
-                if (!actualCard.GetComponent<CharacterBasic>().LoadCharacterStats())
-                {
-                    actualCard.GetComponent<CharacterBasic>().SaveCharacter();
-                    actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
-
-                }
-                listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());
+                actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
+                
+                listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());//GUARDAMOS ESTO 
                 listOfSlots.Add(actualCard);
             }
             counterIdentifier++;

@@ -41,49 +41,21 @@ public class CharacterBasic : MonoBehaviour
 
     public void SaveCharacter()
     {
-
-        string ecryptedKey = EncriptScript.Encrypt(basicInfo.ID);
-        Debug.Log(ecryptedKey);
-        StoredCharacterData dataCharacter = new StoredCharacterData(stats, level, power, true);
-        Serializer.Save(ecryptedKey, dataCharacter);
+        //Guarda el pj en base de datos
 
 
     }
-    public bool LoadCharacterStats()
+    public void LoadCharacterStats()
     {
+        //Recupera la info de base de datos a traves del basicInfo->ID
 
-        string encryptedKey = EncriptScript.Encrypt(basicInfo.ID);
-        Debug.Log(encryptedKey);
-        StoredCharacterData aux = Serializer.Load<StoredCharacterData>(encryptedKey);
+        stats = new Stats();//POR DEFECTO LE PONGO VALORES
+        level = 1;
+        power =1;
+        owned = true;
 
-        if (aux != null)
-        {
-            stats = aux.stats;
-            level = aux.level;
-            power = aux.power;
-            owned = aux.owned;
-            return true;
-        }
-        
-        return false;
     }
     
-    [System.Serializable]
-    public class StoredCharacterData
-    {
-        //info user
-        public Stats stats;
-        public int level;
-        public int power;
-        public bool owned;
 
-        public StoredCharacterData(Stats _stats, int _level, int _power, bool _owned)
-        {
-            stats = _stats;
-            level = _level;
-            power = _power;
-            owned = _owned;
-        }
-    }
 }
 

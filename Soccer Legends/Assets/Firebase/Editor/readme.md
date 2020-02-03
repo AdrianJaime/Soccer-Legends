@@ -162,10 +162,41 @@ Support
 
 Release Notes
 -------------
+### 6.9.0
+  - Overview
+    - Updated dependencies, added support for Apple Sign-in to Auth,
+      support for signing-in using a 3rd party web providers and
+      configuration of BigQuery export in Messaging, fixed a Crashlytics
+      build reporting bug with Python 3 and fixed core editor plugin loading
+      issue on Windows.
+  - Changes
+    - Auth: Added API for invoking FirebaseAuth.SignInWithProvider and User
+      FirebaseUser.LinkWithProvider and FirebaseUser.ReauthenticateWithProvider
+      for sign in with third party auth providers.
+    - Auth: Added constant ProviderId strings to the provider classes.
+    - Auth (iOS): Added support for linking Apple Sign-in credentials.
+    - Crashlytics: Fixed build event reporting when Python 3 is installed on
+      Mac or Linux machines.
+    - Messaging (Android): Added the option to enable or disable message
+      delivery metrics export to BigQuery. This functionality is currently only
+      available on Android. Stubs are provided on iOS for cross platform
+      compatibility.
+    - Editor: Fixed core editor plugin so that it loads without the iOS Unity
+      extension installed on Windows.
+
+### 6.8.1
+  - Overview
+     - Fixed Crashlytics and core editor plugin.
+  - Changes
+    - Crashlytics (Editor): Fixed Crashlytics editor plugin so that it loads
+      without the iOS Unity extension installed.
+    - Editor: Fixed core editor plugin so that it loads without the iOS Unity
+      extension installed.
+
 ### 6.8.0
   - Overview
     - Updated dependencies and fixed resource generation issue with python3.
- - Changes
+  - Changes
     - Editor: Fixed an issue where resource generation from
       google-services.json or GoogleService-Info.plist would fail if python3
       was used to execute the resource generation script.

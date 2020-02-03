@@ -11,11 +11,12 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 
 
-public class DBManager : MonoBehaviour
+public static class DBManager 
 {
     public Text text;
-    Uri url = null;
+    static Uri url = null;
     public Image image;
+
 
     // Update is called once per frame
     void Update()
@@ -43,7 +44,6 @@ public class DBManager : MonoBehaviour
     }
     public void DownloadDB()
     {
-
         FirebaseStorage storage = FirebaseStorage.DefaultInstance;
         StorageReference gs_reference = storage.GetReferenceFromUrl("gs://soccer-legends-db.appspot.com/Image.jpg");
         gs_reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) =>
@@ -61,6 +61,7 @@ public class DBManager : MonoBehaviour
         UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
         url = null;
         yield return www.SendWebRequest();
+
 
         if (www.isNetworkError || www.isHttpError)
         {
@@ -84,6 +85,5 @@ public class DBManager : MonoBehaviour
             Sprite spr = Sprite.Create(myTexture, new Rect(0, 0, myTexture.width, myTexture.height), Vector2.zero, 1);
             image.sprite = spr;
         }
-    }
-    
+    }    
 }

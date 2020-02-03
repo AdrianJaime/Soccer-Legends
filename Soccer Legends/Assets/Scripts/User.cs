@@ -23,27 +23,19 @@ public class User
     public string userName;
     public int userScore;
     public Status stats;
-    public Test testVariable;
+    public EquipDB equipTest;
 
-    public User(string _UN, int _US, Status _stats, Test _user2)
+    public User(string _UN, int _US, Status _stats)
     {
         userName = _UN;
         userScore = _US;
         stats = _stats;
-        testVariable = _user2;
         
     }
 }
 [Serializable]
-public class Test
+public class EquipDB
 {
-    public string stringTest;
-    public int intTest;
+    public int[] characterEquipIDs;
 
-    public Test(string _UN, int _US)
-    {
-        stringTest = _UN;
-        intTest = _US;
-        
-    }
 }

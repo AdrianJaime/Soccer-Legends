@@ -34,7 +34,7 @@ public class InventoryManager : MonoBehaviour
                 //Le asignamos una informacion basica de jugador
                 actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
                 //con la infromación basica cargamos los datos de BD con el ID del personaje.
-                actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
+                actualCard.GetComponent<CharacterBasic>().LoadCharacterStats(actualCard.GetComponent<CharacterBasic>().basicInfo.ID);
                 
                 listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());//GUARDAMOS ESTO 
                 listOfSlots.Add(actualCard);
@@ -81,8 +81,8 @@ public class InventoryManager : MonoBehaviour
                     {
                         Debug.Log("level");
 
-                        int t1 = _objA.level;
-                        int t2 = _objB.level;
+                        int t1 = _objA.info.level;
+                        int t2 = _objB.info.level;
                         return t1.CompareTo(t2);
                     }
                 case "rarity":
@@ -99,20 +99,20 @@ public class InventoryManager : MonoBehaviour
                     }
                 case "stats-shot":
                     {
-                        int t1 = _objA.stats.atq;
-                        int t2 = _objB.stats.atq;
+                        int t1 = _objA.info.atk;
+                        int t2 = _objB.info.atk;
                         return t1.CompareTo(t2);
                     }
                 case "stats-defense":
                     {
-                        int t1 = _objA.stats.def;
-                        int t2 = _objB.stats.def;
+                        int t1 = _objA.info.def;
+                        int t2 = _objB.info.def;
                         return t1.CompareTo(t2);
                     }
                 case "stats-technique":
                     {
-                        int t1 = _objA.stats.teq;
-                        int t2 = _objB.stats.teq;
+                        int t1 = _objA.info.teq;
+                        int t2 = _objB.info.teq;
                         return t1.CompareTo(t2);
                     }
                 case "type":

@@ -26,11 +26,11 @@ public class CharacterAwaken : MonoBehaviour
         if (character.levelMAX != newCharacter.levelMAX)
         {
 
-            levelMax.text = "Nv." + character.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            levelMax.text = "Nv." + character.info.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
         else
         {
-            levelMax.text = "Nv." + character.level + "/" + character.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            levelMax.text = "Nv." + character.info.level + "/" + character.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
 
         }
     }

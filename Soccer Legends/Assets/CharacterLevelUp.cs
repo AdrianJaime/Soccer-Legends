@@ -25,39 +25,39 @@ public class CharacterLevelUp : MonoBehaviour
 
     void UpdateUI()
     {
-        if (character.level != newCharacter.level)
+        if (character.info.level != newCharacter.info.level)
         {
-            newAtkTextLocation.text = "ATK: " + newCharacter.stats.atq.ToString();
-            newTeqTextLocation.text = "TEQ: " + newCharacter.stats.teq.ToString();
-            newDefTextLocation.text = "DEF: " + newCharacter.stats.def.ToString();
+            newAtkTextLocation.text = "ATK: " + newCharacter.info.atk.ToString();
+            newTeqTextLocation.text = "TEQ: " + newCharacter.info.teq.ToString();
+            newDefTextLocation.text = "DEF: " + newCharacter.info.def.ToString();
 
-            level.text = "Nv." + newCharacter.level + "/100";//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            level.text = "Nv." + newCharacter.info.level + "/100";//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
         else
         {
-            oldAtkTextLocation.text = "ATK: " + character.stats.atq.ToString();
-            oldTeqTextLocation.text = "TEQ: " + character.stats.teq.ToString();
-            oldDefTextLocation.text = "DEF: " + character.stats.def.ToString();
+            oldAtkTextLocation.text = "ATK: " + character.info.atk.ToString();
+            oldTeqTextLocation.text = "TEQ: " + character.info.teq.ToString();
+            oldDefTextLocation.text = "DEF: " + character.info.def.ToString();
             newAtkTextLocation.text = "ATK: -";
             newTeqTextLocation.text = "TEQ: -";
             newDefTextLocation.text = "DEF: -";
-            level.text = "Nv." + character.level + "/100";
+            level.text = "Nv." + character.info.level + "/100";
         }
     }
 
     void LevelUp()
     {
-        newCharacter.level++;
-        newCharacter.stats.atq++;
-        newCharacter.stats.teq++;
-        newCharacter.stats.def++;
+        newCharacter.info.level++;
+        newCharacter.info.atk++;
+        newCharacter.info.teq++;
+        newCharacter.info.def++;
     }
     void LevelDown()
     {
-        newCharacter.level--;
-        newCharacter.stats.atq--;
-        newCharacter.stats.teq--;
-        newCharacter.stats.def--;
+        newCharacter.info.level--;
+        newCharacter.info.atk--;
+        newCharacter.info.teq--;
+        newCharacter.info.def--;
     }
 
 

@@ -1,23 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Proyecto26;
 
 [System.Serializable]
 public class CharacterBasic : MonoBehaviour
 {
     [System.Serializable]
-    public struct Stats
+    public struct data
     {
-        public int atq;
+        public int atk;
         public int teq;
         public int def;
+        public int level;
+        public int owned;
     }
 
     public CharacterInfo basicInfo;
 
     //info user
-    public Stats stats;
-    public int level=1;
+    public data info;
     public int levelMAX=1;
     public int currentExpAwakening = 0;
     public int currentExp=0;
@@ -30,8 +32,7 @@ public class CharacterBasic : MonoBehaviour
     }
     public CharacterBasic(CharacterBasic _copy)
     {
-        stats = _copy.stats;
-        level = _copy.level;
+        info = _copy.info;
         currentExp = _copy.currentExp;
         power = _copy.power;
         owned = _copy.owned;
@@ -45,14 +46,16 @@ public class CharacterBasic : MonoBehaviour
 
 
     }
-    public void LoadCharacterStats()
+    public void LoadCharacterStats(string id)
     {
         //Recupera la info de base de datos a traves del basicInfo->ID
 
-        stats = new Stats();//POR DEFECTO LE PONGO VALORES
-        level = 1;
-        power =1;
-        owned = true;
+        RestClient.Get<data>("https://soccer-legends-db.firebaseio.com/player/0/characters/"+id+".json").Then(response =>
+        {
+            info = response;
+        });
+
+
 
     }
     

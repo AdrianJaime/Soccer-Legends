@@ -14,7 +14,7 @@ public class InventoryManager : MonoBehaviour
     public List<CharacterInfo> listOfCharacters = new List<CharacterInfo>();
 
 
-    private void Start()
+    private void Awake()
     {
         CreateInventory();
     }
@@ -33,7 +33,7 @@ public class InventoryManager : MonoBehaviour
                 GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
                 //Le asignamos una informacion basica de jugador
                 actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
-                //con la infromación basica cargamos los datos con el ID del personaje.
+                //con la infromación basica cargamos los datos de BD con el ID del personaje.
                 actualCard.GetComponent<CharacterBasic>().LoadCharacterStats();
                 
                 listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());//GUARDAMOS ESTO 
@@ -42,8 +42,6 @@ public class InventoryManager : MonoBehaviour
             counterIdentifier++;
         }
     }
-
-
 
     public void SortByAtribute(string _aux)
     {
@@ -62,6 +60,12 @@ public class InventoryManager : MonoBehaviour
 
         }
 
+    }
+
+    public CharacterBasic FindCharacterByID(string dbID)
+    {
+        Debug.Log("ENTRO EN LA FUNCION DE BUSCAR");
+        return listActualCharacters.Find(x => x.basicInfo.ID == dbID);
     }
 
     public class SortCharacter : IComparer<CharacterBasic>
@@ -137,6 +141,7 @@ public class InventoryManager : MonoBehaviour
             characterAtributeToSort = _characterAtributeToSort;
         }
     }
+
 
 
 }

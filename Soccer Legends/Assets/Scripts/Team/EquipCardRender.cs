@@ -22,7 +22,7 @@ public class EquipCardRender : MonoBehaviour
     {
         if (characterInfo != null)
         {
-            Color opaque = Color.white;
+            Color opaque = artworkImage.color;
             opaque.a = 1;
             artworkImage.color = opaque;
 
@@ -33,7 +33,7 @@ public class EquipCardRender : MonoBehaviour
         else
         {
             artworkImage.sprite = null;
-            Color transparent=new Color();
+            Color transparent= artworkImage.color;
             transparent.a = 0;
             artworkImage.color = transparent;
 
@@ -43,14 +43,13 @@ public class EquipCardRender : MonoBehaviour
     }
     public void Slected()
     {
-        Color aux = (Color.clear);
+        Color aux = artworkImage.color;
         aux.a = 0.5f;
         artworkImage.color = aux;
     }
     public void Diselected()
     {
-        Color aux = (Color.clear);
-        aux.a =0;
-        artworkImage.color = aux;
+
+        UpdateRender();
     }
 }

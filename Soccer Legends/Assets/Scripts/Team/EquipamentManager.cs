@@ -16,7 +16,11 @@ public class EquipamentManager : MonoBehaviour
 
     private void Start()
     {
+        //ASIGNAMOS EL PRIMER EQUIPO
         actualEquip = equips[0];
+        //LEEMOS DE BD
+        actualEquip.LoadEquipBD(inventoryManager);
+        //CARGAMOS EN LOS SLOTS
         LoadEquipInSlots();
     }
 
@@ -93,17 +97,13 @@ public class EquipamentManager : MonoBehaviour
     
     public void LoadEquipInSlots()
     {
+        //esta funcion carga cada InfoPersonaje en cada slot
         int aux = 0;
         foreach (EquipCardLogic card in actualEquip.arraySlots)
         {
             card.Set(actualEquip.listOfCharacters[aux]);
             aux++;
         }
-    }
-
-    void GetFirebaseData()
-    {
-        //EquipObject[] reult=DBManager.EquipsDBM.GetAllEquipsDB();
     }
 
 }

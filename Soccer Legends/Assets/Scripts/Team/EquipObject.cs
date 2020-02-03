@@ -39,7 +39,7 @@ public class EquipObject : MonoBehaviour
             if (value != null)
             {
                 Debug.Log("BUSCO UN ID EN EL INVENTARIO");
-                CharacterBasic auxCharacter=inventory.FindCharacterByID(value);
+                CharacterBasic auxCharacter = inventory.FindCharacterByID(value);
                 if (auxCharacter != null)
                 {
                     Debug.Log("LO ENCONTRÉ");
@@ -54,7 +54,7 @@ public class EquipObject : MonoBehaviour
                 aux++;
             }
         }
-}
+    }
 
 
 

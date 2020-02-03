@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSelector_EnemyRepresentation : MonoBehaviour
+public class PlayerSelector_Representation : MonoBehaviour
 {
 
     public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();

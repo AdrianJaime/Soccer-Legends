@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerSelector_EnemyCardRender : MonoBehaviour
+public class PlayerSelector_CardRender : MonoBehaviour
 {
     //display objects from de prefab
     public Text nameText;
     public Image artworkImage;
+    public Image cardImage;
     public Text powerText;
     public CharacterBasic characterInfo;
 
@@ -35,5 +36,17 @@ public class PlayerSelector_EnemyCardRender : MonoBehaviour
             powerText.text = characterInfo.power.ToString();
         }
 
+    }
+    public void SelectedRender()
+    {
+        Color selectedColor = Color.green;
+        selectedColor.a = 1;
+        cardImage.color = selectedColor;
+    }
+    public void DiselectedRender()
+    {
+        Color diselectedColor = Color.white;
+        diselectedColor.a = 0.5f;
+        cardImage.color = diselectedColor;
     }
 }

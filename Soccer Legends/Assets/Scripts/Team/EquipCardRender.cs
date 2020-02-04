@@ -18,27 +18,47 @@ public class EquipCardRender : MonoBehaviour
     //como marcos o cosas asi
     public Image[] starSprites;
 
+    private void Start()
+    {
+        UpdateRender();
+    }
+
     public void UpdateRender()
     {
         if (characterInfo != null)
-        {
-            Color opaque = artworkImage.color;
-            opaque.a = 1;
-            artworkImage.color = opaque;
+        { 
+            if (characterInfo.basicInfo != null)
+            {
+                Color opaque = artworkImage.color;
+                opaque.a = 1;
+                artworkImage.color = opaque;
 
-            nameText.text = characterInfo.basicInfo.nameCharacter;
-            artworkImage.sprite = characterInfo.basicInfo.artwork;
-            powerText.text = characterInfo.power.ToString();
+                nameText.text = characterInfo.basicInfo.nameCharacter;
+                artworkImage.sprite = characterInfo.basicInfo.artwork;
+                powerText.text = characterInfo.power.ToString();
+            }
+            else
+            {
+                artworkImage.sprite = null;
+                Color transparent = artworkImage.color;
+                transparent.a = 0;
+                artworkImage.color = transparent;
+
+                nameText.text = "None";
+                powerText.text = "0";
+                    
+            }
         }
         else
         {
             artworkImage.sprite = null;
-            Color transparent= artworkImage.color;
+            Color transparent = artworkImage.color;
             transparent.a = 0;
             artworkImage.color = transparent;
 
             nameText.text = "None";
             powerText.text = "0";
+
         }
     }
     public void Slected()

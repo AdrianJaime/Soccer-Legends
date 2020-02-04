@@ -40,7 +40,6 @@ public class MyPlayer_PVE : MonoBehaviour
     private int shootFramesRef;
     private int passFrames = 0;
     public int fingerIdx = -1;
-    bool outPlayer = true;
 
     //IA
     bool iaPlayer;
@@ -84,9 +83,9 @@ public class MyPlayer_PVE : MonoBehaviour
         if (mg.GameOn && !stunned)
         {
             if (startPosition == Vector2.zero) startPosition = transform.position;
-            if (!iaPlayer) ProcessInputs();
+            if (!iaPlayer && ball != null) ProcessInputs();
             if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
-            else if (playerObjective != Vector3.zero && (ball == null || iaPlayer))
+            else if (playerObjective != Vector3.zero)
             {
                 //Vector3 nextPos;
                 transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
@@ -116,10 +115,10 @@ public class MyPlayer_PVE : MonoBehaviour
         }
         else if(!stunned && fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
         {
-            mg.releaseTouchIdx(fingerIdx);
-            fingerIdx = -1;
-            passFrames = 0;
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        //    mg.releaseTouchIdx(fingerIdx);
+        //    fingerIdx = -1;
+        //    passFrames = 0;
+        //    GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}
@@ -147,25 +146,6 @@ public class MyPlayer_PVE : MonoBehaviour
             {
                 touchTime = Time.time;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                if (Vector3.Distance(aux, transform.position) < characterRad && gameObject.name != "GoalKeeper")
-                {
-                    points.Clear();
-                    onMove = false;
-                    outPlayer = false;
-                    MoveTo(new float[] { 0, 0, 0 }); //Clear from other objectives
-                    if (actualLine) Destroy(actualLine); //Clear line
-
-                    points.Add(transform.position);
-                    actualLine = Instantiate(line, points[0], transform.rotation);
-                    actualLine.GetComponent<LineRenderer>().positionCount++;
-                    actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
-                }
-                else outPlayer = true;
-            }
-            else if(swipe.phase == TouchPhase.Moved && outPlayer)
-            {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
             }
             if (actualLine != null && TrailDistance() < maxSize && gameObject.name != "GoalKeeper")
             {
@@ -178,12 +158,17 @@ public class MyPlayer_PVE : MonoBehaviour
                     actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
                 }
             }
-            if(swipe.phase == TouchPhase.Ended)
+            else if (swipe.phase == TouchPhase.Moved)
             {
-                if (mg.GameOn && !stunned)
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+            }
+            if (swipe.phase == TouchPhase.Ended)
+            {
+                if (Time.time - touchTime <= shootTime && mg.GameOn && !stunned)
                 {
 
-                    if (goal.bounds.Contains(aux) && ball != null && actualLine != null && points.Count > 0 && gameObject.name != "GoalKeeper")
+                    if (goal.bounds.Contains(aux) && ball != null && gameObject.name != "GoalKeeper")
                     {
                         //Goal
                         int ia_Idx = 3;
@@ -202,22 +187,17 @@ public class MyPlayer_PVE : MonoBehaviour
                         //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                         //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
                     }
-                    else if (ball != null && outPlayer)
+                    else if (ball != null)
                     {
                         //Pass
-                        float[] dir = { aux.x, aux.y, transform.position.x, transform.position.y };
+                        float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                         ShootBall(dir);
                         //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
-                    mg.releaseTouchIdx(fingerIdx);
-                    fingerIdx = -1;
-                    passFrames = 0;
                 }
-                if (points.Count == 1)
-                {
-                    GameObject.Destroy(actualLine);
-                    onMove = false;
-                }
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+                passFrames = 0;
             }
         }
     }

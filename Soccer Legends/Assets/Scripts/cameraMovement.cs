@@ -64,18 +64,13 @@ public class cameraMovement : MonoBehaviour
 
             else if (swipe.phase == TouchPhase.Moved)
             {
-                Vector3 camPos = actualTouch;
-                float dist = Vector3.Distance(actualTouch, startTouch) / 2;
-                camPos = lastCamPosition + (actualTouch - startTouch).normalized * dist;
-                if (dist > 5.0f)
-                {
-                    camPos += (startTouch - camPos).normalized * (dist - 5.0f);
-                }
+                Vector3 camPos = transform.localPosition + startTouch;
+                float dist = Vector3.Distance(actualTouch, startTouch);
+                camPos += (startTouch - actualTouch).normalized * dist;
 
                 //ransform.position = startTouch + (startTouch - camPos);
-                transform.position = camPos;
+                transform.localPosition = putZAxis(camPos + transform.parent.position);
                 //ransform.position = Vector3.Lerp(lastCamPosition, camPos, 2 * Time.deltaTime);
-                //lastCamPosition = transform.position;
             }
             else if(swipe.phase == TouchPhase.Ended)
             {

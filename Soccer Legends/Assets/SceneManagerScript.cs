@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneManagerScript : MonoBehaviour
 {
-
-    public void ChangeScene(int _sceneBuildID)
+    public void ChangeScene(string _sceneName)
     {
-        if( SceneManager.sceneCountInBuildSettings >= _sceneBuildID)
-            SceneManager.LoadScene(_sceneBuildID);
+        SceneManager.LoadScene(_sceneName);
     }
 }

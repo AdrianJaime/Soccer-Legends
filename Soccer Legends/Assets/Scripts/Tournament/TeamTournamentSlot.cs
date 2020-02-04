@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Se encarga de la visualización de los institutos en el menu 
+/// de tournament, donde se debe seleccionar.
+/// </summary>
 public class TeamTournamentSlot : MonoBehaviour
 {
     public Text description, nameTeam;
@@ -19,13 +23,13 @@ public class TeamTournamentSlot : MonoBehaviour
     void UpdateUI()
     {
         description.text = basicInfo.description;
-        nameTeam.text = basicInfo.nameTeam;
-        artTeam.sprite = basicInfo.artworkTeam;
+        nameTeam.text = basicInfo.teamName;
+        artTeam.sprite = basicInfo.teamArtwork;
     }
 
     public void OpenTeam()
     {
         StaticInfo.tournamentTeam = basicInfo;
-        SceneManager.LoadScene("MissionMenu");
+        SceneManager.LoadScene("StageScene");
     }
 }

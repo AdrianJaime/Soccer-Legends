@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Este Script se encarga de organizar el apartado visual dentro 
+/// de una stage. Tambien se encarga de comprobar si la reward se ha 
+/// conseguido o no a través de base de datos
+/// </summary>
 public class StageTournament : MonoBehaviour
 {
-    public Text description, nameStage;
-    public Image artStage,artReward, clearPanel;
-    public StageInfo basicInfo;
+    public Text description, stageName;
+    public Image stageArt,artReward, clearPanel;
+    public StageInfo basicInfo;//Información básica sobre ésta stage, variables que no varían
     public RewardLogic reward;
 
-    public bool clear = true;
+    public bool clear = true; 
     bool ownedReward = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,8 +40,8 @@ public class StageTournament : MonoBehaviour
 
 
         description.text = basicInfo.description;
-        nameStage.text = basicInfo.nameStage;
-        artStage.sprite = basicInfo.artworkStage;
+        stageName.text = basicInfo.stageName;
+        stageArt.sprite = basicInfo.stageArtwork;
         artReward.sprite = basicInfo.imageReward;
     }
 }

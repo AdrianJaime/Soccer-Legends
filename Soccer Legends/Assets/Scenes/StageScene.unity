@@ -252,12 +252,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamImage: {fileID: 869739290}
-  nameTeam: {fileID: 1357754039}
+  teamName: {fileID: 1357754039}
   info: {fileID: 11400000, guid: 3c6789cf1a1cf694ea4dbb898d8838cb, type: 2}
   placeToSpawn: {fileID: 37710209}
-  prefabStage: {fileID: 8940025790345671288, guid: 794abf6f63a09ba40b072915143b8291,
+  stagePrefab: {fileID: 8940025790345671288, guid: 794abf6f63a09ba40b072915143b8291,
     type: 3}
-  Stages: []
+  stages: []
   ownedReward: 0
 --- !u!114 &475278782 stripped
 MonoBehaviour:
@@ -296,8 +296,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stagesManager: {fileID: 308256157}
-  rewardTeamStages: {fileID: 0}
+  rewardTeamStages: {fileID: 776973093}
   reward: {fileID: 475278782}
+  percent: {fileID: 912317046}
 --- !u!1 &525749723
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,13 +581,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 308256155}
         m_MethodName: ChangeScene
-        m_Mode: 3
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 11
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: SchoolsTournamentScene
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -710,6 +711,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &776973093 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4340545714363301147, guid: 02b9ad27a554f8c40b5cc2bf40b9e67b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1312265121}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &783700305
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +876,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 869739288}
   m_CullTransparentMesh: 0
+--- !u!114 &912317046 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7016750206582119327, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 3427478713735444706}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &924253384
 GameObject:
   m_ObjectHideFlags: 0

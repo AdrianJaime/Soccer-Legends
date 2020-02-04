@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Este Script regula la progressBar del menú de Stages dentro de un 
+/// instituto. Comprueba el numero de misiones superadas frente al numero 
+/// total y actua en consecuencia.
+/// </summary>
 public class Stages_PB : MonoBehaviour
 {
 
@@ -24,7 +29,7 @@ public class Stages_PB : MonoBehaviour
 
         int clearedStages = 0;
         //estos clearedSta¡ges se deberian leer de BD teniendo cada stage un int 
-        foreach (StageTournament stage in stagesManager.Stages)
+        foreach (StageTournament stage in stagesManager.stages)
         {
             if (stage.clear)
                 clearedStages++;

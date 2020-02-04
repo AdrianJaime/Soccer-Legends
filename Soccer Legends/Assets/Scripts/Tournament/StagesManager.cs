@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Este script se encarga de que las stages se spawneen correctamente 
+/// segun el numero/datos de BD; y adapta su contenido visualmente.
+/// </summary>
 public class StagesManager : MonoBehaviour
 {
-
     public Image teamImage;
-    public Text nameTeam;
+    public Text teamName;
 
     public TeamTournamentInfo info; //publico para poner por defecto alguno en el testing
     public Transform placeToSpawn;
-    public GameObject prefabStage;
-    public List<StageTournament> Stages;
+    public GameObject stagePrefab;
+    public List<StageTournament> stages;
 
     public bool ownedReward = false;
 
@@ -28,20 +31,20 @@ public class StagesManager : MonoBehaviour
     {
         foreach(StageInfo stage in info.stages)
         {
-            GameObject auxStage = Instantiate(prefabStage, placeToSpawn);
+            GameObject auxStage = Instantiate(stagePrefab, placeToSpawn);
             //Le asignamos una informacion basica de jugador
             //Tambien habría que pasarle desde base de datos si esta completada la mision o no o si ha reclamado la recompensda o n
             auxStage.GetComponent<StageTournament>().clear = true;
 
             auxStage.GetComponent<StageTournament>().basicInfo = stage;
 
-            Stages.Add(auxStage.GetComponent<StageTournament>());
+            stages.Add(auxStage.GetComponent<StageTournament>());
         }
     }
 
     public void UpdateUI()
     {
-        teamImage.sprite = info.artworkTeam;
-        nameTeam.text = info.nameTeam;
+        teamImage.sprite = info.teamArtwork;
+        teamName.text = info.teamName;
     }
 }

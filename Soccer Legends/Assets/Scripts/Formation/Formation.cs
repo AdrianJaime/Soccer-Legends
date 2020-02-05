@@ -6,9 +6,19 @@ public class Formation : MonoBehaviour
 {
 
     public EquipCardFormationLogic[] arraySlots = new EquipCardFormationLogic[4];
+    public List<CharacterBasic> arrayCharactersTeam;
     public CharacterBasic[] listOfCharacters = new CharacterBasic[4];
     public bool[] arrayEquiped = new bool[4];
 
+    private void Awake()
+    {
+        int a = 0;
+        foreach(CharacterBasic character in arrayCharactersTeam)
+        {
+            character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
+            a++;
+        }
+    }
     // public bool preferent;
     public int isUsed(CharacterBasic _aux)
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerSelector_PlayerManager : MonoBehaviour
 {
@@ -31,5 +32,11 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
         characterSelected.Remove(player);
         if (confirmationButton.IsInteractable()==true)
             confirmationButton.interactable = false;      
+    }
+
+    public void OnConfirmationClick()
+    {
+        StaticInfo.teamSelectedToPlay = characterSelected;
+        SceneManager.LoadScene("FormationScene");
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Photon.Realtime;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PVE_Manager : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class PVE_Manager : MonoBehaviour
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
+    private List<int> touchesIdx;
+    private int fingerIdx = -1;
+    private float enemySpecialBar = 0;
+    private int energySegments;
 
     private float timeStart = 0;
     private int fightingPlayer = 0, fightingIA = 0;
@@ -24,22 +29,44 @@ public class PVE_Manager : MonoBehaviour
 
     Vector2[] swipes;
 
+    //Hardcoded bug fixes
+    int frameCount = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+        timeStart = Time.time;
+        touchesIdx = new List<int>();
+        fingerIdx = -1;
         swipes = new Vector2[2];
+        energySegments = energyBar.transform.GetChild(1).childCount - 1;
+        Debug.Log(energySegments);
         SpawnPlayers();
     }
 
     private void Update()
     {
-        if (!GameOn && Input.touchCount > 0)
+        if (touchesIdx.Count == 1 && Input.touchCount == 0)
+        {
+            frameCount++;
+            if (frameCount == 2)
+            {
+                touchesIdx.Clear();
+                frameCount = 0;
+            }
+        }
+        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Debug.Log("Finger idx->" + fingerIdx.ToString());
+        Debug.Log("Touches->" + touchesIdx.Count.ToString());
+        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
             switch(state)
             {
                 case fightState.FIGHT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
-                    Touch swipe = Input.GetTouch(0);
+                    if (fingerIdx != 0) fingerIdx = getTouchIdx();
+                    Debug.Log("Inside " + fingerIdx.ToString());
+                    Touch swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
                         swipes[0] = swipe.position;
@@ -70,13 +97,13 @@ public class PVE_Manager : MonoBehaviour
                         }
                         if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir)
                         {
-                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense);
-                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
-                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
-                            Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name +
-                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
+                            int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() +
+                            " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
+                            Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name + "has a deffense of " + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
+                            " and a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
                             (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 
-                            playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
+                            playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense).ToString());
                             Debug.Log("Random value-> " + randomValue.ToString());
                             if (randomValue > playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique)
                             {
@@ -86,11 +113,14 @@ public class PVE_Manager : MonoBehaviour
 
                         }
                         else playerWithoutBall.GetComponent<MyPlayer_PVE>().Lose();
+                        releaseTouchIdx(fingerIdx);
+                        fingerIdx = -1;
                     }      
                     break;
                 case fightState.SHOOT:
-                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && energyBar.GetComponent<Scrollbar>().size == 1 ? "Special" : "Normal";
-                    swipe = Input.GetTouch(0);
+                    myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar * energySegments >= 1 ? "Special" : "Normal";
+                    if (fingerIdx != 0) fingerIdx = getTouchIdx();
+                    swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
                         swipes[0] = swipe.position;
@@ -98,7 +128,7 @@ public class PVE_Manager : MonoBehaviour
                     else if (swipe.phase == TouchPhase.Moved)
                     {
                         swipes[1] = swipe.position;
-                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size == 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                         else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
                         Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
@@ -121,30 +151,40 @@ public class PVE_Manager : MonoBehaviour
                         }
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == goalkeeper.GetComponent<MyPlayer_PVE>().fightDir)
                         {
-                            int randomValue = Random.Range(0, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense);
-                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name +
-                            " has a range between 0 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
-                            Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name +
-                            " has a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1).ToString() + " and " +
-                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique +
-                            goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense - 1).ToString());
-                            Debug.Log("Random value-> " + randomValue.ToString());
-                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size = 0;
+                            int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                            Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() +
+                            " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString());
+                            Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name + "has a deffense of " + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
+                            " and a range between " + (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + 1).ToString() + " and " +
+                            (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot +
+                            goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense).ToString());
+                            Debug.Log("Random value-> " + randomValue.ToString());          
                             if(randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
                             {
                                 Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
                             }
                             else
                             {
-                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose(); 
                             }
                         }
                         else
                         {
-                            if(playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
-                            else playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
-                            energyBar.GetComponent<Scrollbar>().size = 0;
+                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                            else
+                            {
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
+                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                            }
+                            energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                         }
+                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
+                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
+                        releaseTouchIdx(fingerIdx);
+                        fingerIdx = -1;
                     }
                     break;
 
@@ -203,7 +243,13 @@ public class PVE_Manager : MonoBehaviour
         }
         else if (GameStarted && GameOn)
         {
-           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += eneregyFill * Time.deltaTime;
+            if(fingerIdx != -1)
+            {
+                releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+            }
+           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += (eneregyFill * Time.deltaTime) / energySegments;
+            if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / energySegments;
         }
     }
 
@@ -245,6 +291,8 @@ public class PVE_Manager : MonoBehaviour
     {
         // if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
         StartGame();
+        releaseTouchIdx(fingerIdx);
+        fingerIdx = -1;
     }
 
     public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
@@ -280,6 +328,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Player.fightDir = null;
             fightingPlayer = _player1;
             fightingIA = _player2;
+            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
     }
 
@@ -310,6 +359,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Player.fightDir = null;
             fightingPlayer = _player1;
             fightingIA = _player2;
+            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
         //MyPlayer_PVE player1;
         //MyPlayer_PVE IA_Player;
@@ -418,11 +468,22 @@ public class PVE_Manager : MonoBehaviour
         return 0;
     }
 
+    public GameObject FindWhoHasTheBall()
+    {
+        for (int i = 0; i < myPlayers.Length; i++)
+        {
+            MyPlayer_PVE player1 = myPlayers[i].GetComponent<MyPlayer_PVE>();
+            MyPlayer_PVE IA_Player = myIA_Players[i].GetComponent<MyPlayer_PVE>();
+            if (player1.ball != null) return player1.gameObject;
+            else if (IA_Player.ball != null) return IA_Player.gameObject;
+        }
+        return null;
+    }
+
     public void UpdateScoreBoard()
     {
         scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
         scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
-        Debug.Log(score[0].ToString() + score[1].ToString());
     }
 
     public void Reposition()
@@ -435,4 +496,41 @@ public class PVE_Manager : MonoBehaviour
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
+
+    public int getTouchIdx()
+    {
+        if (touchesIdx.Count == 0)
+        {
+            touchesIdx.Add(0);
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (!touchesIdx.Contains(i))
+                {
+                    touchesIdx.Add(i);
+                    return i;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void releaseTouchIdx(int idx)
+    {
+        touchesIdx.Remove(idx);
+        //Camera
+        if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx > idx)
+            GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx--;
+        //Manager
+        if (fingerIdx > idx) fingerIdx--;
+
+        //Players
+        if (myPlayers[0].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[0].GetComponent<MyPlayer_PVE>().fingerIdx--;
+        if (myPlayers[1].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[1].GetComponent<MyPlayer_PVE>().fingerIdx--;
+        if (myPlayers[2].GetComponent<MyPlayer_PVE>().fingerIdx > idx) myPlayers[2].GetComponent<MyPlayer_PVE>().fingerIdx--;
+    }
+
+    public int getTotalTouches() { return touchesIdx.Count; }
 }

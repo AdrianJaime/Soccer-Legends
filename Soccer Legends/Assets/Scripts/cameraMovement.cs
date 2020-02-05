@@ -5,8 +5,10 @@ using UnityEngine;
 public class cameraMovement : MonoBehaviour
 {
     private Vector3 startTouch;
+    private Vector3 startTouchWorld;
     private Vector3 lastCamPosition;
     private Vector3 localCamPos;
+    Vector3 offset;
     PVE_Manager mg;
     public int fingerIdx;
 
@@ -56,30 +58,38 @@ public class cameraMovement : MonoBehaviour
         {
             if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
             Touch swipe = Input.GetTouch(fingerIdx);
-            Vector3 actualTouch = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-            if (swipe.phase == TouchPhase.Began)
+            Vector3 actualTouch = new Vector3(swipe.position.x, swipe.position.y, 0);
+            if (startTouch == Vector3.zero)
             {
                 startTouch = actualTouch;
+                startTouchWorld = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                offset = transform.position - startTouchWorld;
+                //if(startTouchWorld.x < transform.position.x) startTouchWorld = new Vector3 ()
             }
 
             else if (swipe.phase == TouchPhase.Moved)
             {
-                Vector3 camPos = transform.localPosition + startTouch;
-                float dist = Vector3.Distance(actualTouch, startTouch);
+                Vector3 camPos = offset + startTouchWorld;//transform.parent.position + lastCamPosition - startTouchWorld;
+                float dist = Vector3.Distance(actualTouch, startTouch) / Screen.width*5;
                 camPos += (startTouch - actualTouch).normalized * dist;
+                Debug.Log("actual " + Screen.width);
 
                 //ransform.position = startTouch + (startTouch - camPos);
-                transform.localPosition = putZAxis(camPos + transform.parent.position);
+                //if(putZAxis(Camera.main.ScreenToWorldPoint(startTouch)))
+                transform.position = putZAxis(camPos);// + startTouchWorld);
+                
                 //ransform.position = Vector3.Lerp(lastCamPosition, camPos, 2 * Time.deltaTime);
             }
             else if(swipe.phase == TouchPhase.Ended)
             {
                 mg.releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
+                startTouchWorld = startTouch = Vector3.zero;
             }
         }
         else
         {
+            Debug.Log("Free Mode");
             transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos, Time.deltaTime);
             lastCamPosition = transform.position;
         }

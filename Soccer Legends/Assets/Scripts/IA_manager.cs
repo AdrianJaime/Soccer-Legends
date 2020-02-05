@@ -6,8 +6,10 @@ using UnityEditor;
 public class IA_manager : MonoBehaviour
 {
     public enum formationPositions { FORWARD, PIVOT, GOALKEEPER}
+    public enum strategy { EQUILIBRATED, OFFENSIVE, DEFFENSIVE }
     enum IA_State { FREE_BALL, PLAYER_HAS_BALL, IA_HAS_BALL}
 
+    public strategy teamStrategy;
     IA_State ia_State;
 
     [SerializeField]
@@ -86,7 +88,54 @@ public class IA_manager : MonoBehaviour
         }
     }
 
-    void deffendAlgorithm(GameObject[] rivalPlayers, Vector3 ballPos)
+    void deffendAlgorithm(GameObject[] _rivalPlayers, Vector3 _ballPos)
+    {
+        switch (teamStrategy)
+        {
+            case strategy.EQUILIBRATED:
+                equilibratedDeffending(_rivalPlayers, _ballPos);
+                break;
+            case strategy.OFFENSIVE:
+                break;
+            case strategy.DEFFENSIVE:
+                break;
+        } 
+    }
+
+    void atackAlgorithm(GameObject[] _rivalPlayers, Vector3 _ballPos)
+    {
+        switch (teamStrategy)
+        {
+            case strategy.EQUILIBRATED:
+                equilibratedAtacking(_rivalPlayers, _ballPos);
+                break;
+            case strategy.OFFENSIVE:
+                break;
+            case strategy.DEFFENSIVE:
+                break;
+        }
+    }
+
+    void processSeparation()
+    {
+        if (!manager.GameOn) return;
+        for (int i = 0; i < ia_players.Length; i++)
+        {
+            Vector2 iaSparationForce, playerSeparationForce;
+            iaSparationForce = playerSeparationForce = Vector2.zero;
+            for (int j = 0; j < ia_players.Length; j++)
+            {
+                if (ia_players[j] != ia_players[i] && Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position) < separationDist)
+                {
+                    ia_players[i].GetComponent<Rigidbody2D>().AddForce((ia_players[j].transform.position - ia_players[i].transform.position).normalized *
+                        (separationDist - Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position)) * -20, ForceMode2D.Force);
+                }
+                else ia_players[i].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            }
+        }
+    }
+
+    void equilibratedDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
@@ -140,7 +189,8 @@ public class IA_manager : MonoBehaviour
 
         //Set objectives
         closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
-        farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y, 0.0f });
+        Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
+        farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
         //Set Pivot
         pivot = ia_players[0];
         Vector2 pivotObjectivePos = Vector2.zero;
@@ -159,12 +209,12 @@ public class IA_manager : MonoBehaviour
         }
     }
 
-    void atackAlgorithm(GameObject[] rivalPlayers, Vector3 ballPos)
+    void equilibratedAtacking(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         GameObject forward_with_ball, forward_without_ball, pivot, goal;
         bool pivotWithBall = false;
         pivot = ia_players[0];
-        if(!playerTeam)goal = GameObject.Find("Goal 1");
+        if (!playerTeam) goal = GameObject.Find("Goal 1");
         else goal = GameObject.Find("Goal 2");
         if (ia_players[1].GetComponent<MyPlayer_PVE>().ball != null)
         {
@@ -175,7 +225,7 @@ public class IA_manager : MonoBehaviour
         {
             forward_with_ball = ia_players[2];
             forward_without_ball = ia_players[1];
-            if(ia_players[0].GetComponent<MyPlayer_PVE>().ball != null)
+            if (ia_players[0].GetComponent<MyPlayer_PVE>().ball != null)
             {
                 pivotWithBall = true;
             }
@@ -197,8 +247,8 @@ public class IA_manager : MonoBehaviour
         if (forward_with_ball.transform.position.x < 0.0f)
         {
             forward_with_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
-            if(Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f,forwardWithoutBall_Y, 0.0f });
+            if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
+                forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
             else forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.x, forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
         }
         else
@@ -216,25 +266,6 @@ public class IA_manager : MonoBehaviour
         else
         {
             pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivot.GetComponent<MyPlayer_PVE>().startPosition.x, pivot.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
-        }
-    }
-
-    void processSeparation()
-    {
-        if (!manager.GameOn) return;
-        for (int i = 0; i < ia_players.Length; i++)
-        {
-            Vector2 iaSparationForce, playerSeparationForce;
-            iaSparationForce = playerSeparationForce = Vector2.zero;
-            for (int j = 0; j < ia_players.Length; j++)
-            {
-                if (ia_players[j] != ia_players[i] && Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position) < separationDist)
-                {
-                    ia_players[i].GetComponent<Rigidbody2D>().AddForce((ia_players[j].transform.position - ia_players[i].transform.position).normalized *
-                        (separationDist - Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position)) * -20, ForceMode2D.Force);
-                }
-                else ia_players[i].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            }
         }
     }
 }

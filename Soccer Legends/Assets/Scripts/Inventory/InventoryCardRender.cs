@@ -36,10 +36,12 @@ public class InventoryCardRender : MonoBehaviour
     }
     public void OpenCharacterInfo()
     {
-        StaticInfo.characterToAcces = characterInfo;
-        StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(2);
-
+        if (characterInfo.owned)
+        {
+            StaticInfo.characterToAcces = characterInfo;
+            StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene("CharacterInfoScene");
+        }
     }
     public void OpenLevelUpMenu()
     {

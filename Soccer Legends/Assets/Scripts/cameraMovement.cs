@@ -85,6 +85,7 @@ public class cameraMovement : MonoBehaviour
                 mg.releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
                 startTouchWorld = startTouch = Vector3.zero;
+                lastCamPosition = transform.position;
             }
         }
         else

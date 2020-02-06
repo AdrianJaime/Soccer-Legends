@@ -21,11 +21,11 @@ public class IA_manager : MonoBehaviour
     [SerializeField]
     float separationDist;
 
-    PVE_Manager manager;
+    PVE_Manager mg;
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<PVE_Manager>();
+        mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
     }
 
     // Update is called once per frame
@@ -42,7 +42,7 @@ public class IA_manager : MonoBehaviour
 
     void checkIA_State()
     {
-        ia_State = (IA_State)manager.HasTheBall();
+        ia_State = (IA_State)mg.HasTheBall();
     }
 
     void processIA()
@@ -51,16 +51,16 @@ public class IA_manager : MonoBehaviour
         switch (ia_State)
         {
             case IA_State.FREE_BALL:
-                if (playerTeam) catchingBallAlgorithm(manager.myIA_Players, ballPosition);
-                else catchingBallAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) catchingBallAlgorithm(mg.myIA_Players, ballPosition);
+                else catchingBallAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.PLAYER_HAS_BALL:
-                if (playerTeam) atackAlgorithm(manager.myIA_Players, ballPosition);
-                else deffendAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) atackAlgorithm(mg.myIA_Players, ballPosition);
+                else deffendAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.IA_HAS_BALL:
-                if (playerTeam) deffendAlgorithm(manager.myIA_Players, ballPosition);
-                else atackAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) deffendAlgorithm(mg.myIA_Players, ballPosition);
+                else atackAlgorithm(mg.myPlayers, ballPosition);
                 break;
             default:
                 break;
@@ -118,7 +118,7 @@ public class IA_manager : MonoBehaviour
 
     void processSeparation()
     {
-        if (!manager.GameOn) return;
+        if (!mg.GameOn) return;
         for (int i = 0; i < ia_players.Length; i++)
         {
             Vector2 iaSparationForce, playerSeparationForce;
@@ -267,5 +267,69 @@ public class IA_manager : MonoBehaviour
         {
             pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivot.GetComponent<MyPlayer_PVE>().startPosition.x, pivot.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
         }
+    }
+
+    public void check_IA_Shoot()
+    {
+        GameObject playerWithBall = null;
+        foreach(GameObject player in mg.myIA_Players)
+        {
+            if (player.GetComponent<MyPlayer_PVE>().ball != null)
+            {
+                playerWithBall = player;
+                break;
+            }
+        }
+        if (!mg.GameOn || playerWithBall == null || (mg.myPlayers[0].transform.position.y > playerWithBall.transform.position.y
+            && mg.myPlayers[1].transform.position.y > playerWithBall.transform.position.y && mg.myPlayers[2].transform.position.y > playerWithBall.transform.position.y))
+        {
+            playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
+            return;
+        }
+
+        GameObject ball = playerWithBall.GetComponent<MyPlayer_PVE>().ball;
+        Vector3 shootingTarget;
+        List<Vector3> closePlayers = new List<Vector3>();
+
+        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        {
+            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != gameObject) closePlayers.Add(mg.myIA_Players[i].transform.position);
+        }
+        while (closePlayers.Count != 0)
+        {
+            shootingTarget = closePlayers[0];
+            float minDist = Vector2.Distance(shootingTarget, playerWithBall.transform.position);
+            if (closePlayers.Count > 1)
+            {
+                for (int i = 0; i < closePlayers.Count; i++)
+                {
+                    //Debug.Log("Player " + (i + 1).ToString() + "-> " + Vector2.Distance(transform.position, closePlayers[i]).ToString());
+                    if (Vector2.Distance(playerWithBall.transform.position, closePlayers[i]) < minDist)
+                    {
+                        // Debug.Log("Target change to-> " + (i + 1).ToString());
+                        shootingTarget = closePlayers[i];
+                        minDist = Vector2.Distance(playerWithBall.transform.position, closePlayers[i]);
+                    }
+                }
+            }
+            RaycastHit2D hit;
+            Vector3 dir = shootingTarget - ball.transform.position;
+            //Debug.Log("Final distance-> " + Vector2.Distance(transform.position, shootingTarget).ToString());
+            hit = Physics2D.Raycast(ball.transform.position, dir, 10);
+            if (hit && hit.transform.parent == playerWithBall.transform.parent && hit.transform.name != playerWithBall.transform.name && !hit.transform.GetComponent<MyPlayer_PVE>().covered)
+            {
+                //Debug.Log(hit.transform.name);
+                //Debug.Log("Shoot distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
+                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { hit.transform.position.x, hit.transform.position.y - 0.25f, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+                closePlayers.Clear();
+            }
+            else
+            {
+                // Debug.Log("Unable to pass to player with distance-> " + Vector2.Distance(transform.position, hit.transform.position).ToString());
+                closePlayers.Remove(shootingTarget);
+            }
+        }
+
+        if (ball != null) playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
     }
 }

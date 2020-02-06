@@ -124,7 +124,7 @@ namespace DanielLochner.Assets.SimpleScrollSnap
         #endregion
 
         #region Methods
-        private void Start()
+        public void SetUp()
         {
             if (Validate())
             {
@@ -225,7 +225,7 @@ namespace DanielLochner.Assets.SimpleScrollSnap
 
             return valid;
         }
-        public void Setup(bool updatePosition)
+        private void Setup(bool updatePosition)
         {
             if (NumberOfPanels == 0) return;
 

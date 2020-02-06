@@ -529,6 +529,7 @@ MonoBehaviour:
   banners:
   - {fileID: 11400000, guid: cb1d3151db9d3e74bb4ffe676c2f49ef, type: 2}
   - {fileID: 11400000, guid: cb1d3151db9d3e74bb4ffe676c2f49ef, type: 2}
+  - {fileID: 11400000, guid: cb1d3151db9d3e74bb4ffe676c2f49ef, type: 2}
   prefabSmallBanner: {fileID: 7316614037205590397, guid: 170c5f73b09bb2d46890f5db6938a37a,
     type: 3}
   prefabBigBanner: {fileID: 5953722132352832436, guid: d10ab156333aed44abf995fb7d7f03bc,
@@ -627,6 +628,106 @@ PrefabInstance:
     - target: {fileID: 1469405989811218, guid: e49374da8d55bd4429770405940b3c9e, type: 3}
       propertyPath: m_Name
       value: Banner Scroll
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.000030517578
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 990.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1291.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: infinitelyScroll
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: swipeGestures
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 308256155}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangeScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelChanging.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: MainMenuScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 924253389}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangePanelSync
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: automaticLayoutSpacing
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 224199893423832796, guid: e49374da8d55bd4429770405940b3c9e,
         type: 3}
@@ -732,36 +833,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.000030517578
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 990.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 1291.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: infinitelyScroll
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: swipeGestures
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e49374da8d55bd4429770405940b3c9e, type: 3}
@@ -985,6 +1056,76 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'Shortcut Scroll '
       objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 693.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.000049591
+      objectReference: {fileID: 0}
+    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 167.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: automaticLayoutSpacing
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: infinitelyScroll
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: infiniteScrollingEndSpacing
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: startingPanel
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 924253389}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ChangePanelSync
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: onPanelSelected.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 224199893423832796, guid: e49374da8d55bd4429770405940b3c9e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1089,46 +1230,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 693.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.000049591
-      objectReference: {fileID: 0}
-    - target: {fileID: 224913017787380488, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 167.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: automaticLayoutSpacing
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: infinitelyScroll
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: infiniteScrollingEndSpacing
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: startingPanel
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114376197996893504, guid: e49374da8d55bd4429770405940b3c9e,
         type: 3}

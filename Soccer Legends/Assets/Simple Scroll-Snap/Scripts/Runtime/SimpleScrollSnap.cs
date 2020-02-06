@@ -29,6 +29,7 @@ namespace DanielLochner.Assets.SimpleScrollSnap
         private Canvas canvas;
         private CanvasScaler canvasScaler;
 
+
         public MovementType movementType = MovementType.Fixed;
         public MovementAxis movementAxis = MovementAxis.Horizontal;
         public bool automaticallyLayout = true;
@@ -51,9 +52,14 @@ namespace DanielLochner.Assets.SimpleScrollSnap
         public bool hardSnap = true;
         public UnityEvent onPanelChanged, onPanelSelecting, onPanelSelected, onPanelChanging;
         public List<TransitionEffect> transitionEffects = new List<TransitionEffect>();
+        private bool canInvokeOnPanelSelected=true;
         #endregion
 
         #region Properties
+        public void setCanInvokeOnPanelSelected(bool _aux)
+        {
+           canInvokeOnPanelSelected=_aux;
+        }
         public int CurrentPanel
         {
             get { return currentPanel; }
@@ -124,6 +130,10 @@ namespace DanielLochner.Assets.SimpleScrollSnap
         #endregion
 
         #region Methods
+        private void Start()
+        {
+                SetUp();
+        }
         public void SetUp()
         {
             if (Validate())
@@ -501,10 +511,11 @@ namespace DanielLochner.Assets.SimpleScrollSnap
                 onPanelChanged.Invoke();
                 currentPanel = targetPanel;
             }
-            else if (ScrollRect.velocity != Vector2.zero)
+            else if (ScrollRect.velocity.magnitude != 0) //(targetPanel!=currentPanel) //he tocado esta parte antes era (ScrollRect.velocity.magnitude != 0) pero no funcionaba
             {
                 onPanelChanging.Invoke();
             }
+
         }
 
         private void OnSelectingAndSnapping()
@@ -683,11 +694,17 @@ namespace DanielLochner.Assets.SimpleScrollSnap
             }
         }
 
+
+
         public void GoToPanel(int panelNumber)
         {
             targetPanel = panelNumber;
             selected = true;
-            onPanelSelected.Invoke();
+            if (canInvokeOnPanelSelected == true)
+            {
+                onPanelSelected.Invoke();
+
+            }
 
             if (pagination != null)
             {

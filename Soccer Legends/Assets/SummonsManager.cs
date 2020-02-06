@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SummonsManager : MonoBehaviour
 {
@@ -23,8 +24,13 @@ public class SummonsManager : MonoBehaviour
             {
                 GameObject actualBanner = Instantiate(prefabSmallBanner, transformSmallBanner);
                 actualBanner.GetComponent<BannerBASE>().basicInfo = banner;
+
                 GameObject actualBanner2 = Instantiate(prefabBigBanner, transformBigBanner);
                 actualBanner2.GetComponent<BannerBASE>().basicInfo = banner;
+
+                Color aux = new Color(Random.Range(0,255),Random.Range(0,255),Random.Range(0,255));
+
+
             }
 
         }
@@ -39,4 +45,31 @@ public class SummonsManager : MonoBehaviour
         smallBannerScroll.SetUp();
         bigBannerScroll.SetUp();
     }
+
+
+    public void PrintTest(bool auc)
+    {
+
+        if (auc)
+            Debug.Log("Im CHANGING");
+        else
+            Debug.Log("ive CHANGED");
+    }
+
+    public void ChangePanelSync()
+    {
+        if(bigBannerScroll.CurrentPanel!= bigBannerScroll.TargetPanel)
+        {
+            smallBannerScroll.setCanInvokeOnPanelSelected(false);
+            smallBannerScroll.GoToPanel(bigBannerScroll.TargetPanel);
+        }
+        else if (smallBannerScroll.CurrentPanel!= smallBannerScroll.TargetPanel)
+        {
+            bigBannerScroll.setCanInvokeOnPanelSelected( false);
+            bigBannerScroll.GoToPanel(smallBannerScroll.TargetPanel);
+        }
+        bigBannerScroll.setCanInvokeOnPanelSelected(true);
+        smallBannerScroll.setCanInvokeOnPanelSelected(true);
+    }
+
 }

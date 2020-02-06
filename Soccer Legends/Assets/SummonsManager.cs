@@ -18,6 +18,9 @@ public class SummonsManager : MonoBehaviour
 
     private void SetUpSummons()
     {
+
+        // LEER BANNERS DE BASE DE DATOS Y ACTUALIZAR LISTA BANNERS.
+
         foreach(BannerInfo banner in banners)
         {
             if (banner != null)
@@ -44,16 +47,6 @@ public class SummonsManager : MonoBehaviour
    
         smallBannerScroll.SetUp();
         bigBannerScroll.SetUp();
-    }
-
-
-    public void PrintTest(bool auc)
-    {
-
-        if (auc)
-            Debug.Log("Im CHANGING");
-        else
-            Debug.Log("ive CHANGED");
     }
 
     public void ChangePanelSync()

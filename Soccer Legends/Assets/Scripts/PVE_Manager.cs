@@ -15,6 +15,7 @@ public class PVE_Manager : MonoBehaviour
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
+    public GameObject lastPlayer;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
@@ -40,7 +41,6 @@ public class PVE_Manager : MonoBehaviour
         fingerIdx = -1;
         swipes = new Vector2[2];
         energySegments = energyBar.transform.GetChild(1).childCount - 1;
-        Debug.Log(energySegments);
         SpawnPlayers();
     }
 
@@ -56,8 +56,7 @@ public class PVE_Manager : MonoBehaviour
             }
         }
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        Debug.Log("Finger idx->" + fingerIdx.ToString());
-        Debug.Log("Touches->" + touchesIdx.Count.ToString());
+        //Debug.Log("Touches->" + touchesIdx.Count.ToString());
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
             switch(state)
@@ -65,7 +64,6 @@ public class PVE_Manager : MonoBehaviour
                 case fightState.FIGHT:
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
                     if (fingerIdx != 0) fingerIdx = getTouchIdx();
-                    Debug.Log("Inside " + fingerIdx.ToString());
                     Touch swipe = Input.GetTouch(fingerIdx);
                     if (swipe.phase == TouchPhase.Began)
                     {
@@ -165,8 +163,7 @@ public class PVE_Manager : MonoBehaviour
                             }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose(); 
                             }
                         }
@@ -175,8 +172,7 @@ public class PVE_Manager : MonoBehaviour
                             if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
                             }
                             energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
@@ -317,7 +313,19 @@ public class PVE_Manager : MonoBehaviour
     {
         MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
-        if (!directionButtons.activeSelf)
+        if(player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
+        {
+            player1.ball = GameObject.FindGameObjectWithTag("Ball");
+            player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+            IA_Player.GetComponent<MyPlayer_PVE>().Lose();
+        }
+        else if(IA_Player.formationPos == IA_manager.formationPositions.GOALKEEPER)
+        {
+            IA_Player.ball = GameObject.FindGameObjectWithTag("Ball");
+            IA_Player.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+            player1.GetComponent<MyPlayer_PVE>().Lose();
+        }
+        else if (!directionButtons.activeSelf)
         {
             GameOn = false;
             directionButtons.SetActive(true);
@@ -337,6 +345,7 @@ public class PVE_Manager : MonoBehaviour
         if (isLocal) score[0]++;
         else score[1]++;
 
+        lastPlayer = null;
         UpdateScoreBoard();
         Reposition();
         //photonView.RPC("UpdateScoreBoard", RpcTarget.AllViaServer);
@@ -359,7 +368,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Player.fightDir = null;
             fightingPlayer = _player1;
             fightingIA = _player2;
-            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
         //MyPlayer_PVE player1;
         //MyPlayer_PVE IA_Player;

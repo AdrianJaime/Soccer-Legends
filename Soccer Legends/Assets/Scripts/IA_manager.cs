@@ -5,7 +5,7 @@ using UnityEditor;
 
 public class IA_manager : MonoBehaviour
 {
-    public enum formationPositions { FORWARD, PIVOT, GOALKEEPER}
+    public enum formationPositions { ALA, PIVOT, CIERRE, GOALKEEPER}
     public enum strategy { EQUILIBRATED, OFFENSIVE, DEFFENSIVE }
     enum IA_State { FREE_BALL, PLAYER_HAS_BALL, IA_HAS_BALL}
 
@@ -21,11 +21,11 @@ public class IA_manager : MonoBehaviour
     [SerializeField]
     float separationDist;
 
-    PVE_Manager manager;
+    PVE_Manager mg;
 
     private void Start()
     {
-        manager = GameObject.Find("Manager").GetComponent<PVE_Manager>();
+        mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
     }
 
     // Update is called once per frame
@@ -42,7 +42,7 @@ public class IA_manager : MonoBehaviour
 
     void checkIA_State()
     {
-        ia_State = (IA_State)manager.HasTheBall();
+        ia_State = (IA_State)mg.HasTheBall();
     }
 
     void processIA()
@@ -51,16 +51,20 @@ public class IA_manager : MonoBehaviour
         switch (ia_State)
         {
             case IA_State.FREE_BALL:
-                if (playerTeam) catchingBallAlgorithm(manager.myIA_Players, ballPosition);
-                else catchingBallAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) catchingBallAlgorithm(mg.myIA_Players, ballPosition);
+                else catchingBallAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.PLAYER_HAS_BALL:
-                if (playerTeam) atackAlgorithm(manager.myIA_Players, ballPosition);
-                else deffendAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) atackAlgorithm(mg.myIA_Players, ballPosition);
+                else deffendAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.IA_HAS_BALL:
-                if (playerTeam) deffendAlgorithm(manager.myIA_Players, ballPosition);
-                else atackAlgorithm(manager.myPlayers, ballPosition);
+                if (playerTeam) deffendAlgorithm(mg.myIA_Players, ballPosition);
+                else
+                {
+                    atackAlgorithm(mg.myPlayers, ballPosition);
+                    //check_IA_Shoot();//if (Time.frameCount % (60 * Random.Range(1, 4)) == 0) 
+                }
                 break;
             default:
                 break;
@@ -72,7 +76,7 @@ public class IA_manager : MonoBehaviour
         Vector2 IA_ObjectivePos = Vector2.zero;
         for (int i = 0; i < ia_players.Length; i++)
         {
-            if (ia_players[i].GetComponent<MyPlayer_PVE>().formationPos == formationPositions.PIVOT &&
+            if (ia_players[i].GetComponent<MyPlayer_PVE>().formationPos == formationPositions.CIERRE &&
                 (Vector2.Distance(ia_players[i].transform.position, ballPos) > Vector2.Distance(ia_players[i + 1].transform.position, ballPos) ||
                     Vector2.Distance(ia_players[i].transform.position, ballPos) > Vector2.Distance(ia_players[i + 2].transform.position, ballPos)))
             {
@@ -118,7 +122,7 @@ public class IA_manager : MonoBehaviour
 
     void processSeparation()
     {
-        if (!manager.GameOn) return;
+        if (!mg.GameOn) return;
         for (int i = 0; i < ia_players.Length; i++)
         {
             Vector2 iaSparationForce, playerSeparationForce;
@@ -147,7 +151,7 @@ public class IA_manager : MonoBehaviour
         {
             playerPositions[i] = rivalPlayers[i].transform.position;
             //We also check if there is any player inside the IA team field for the pivot position
-            if (!rival_in_our_Camp && playerPositions[i].y > 0.0f) rival_in_our_Camp = true;
+            if (!rival_in_our_Camp && Vector2.Distance(playerPositions[i], rivalPlayers[i].GetComponent<MyPlayer_PVE>().goal.transform.position) < 7.5f) rival_in_our_Camp = true;
             if (rivalPlayers[i].GetComponent<MyPlayer_PVE>().ball != null)
             {
                 playerWithBall = rivalPlayers[i];
@@ -188,9 +192,17 @@ public class IA_manager : MonoBehaviour
         }
 
         //Set objectives
-        closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
-        Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
-        farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
+        if (playerWithBall.GetComponent<MyPlayer_PVE>().formationPos != formationPositions.GOALKEEPER)
+        {
+            closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
+            farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
+        }
+        else
+        {
+            farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, (farForward.GetComponent<MyPlayer_PVE>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
+            closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y, 0.0f });
+        }
         //Set Pivot
         pivot = ia_players[0];
         Vector2 pivotObjectivePos = Vector2.zero;
@@ -211,61 +223,266 @@ public class IA_manager : MonoBehaviour
 
     void equilibratedAtacking(GameObject[] rivalPlayers, Vector3 ballPos)
     {
-        GameObject forward_with_ball, forward_without_ball, pivot, goal;
-        bool pivotWithBall = false;
-        pivot = ia_players[0];
-        if (!playerTeam) goal = GameObject.Find("Goal 1");
-        else goal = GameObject.Find("Goal 2");
-        if (ia_players[1].GetComponent<MyPlayer_PVE>().ball != null)
+        if (transform.GetChild(3).GetComponent<MyPlayer_PVE>().ball == null)
         {
-            forward_with_ball = ia_players[1];
-            forward_without_ball = ia_players[2];
-        }
-        else
-        {
-            forward_with_ball = ia_players[2];
-            forward_without_ball = ia_players[1];
-            if (ia_players[0].GetComponent<MyPlayer_PVE>().ball != null)
+            GameObject forward_with_ball, forward_without_ball, cierre, goal;
+            bool cierreWithBall = false;
+            cierre = ia_players[0];
+            if (!playerTeam) goal = GameObject.Find("Goal 1");
+            else goal = GameObject.Find("Goal 2");
+            if (ia_players[1].GetComponent<MyPlayer_PVE>().ball != null)
             {
-                pivotWithBall = true;
+                forward_with_ball = ia_players[1];
+                forward_without_ball = ia_players[2];
+            }
+            else
+            {
+                forward_with_ball = ia_players[2];
+                forward_without_ball = ia_players[1];
+                if (ia_players[0].GetComponent<MyPlayer_PVE>().ball != null)
+                {
+                    cierreWithBall = true;
+                }
+            }
+
+            float forwardWithBall_Y, forwardWithoutBall_Y;
+            forwardWithBall_Y = forwardWithoutBall_Y = goal.transform.position.y;
+
+            if (cierreWithBall)
+            {
+                if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(cierre.transform.position, goal.transform.position) && Vector2.Distance(forward_with_ball.transform.position, cierre.transform.position) >= 2)
+                    forwardWithBall_Y = cierre.transform.position.y;
+                if (Vector2.Distance(forward_without_ball.transform.position, goal.transform.position) < Vector2.Distance(cierre.transform.position, goal.transform.position) && Vector2.Distance(forward_without_ball.transform.position, cierre.transform.position) >= 2)
+                    forwardWithoutBall_Y = cierre.transform.position.y;
+
+            }
+
+
+            if (forward_with_ball.transform.position.x < 0.0f)
+            {
+                forward_with_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
+                if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
+                    forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.x, forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
+            }
+            else
+            {
+                forward_with_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
+                if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
+                    forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.x, forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
+            }
+            if (Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
+                Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
+            {
+                cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, 0.0f, 0.0f });
+            }
+            else
+            {
+                cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { cierre.GetComponent<MyPlayer_PVE>().startPosition.x, cierre.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
             }
         }
-
-        float forwardWithBall_Y, forwardWithoutBall_Y;
-        forwardWithBall_Y = forwardWithoutBall_Y = goal.transform.position.y;
-
-        if (pivotWithBall)
+        else
         {
-            if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(pivot.transform.position, goal.transform.position) && Vector2.Distance(forward_with_ball.transform.position, pivot.transform.position) >= 2)
-                forwardWithBall_Y = pivot.transform.position.y;
-            if (Vector2.Distance(forward_without_ball.transform.position, goal.transform.position) < Vector2.Distance(pivot.transform.position, goal.transform.position) && Vector2.Distance(forward_without_ball.transform.position, pivot.transform.position) >= 2)
-                forwardWithoutBall_Y = pivot.transform.position.y;
+            for(int i = 0; i < ia_players.Length; i++)
+            {
+                MyPlayer_PVE player = ia_players[i].GetComponent<MyPlayer_PVE>();
+                player.MoveTo(new float[] { player.startPosition.x, player.startPosition.y, 0.0f });
+            }
+        }
+    }
 
+    public void check_IA_Shoot()
+    {
+        GameObject playerWithBall = null;
+        foreach(GameObject player in mg.myIA_Players)
+        {
+            if (player.GetComponent<MyPlayer_PVE>().ball != null)
+            {
+                playerWithBall = player;
+                break;
+            }
+        }
+        if (!mg.GameOn || playerWithBall == null || (mg.myPlayers[0].transform.position.y > playerWithBall.transform.position.y
+            && mg.myPlayers[1].transform.position.y > playerWithBall.transform.position.y && mg.myPlayers[2].transform.position.y > playerWithBall.transform.position.y
+            && playerWithBall.transform.position.y > -4))
+        {
+            playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
+            return;
         }
 
+        ;
 
-        if (forward_with_ball.transform.position.x < 0.0f)
+        switch (playerWithBall.transform.GetComponent<MyPlayer_PVE>().formationPos)
         {
-            forward_with_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
-            if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
-            else forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.x, forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
+            case formationPositions.CIERRE:
+                if (Random.Range(1, 101) > 90) playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
+                else passToPlayer(playerWithBall);
+                break;
+            case formationPositions.ALA:
+                if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) > 90) passToPlayer(playerWithBall);
+                else playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
+                break;
+            case formationPositions.PIVOT:
+                float randVal = Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101);
+                Debug.Log(randVal);
+                if (randVal > 90) shootToGoal(playerWithBall);
+                else passToPlayer(playerWithBall);
+                break;
+            case formationPositions.GOALKEEPER:
+                passToPlayer(playerWithBall);
+                break;
+        }
+
+       //passToPlayer(playerWithBall);
+    }
+
+    void passToPlayer(GameObject playerWithBall)
+    {
+        GameObject ball = playerWithBall.GetComponent<MyPlayer_PVE>().ball;
+        Vector3 shootingTarget;
+        List<Vector3> closePlayers = new List<Vector3>();
+        playerWithBall.GetComponent<Collider2D>().enabled = false;
+
+        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        {
+            switch (playerWithBall.transform.GetComponent<MyPlayer_PVE>().formationPos)
+            {
+                case formationPositions.CIERRE:
+                    switch (teamStrategy)
+                    {
+                        case strategy.EQUILIBRATED:
+                            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            break;
+                        case strategy.OFFENSIVE:
+                            break;
+                        case strategy.DEFFENSIVE:
+                            break;
+                    }
+                    break;
+                case formationPositions.ALA:
+                    switch (teamStrategy)
+                    {
+                        case strategy.EQUILIBRATED:
+                            if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
+                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            break;
+                        case strategy.OFFENSIVE:
+                            break;
+                        case strategy.DEFFENSIVE:
+                            break;
+                    }
+                    break;
+                case formationPositions.PIVOT:
+                    switch (teamStrategy)
+                    {
+                        case strategy.EQUILIBRATED:
+                            if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
+                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            break;
+                        case strategy.OFFENSIVE:
+                            break;
+                        case strategy.DEFFENSIVE:
+                            break;
+                    }
+                    break;
+                case formationPositions.GOALKEEPER:
+                    switch (teamStrategy)
+                    {
+                        case strategy.EQUILIBRATED:
+                            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            break;
+                        case strategy.OFFENSIVE:
+                            break;
+                        case strategy.DEFFENSIVE:
+                            break;
+                    }
+                    break;
+            }
+        }
+        while (closePlayers.Count != 0)
+        {
+            shootingTarget = closePlayers[0];
+            float minDist = Vector2.Distance(shootingTarget, playerWithBall.transform.position);
+            if (closePlayers.Count > 1)
+            {
+                for (int i = 0; i < closePlayers.Count; i++)
+                {
+                    Debug.Log("Player " + (i + 1).ToString() + "-> " + Vector2.Distance(playerWithBall.transform.position, closePlayers[i]).ToString());
+                    if (Vector2.Distance(playerWithBall.transform.position, closePlayers[i]) < minDist)
+                    {
+                        Debug.Log("Target change to-> " + (i + 1).ToString());
+                        shootingTarget = closePlayers[i];
+                        minDist = Vector2.Distance(playerWithBall.transform.position, closePlayers[i]);
+                    }
+                }
+            }
+            RaycastHit2D hit;
+            Vector3 dir = shootingTarget - ball.transform.position;
+            Debug.Log("Final distance-> " + Vector2.Distance(playerWithBall.transform.position, shootingTarget).ToString());
+            hit = Physics2D.Raycast(ball.transform.position, dir, 10);
+            if (hit && hit.transform.parent == playerWithBall.transform.parent && hit.transform.name != playerWithBall.transform.name && !hit.transform.GetComponent<MyPlayer_PVE>().covered)
+            {
+                Debug.Log(hit.transform.name + "of team " + hit.transform.parent.name + "selected to pass");
+                Debug.Log("Shoot distance-> " + Vector2.Distance(playerWithBall.transform.position, hit.transform.position).ToString());
+                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { hit.transform.position.x, hit.transform.position.y - 0.25f, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+                closePlayers.Clear();
+            }
+            else
+            {
+                if (hit)
+                {
+                    Debug.Log("Unable to pass to player with distance-> " + Vector2.Distance(playerWithBall.transform.position, hit.transform.position).ToString());
+                    //if (hit.transform.parent != playerWithBall.transform.parent) 
+                    //Debug.Log("Reason: Target intercepted with " + hit.transform.name + "of team " +
+                    //hit.transform.parent.name);
+                    //else if (!hit.transform.GetComponent<MyPlayer_PVE>().covered)
+                    //    Debug.Log("Reason: Target covered");
+                }
+                else
+                {
+                    Debug.Log(shootingTarget.ToString() + " not Found");
+                }
+                closePlayers.Remove(shootingTarget);
+            }
+        }
+        if(playerWithBall.transform.GetComponent<MyPlayer_PVE>().ball != null)
+        {
+
+            switch (playerWithBall.transform.GetComponent<MyPlayer_PVE>().formationPos)
+            {
+                case formationPositions.CIERRE:
+                case formationPositions.PIVOT:
+                    playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
+                    break;
+                case formationPositions.ALA:
+                    if(playerWithBall.transform.position.y < -4)shootToGoal(playerWithBall);
+                    break;
+                case formationPositions.GOALKEEPER:
+                    Vector2 randShoot = new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(1.0f, 10.0f));
+                    playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+                    break;
+            }
+        }
+        playerWithBall.GetComponent<Collider2D>().enabled = true;
+    }
+
+    void shootToGoal(GameObject playerWithBall)
+    {
+        Debug.Log("Shooting to goal");
+
+        
+
+        if(mg.myIA_Players[3].transform.position.x < 0)
+        {
+            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x +0.5f,1.5f), -7.5f);
+            playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
         }
         else
         {
-            forward_with_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
-            if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
-            else forward_without_ball.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.x, forward_without_ball.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
+            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x - 0.5f, -1.5f), -7.5f);
+            playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
         }
-        if (Vector2.Distance(pivot.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
-            Vector2.Distance(pivot.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-        {
-            pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x, goal.transform.position.y + 4.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
-        }
-        else
-        {
-            pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivot.GetComponent<MyPlayer_PVE>().startPosition.x, pivot.GetComponent<MyPlayer_PVE>().startPosition.y, 0.0f });
-        }
+
     }
 }

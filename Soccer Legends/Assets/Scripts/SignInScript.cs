@@ -31,7 +31,7 @@ public class SignInScript : MonoBehaviour
         txt.text = "Pressed";
         // Initialize Firebase Auth
         Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-
+        txt.text = "He pasado";
         // Sign In and Get a server auth code.
         UnityEngine.Social.localUser.Authenticate((bool success) => {
             if (!success)

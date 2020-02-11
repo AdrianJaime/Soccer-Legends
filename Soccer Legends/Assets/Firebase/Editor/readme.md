@@ -162,6 +162,19 @@ Support
 
 Release Notes
 -------------
+### 6.10.0
+  - Overview
+    - Auth bug fixes and resource generation improvements.
+  - Changes
+    - Auth (iOS): Enabled the method OAuthProvider.GetCredential. This method
+      takes a nonce parameter as required by Apple Sign-in.
+    - Auth (Desktop): Fixed a deadlock that could cause the Unity Editor to
+      freeze when disposing FirebaseAuth.
+    - Editor: Python 3 compatibility for resource generation script and added
+      a fallback to use the Python interpreter on Windows 7/8.
+    - Editor: Removed debug logging when the resource generator script is
+      executed.
+
 ### 6.9.0
   - Overview
     - Updated dependencies, added support for Apple Sign-in to Auth,

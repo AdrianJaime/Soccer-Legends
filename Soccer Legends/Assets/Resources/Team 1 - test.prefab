@@ -268,8 +268,8 @@ GameObject:
   - component: {fileID: 4340053468883620264}
   - component: {fileID: 8838699179085756569}
   - component: {fileID: 476543057083325384}
-  - component: {fileID: 380794550905167648}
   - component: {fileID: 7106109496252222952}
+  - component: {fileID: 386587558505425320}
   m_Layer: 0
   m_Name: Forward 1
   m_TagString: Player
@@ -361,32 +361,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &380794550905167648
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3557163622364493480}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.54, y: 0.9}
-    newSize: {x: 0.54, y: 0.9}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.54, y: 0.9}
-  m_EdgeRadius: 0
 --- !u!114 &7106109496252222952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -416,7 +390,25 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  goal: {fileID: 0}
+  rival_goal: {fileID: 0}
   fingerIdx: -1
+--- !u!58 &386587558505425320
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3557163622364493480}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.5}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &3981013600726818671
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,7 +598,7 @@ GameObject:
   - component: {fileID: 3981013601855209106}
   - component: {fileID: 3981013601855209109}
   - component: {fileID: 4315600174936999466}
-  - component: {fileID: 8929388356311116796}
+  - component: {fileID: 8326061143549990430}
   - component: {fileID: 5526323101604561718}
   m_Layer: 0
   m_Name: Pivot
@@ -699,8 +691,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &8929388356311116796
-BoxCollider2D:
+--- !u!58 &8326061143549990430
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -712,19 +704,9 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.54, y: 0.9}
-    newSize: {x: 0.54, y: 0.9}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0, y: -0.5}
   serializedVersion: 2
-  m_Size: {x: 0.54, y: 0.9}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!114 &5526323101604561718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -754,6 +736,8 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  goal: {fileID: 0}
+  rival_goal: {fileID: 0}
   fingerIdx: -1
 --- !u!1 &3981013602569086292
 GameObject:
@@ -807,6 +791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c455f4b46d2da5489c86935f0402c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teamStrategy: 0
   ia_players:
   - {fileID: 3981013601855209107}
   - {fileID: 3557163622364493480}
@@ -824,8 +809,8 @@ GameObject:
   - component: {fileID: 7921075470876905324}
   - component: {fileID: 2362436270143858915}
   - component: {fileID: 6415165679903509905}
-  - component: {fileID: 988141333457723243}
   - component: {fileID: 2620599966871351047}
+  - component: {fileID: 9090566423877334798}
   m_Layer: 0
   m_Name: Forward 2
   m_TagString: Player
@@ -917,32 +902,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &988141333457723243
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6405541584244281495}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.54, y: 0.9}
-    newSize: {x: 0.54, y: 0.9}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.54, y: 0.9}
-  m_EdgeRadius: 0
 --- !u!114 &2620599966871351047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -972,7 +931,25 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  goal: {fileID: 0}
+  rival_goal: {fileID: 0}
   fingerIdx: -1
+--- !u!58 &9090566423877334798
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405541584244281495}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.5}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &6509667755372946349
 GameObject:
   m_ObjectHideFlags: 0
@@ -1162,8 +1139,8 @@ GameObject:
   - component: {fileID: 1708218351993224767}
   - component: {fileID: 7276447991828144707}
   - component: {fileID: 4826797937057894208}
-  - component: {fileID: 4989256877389021996}
   - component: {fileID: 437891570731934391}
+  - component: {fileID: 5090762970304651818}
   m_Layer: 0
   m_Name: GoalKeeper
   m_TagString: GoalKeeper
@@ -1255,32 +1232,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &4989256877389021996
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7975296050309485964}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.54, y: 0.9}
-    newSize: {x: 0.54, y: 0.9}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.54, y: 0.9}
-  m_EdgeRadius: 0
 --- !u!114 &437891570731934391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,7 +1261,25 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  goal: {fileID: 0}
+  rival_goal: {fileID: 0}
   fingerIdx: -1
+--- !u!58 &5090762970304651818
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7975296050309485964}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.5}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &8550048395722185372
 GameObject:
   m_ObjectHideFlags: 0

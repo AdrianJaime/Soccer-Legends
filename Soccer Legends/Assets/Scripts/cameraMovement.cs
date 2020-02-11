@@ -52,7 +52,6 @@ public class cameraMovement : MonoBehaviour
                 }
             }
         }
-        Debug.Log(found);
         //Movement
         if ((Input.touchCount > mg.getTotalTouches() && found || fingerIdx != -1))
         {
@@ -72,7 +71,6 @@ public class cameraMovement : MonoBehaviour
                 Vector3 camPos = offset + startTouchWorld;//transform.parent.position + lastCamPosition - startTouchWorld;
                 float dist = Vector3.Distance(actualTouch, startTouch) / Screen.width*5;
                 camPos += (startTouch - actualTouch).normalized * dist;
-                Debug.Log("actual " + Screen.width);
 
                 //ransform.position = startTouch + (startTouch - camPos);
                 //if(putZAxis(Camera.main.ScreenToWorldPoint(startTouch)))
@@ -85,11 +83,11 @@ public class cameraMovement : MonoBehaviour
                 mg.releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
                 startTouchWorld = startTouch = Vector3.zero;
+                lastCamPosition = transform.position;
             }
         }
         else
         {
-            Debug.Log("Free Mode");
             transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos, Time.deltaTime);
             lastCamPosition = transform.position;
         }

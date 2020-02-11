@@ -1491,7 +1491,7 @@ PrefabInstance:
     - target: {fileID: 114045889215769492, guid: a1ec3309957318841a5e68ab2178c627,
         type: 3}
       propertyPath: onPanelSelecting.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ChangeEquipSlide
+      value: SetCurrentSlot
       objectReference: {fileID: 0}
     - target: {fileID: 114045889215769492, guid: a1ec3309957318841a5e68ab2178c627,
         type: 3}
@@ -1507,6 +1507,11 @@ PrefabInstance:
         type: 3}
       propertyPath: infiniteScrollingEndSpacing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: a1ec3309957318841a5e68ab2178c627,
+        type: 3}
+      propertyPath: transitionEffects.Array.data[0].showPanel
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224376673849031854, guid: a1ec3309957318841a5e68ab2178c627,
         type: 3}

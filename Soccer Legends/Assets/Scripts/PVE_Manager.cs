@@ -163,8 +163,7 @@ public class PVE_Manager : MonoBehaviour
                             }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose(); 
                             }
                         }
@@ -173,8 +172,7 @@ public class PVE_Manager : MonoBehaviour
                             if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball = GameObject.FindGameObjectWithTag("Ball");
-                                goalkeeper.GetComponent<MyPlayer_PVE>().ball.transform.localPosition = new Vector3(0, -0.5f, 0);
+                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
                             }
                             energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;

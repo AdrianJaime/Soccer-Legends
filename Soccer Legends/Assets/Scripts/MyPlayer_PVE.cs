@@ -48,15 +48,21 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
         else iaPlayer = false;
-        switch (gameObject.name.Substring(0, 5))
+        switch (gameObject.transform.GetSiblingIndex())
         {
-            case "Pivot":
+            case 0:
+                formationPos = IA_manager.formationPositions.CIERRE;
+                gameObject.name = "Cierre";
+                break;
+            case 1:
+                    formationPos = IA_manager.formationPositions.ALA;
+                    gameObject.name = "Ala";
+                break;
+            case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
+                gameObject.name = "Pivot";
                 break;
-            case "Forwa":
-                formationPos = IA_manager.formationPositions.FORWARD;
-                break;
-            case "GoalK":
+            case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 break;
             default:
@@ -64,7 +70,8 @@ public class MyPlayer_PVE : MonoBehaviour
                 break;
         }
         SetName(gameObject.name);
-        stats = new Stats(Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10));
+        if(iaPlayer)stats = new Stats(7, 7,5);
+        else stats = new Stats(5, 3, 3);
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         fightDir = null;
         //if (photonView.IsMine)
@@ -104,23 +111,7 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             checkCollisionDetection();
-            if (iaPlayer && ball != null && goal.bounds.Contains(ball.transform.position))
-            {
-                int ia_Idx = 0;
-                int playerIdx = 3;
-                fightDir = null;
-                for (int i = 0; i < mg.myPlayers.Length; i++)
-                {
-                    if (gameObject == mg.myIA_Players[i])
-                    {
-                        ia_Idx = i;
-                        break;
-                    }
-                }
-                mg.ChooseShoot(playerIdx, ia_Idx);
-            }
-
-            rePositionBall(); //To be implemented
+            //rePositionBall(); //To be implemented
         }
         else if(!stunned && fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
         {
@@ -393,7 +384,7 @@ public class MyPlayer_PVE : MonoBehaviour
         else rivals = mg.myIA_Players;
         foreach (GameObject rival in rivals)
         {
-            if (Vector2.Distance(rival.transform.position - new Vector3(0, 0.25f, 0), transform.position - new Vector3(0, 0.25f, 0)) < detectionDist && !rival.GetComponent<MyPlayer_PVE>().stunned)
+            if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist + 0.1 && !rival.GetComponent<MyPlayer_PVE>().stunned)
             {
                 if (ball != null && rival.GetComponent<MyPlayer_PVE>().ball == null)
                 {
@@ -424,7 +415,7 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount && GameObject.FindGameObjectWithTag("Ball").transform.position.y < transform.position.y + 0.25f)
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist - 0.1f && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);
@@ -443,13 +434,28 @@ public class MyPlayer_PVE : MonoBehaviour
                 int ia_Idx = 3;
                 int playerIdx = 0;
                 fightDir = null;
-                for (int i = 0; i < mg.myPlayers.Length; i++)
-                {
-
-                    if (gameObject == mg.myPlayers[i])
+                if (!iaPlayer) {
+                    for (int i = 0; i < mg.myPlayers.Length; i++)
                     {
-                        playerIdx = i;
-                        break;
+
+                        if (gameObject == mg.myPlayers[i])
+                        {
+                            playerIdx = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    playerIdx = 3;
+                    for (int i = 0; i < mg.myIA_Players.Length; i++)
+                    {
+
+                        if (gameObject == mg.myIA_Players[i])
+                        {
+                            ia_Idx = i;
+                            break;
+                        }
                     }
                 }
                 mg.ChooseShoot(playerIdx, ia_Idx);

@@ -55,7 +55,7 @@ public class PVE_Manager : MonoBehaviour
                 frameCount = 0;
             }
         }
-        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
         Debug.Log("Finger idx->" + fingerIdx.ToString());
         Debug.Log("Touches->" + touchesIdx.Count.ToString());
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))

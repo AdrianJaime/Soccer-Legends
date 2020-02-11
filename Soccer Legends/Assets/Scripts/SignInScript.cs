@@ -6,6 +6,7 @@ using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using Firebase.Auth;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SignInScript : MonoBehaviour
 {
@@ -19,11 +20,15 @@ public class SignInScript : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
         Debug.LogFormat("SignInOnClick: Play Games Configuration initialized");
+        txt.text = "SignInOnClick: Play Games Configuration initialized";
+
     }
 
 
     public void SignInWithPlayGames()
     {
+
+        txt.text = "Pressed";
         // Initialize Firebase Auth
         Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
@@ -66,6 +71,7 @@ public class SignInScript : MonoBehaviour
                 Firebase.Auth.FirebaseUser newUser = task.Result;
                 Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
                 txt.text = newUser.UserId;
+                SceneManager.LoadScene("MainMenuScene");
             });
         });
     }

@@ -21,13 +21,16 @@ public class InventoryCardRender : MonoBehaviour
     private void Start()
     {
         manager = FindObjectOfType<EquipamentManager>();
-        UpdateSlotRender();
+    }
 
+    private void Update()
+    {
+        UpdateSlotRender();
     }
 
     public void OnClickSlot()
     {
-        if(characterInfo.owned)
+        if(characterInfo.info.owned)
           manager.EquipCharacter(characterInfo);     
     }
     public void DisEquip()
@@ -36,7 +39,7 @@ public class InventoryCardRender : MonoBehaviour
     }
     public void OpenCharacterInfo()
     {
-        if (characterInfo.owned)
+        if (characterInfo.info.owned)
         {
             StaticInfo.characterToAcces = characterInfo;
             StaticInfo.previousScene = SceneManager.GetActiveScene().buildIndex;
@@ -65,11 +68,12 @@ public class InventoryCardRender : MonoBehaviour
             nameText.text = characterInfo.basicInfo.nameCharacter;
             artworkImage.sprite = characterInfo.basicInfo.artwork;
 
-            if (!characterInfo.owned)
+            if (!characterInfo.info.owned)
             {
                 artworkImage.color = Color.black;
             }
-
+            else
+                artworkImage.color = Color.white;
         }
     }
 }

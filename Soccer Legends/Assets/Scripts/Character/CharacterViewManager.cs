@@ -22,16 +22,12 @@ public class CharacterViewManager : MonoBehaviour
 
     public void UpdateInterface()
     {
-        if (actualCharacter.basicInfo != null)
-        {
             pivotStat.text = actualCharacter.info.atk.ToString();
             defenseStat.text = actualCharacter.info.def.ToString();
             technicalStat.text = actualCharacter.info.teq.ToString();
             nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
             levelCharacter.text = actualCharacter.info.level.ToString();
             imageCharacter.sprite = actualCharacter.basicInfo.artwork;
-        }
-
     }
 
     public void LoadPreviousScene()

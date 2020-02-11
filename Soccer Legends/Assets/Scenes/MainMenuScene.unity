@@ -1638,26 +1638,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: pagination
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: automaticLayoutSpacing
-      value: 0.111
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: infinitelyScroll
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
-        type: 3}
-      propertyPath: infiniteScrollingEndSpacing
-      value: 0.111
-      objectReference: {fileID: 0}
     - target: {fileID: 224199893423832796, guid: e49374da8d55bd4429770405940b3c9e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1762,6 +1742,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: pagination
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: automaticLayoutSpacing
+      value: 0.111
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: infinitelyScroll
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114045889215769492, guid: e49374da8d55bd4429770405940b3c9e,
+        type: 3}
+      propertyPath: infiniteScrollingEndSpacing
+      value: 0.111
       objectReference: {fileID: 0}
     - target: {fileID: 224376673849031854, guid: e49374da8d55bd4429770405940b3c9e,
         type: 3}
@@ -2169,6 +2169,7 @@ GameObject:
   - component: {fileID: 1567265377}
   - component: {fileID: 1567265376}
   - component: {fileID: 1567265379}
+  - component: {fileID: 1567265380}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2252,6 +2253,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5b4ef1cd31a468bf740df241489b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1567265380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1567265375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9da508ef456b6184ba2affbcd13842b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  txt: {fileID: 0}
 --- !u!1 &1577175026
 GameObject:
   m_ObjectHideFlags: 0

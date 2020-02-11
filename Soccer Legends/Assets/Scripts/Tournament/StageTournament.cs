@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Este Script se encarga de organizar el apartado visual dentro 
@@ -43,5 +44,10 @@ public class StageTournament : MonoBehaviour
         stageName.text = basicInfo.stageName;
         stageArt.sprite = basicInfo.stageArtwork;
         artReward.sprite = basicInfo.imageReward;
+    }
+
+    public void ChangeScene(string _sceneName)
+    {
+        SceneManager.LoadScene(_sceneName);
     }
 }

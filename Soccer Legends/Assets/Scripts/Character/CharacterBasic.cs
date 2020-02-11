@@ -13,7 +13,7 @@ public class CharacterBasic : MonoBehaviour
         public int teq;
         public int def;
         public int level;
-        public int owned;
+        public bool owned;
     }
 
     public CharacterInfo basicInfo;
@@ -24,7 +24,7 @@ public class CharacterBasic : MonoBehaviour
     public int currentExpAwakening = 0;
     public int currentExp=0;
     public int power=1;
-    public bool owned=true;//no se inicializa a estos valores
+
 
     public CharacterBasic()
     {
@@ -35,7 +35,7 @@ public class CharacterBasic : MonoBehaviour
         info = _copy.info;
         currentExp = _copy.currentExp;
         power = _copy.power;
-        owned = _copy.owned;
+       // owned = _copy.owned;
         basicInfo = _copy.basicInfo;
         levelMAX = _copy.levelMAX;
     }
@@ -49,6 +49,7 @@ public class CharacterBasic : MonoBehaviour
     public void LoadCharacterStats(string id)
     {
         //Recupera la info de base de datos a traves del basicInfo->ID
+        Debug.Log("Tus muertos 23");
 
         RestClient.Get<data>("https://soccer-legends-db.firebaseio.com/player/0/characters/"+id+".json").Then(response =>
         {

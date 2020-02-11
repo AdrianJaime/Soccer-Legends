@@ -70,8 +70,8 @@ public class MyPlayer_PVE : MonoBehaviour
                 break;
         }
         SetName(gameObject.name);
-        if(iaPlayer)stats = new Stats(7, 7,5);
-        else stats = new Stats(5, 3, 3);
+        if(iaPlayer)stats = new Stats(5, 3,3);
+        else stats = new Stats(7, 5, 5);
         int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         fightDir = null;
         //if (photonView.IsMine)

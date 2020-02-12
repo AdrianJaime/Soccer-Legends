@@ -100,6 +100,7 @@ public class IA_manager : MonoBehaviour
                 equilibratedDeffending(_rivalPlayers, _ballPos);
                 break;
             case strategy.OFFENSIVE:
+                offensiveDeffending(_rivalPlayers, _ballPos);
                 break;
             case strategy.DEFFENSIVE:
                 break;
@@ -143,8 +144,8 @@ public class IA_manager : MonoBehaviour
     {
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
-        GameObject pivot, closeForward, farForward, playerWithBall, playerCloseToBall;
-        pivot = closeForward = farForward = playerWithBall = playerCloseToBall = playerWithBall = null;
+        GameObject cierre, closeForward, farForward, playerWithBall, playerCloseToBall;
+        cierre = closeForward = farForward = playerWithBall = playerCloseToBall = playerWithBall = null;
 
         //Find player with Ball
         for (int i = 0; i < rivalPlayers.Length; i++)
@@ -201,22 +202,106 @@ public class IA_manager : MonoBehaviour
         else
         {
             farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, (farForward.GetComponent<MyPlayer_PVE>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
-            closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y, 0.0f });
+            closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
         }
-        //Set Pivot
-        pivot = ia_players[0];
+        //Set Cierre
+        cierre = ia_players[0];
         Vector2 pivotObjectivePos = Vector2.zero;
 
         if (rival_in_our_Camp)
         {
-            float y_value = pivot.GetComponent<MyPlayer_PVE>().startPosition.y;
-            if (ballPos.y > pivot.transform.position.y) y_value = ballPos.y;
-            pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
+            float y_value = cierre.GetComponent<MyPlayer_PVE>().startPosition.y;
+            if (ballPos.y > cierre.transform.position.y) y_value = ballPos.y;
+            cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
         }
         else
         {
-            pivotObjectivePos = new Vector2(ballPos.x + pivot.GetComponent<MyPlayer_PVE>().startPosition.x,
-                    ballPos.y + pivot.GetComponent<MyPlayer_PVE>().startPosition.y) / 2.0f;
+            pivotObjectivePos = new Vector2(ballPos.x + cierre.GetComponent<MyPlayer_PVE>().startPosition.x,
+                    ballPos.y + cierre.GetComponent<MyPlayer_PVE>().startPosition.y) / 2.0f;
+            cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
+        }
+    }
+
+    void offensiveDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
+    {
+        Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
+        GameObject pivot, closePlayer, farPlayer, playerWithBall, playerCloseToBall, playerCloseToGoal, goal;
+        pivot = closePlayer = farPlayer = playerWithBall = playerCloseToBall = playerWithBall = null;
+
+        if (!playerTeam) goal = GameObject.Find("Goal 1");
+        else goal = GameObject.Find("Goal 2");
+
+
+        playerCloseToGoal = rivalPlayers[0];
+        float minGoalDist = Vector2.Distance(playerCloseToGoal.transform.position, goal.transform.position);
+
+        //Find player with Ball and closest to goal for the Pivot
+        for (int i = 0; i < rivalPlayers.Length; i++)
+        {
+            playerPositions[i] = rivalPlayers[i].transform.position;
+
+            if(rivalPlayers[i].GetComponent<MyPlayer_PVE>().formationPos != formationPositions.GOALKEEPER &&  Vector2.Distance(playerPositions[i], goal.transform.position) < minGoalDist)
+            {
+                minGoalDist = Vector2.Distance(playerPositions[i], goal.transform.position);
+                playerCloseToGoal = rivalPlayers[i];
+            }
+
+            if (rivalPlayers[i].GetComponent<MyPlayer_PVE>().ball != null)
+            {
+                playerWithBall = rivalPlayers[i];
+                //Now find the closest player to this player with the ball
+                int closestIdx = -1;
+                float closestDist = -1.0f;
+                for (int j = 0; j < rivalPlayers.Length; j++)
+                {
+                    if (j != i)
+                    {
+                        if (closestDist == -1.0f)
+                        {
+                            closestIdx = j;
+                            closestDist = Vector2.Distance(rivalPlayers[i].transform.position, rivalPlayers[j].transform.position);
+                        }
+                        else if (Vector2.Distance(rivalPlayers[i].transform.position, rivalPlayers[j].transform.position) < closestDist)
+                        {
+                            closestIdx = j;
+                            closestDist = Vector2.Distance(rivalPlayers[i].transform.position, rivalPlayers[j].transform.position);
+                        }
+                    }
+                }
+                playerCloseToBall = rivalPlayers[closestIdx];
+            }
+        }
+
+
+        //Find closest Cierre/Ala to player with ball
+        if (Vector2.Distance(ia_players[1].transform.position, playerWithBall.transform.position) < Vector2.Distance(ia_players[0].transform.position, playerWithBall.transform.position))
+        {
+            closePlayer = ia_players[1];
+            farPlayer = ia_players[0];
+        }
+        else
+        {
+            closePlayer = ia_players[0];
+            farPlayer = ia_players[1];
+        }
+
+        //Set Pivot
+        pivot = ia_players[2];
+        Vector2 pivotObjectivePos = Vector2.zero;
+
+        //Set objectives
+        if (playerWithBall.GetComponent<MyPlayer_PVE>().formationPos != formationPositions.GOALKEEPER)
+        {
+            closePlayer.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
+            farPlayer.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
+            pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, playerCloseToGoal.transform.position.y, 0.0f });
+        }
+        else
+        {
+            farPlayer.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, (farPlayer.GetComponent<MyPlayer_PVE>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
+            closePlayer.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
+            pivotObjectivePos = playerCloseToBall.transform.position + (playerWithBall.transform.position - playerCloseToBall.transform.position) / 2.0f;
             pivot.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
         }
     }
@@ -275,7 +360,7 @@ public class IA_manager : MonoBehaviour
             if (Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
                 Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
             {
-                cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, 0.0f, 0.0f });
+                cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { goal.transform.position.x, goal.transform.position.y + 8.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
             }
             else
             {

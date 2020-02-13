@@ -312,7 +312,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1142870539}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2255686296837704552}
+        m_MethodName: CalculateSummon
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1249402813
@@ -665,6 +676,32 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Multiple Summon
+--- !u!114 &316737817088206975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5953722132352832436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 033dd66cd55f4fe4088a26054ae1d87a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basicInfo: {fileID: 0}
+--- !u!114 &2255686296837704552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5953722132352832436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3910feda2a6c2344d8b579ff68a291b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  banner: {fileID: 316737817088206975}
 --- !u!114 &5746810256876692669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -680,19 +717,6 @@ MonoBehaviour:
   imageBanner: {fileID: 1711361734}
   banner: {fileID: 316737817088206975}
   isSmallBanner: 0
---- !u!114 &316737817088206975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5953722132352832436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 033dd66cd55f4fe4088a26054ae1d87a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  basicInfo: {fileID: 0}
 --- !u!1001 &6610289303423018357
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,6 +728,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ContainerScrollBigBanner
+      objectReference: {fileID: 0}
+    - target: {fileID: 658556498662815431, guid: 91d71e727e21c2e49b636582c8a1702a,
+        type: 3}
+      propertyPath: m_CullTransparentMesh
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 658556498662815430, guid: 91d71e727e21c2e49b636582c8a1702a,
         type: 3}

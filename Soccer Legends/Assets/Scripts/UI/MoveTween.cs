@@ -6,7 +6,6 @@ public class MoveTween : MonoBehaviour
 {
     public float time = 0;
     public Vector3 movement;
-    public bool sameButton=false;
 
     Vector3 initialPosition;
 

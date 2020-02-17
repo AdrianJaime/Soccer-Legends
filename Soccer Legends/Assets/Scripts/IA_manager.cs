@@ -26,6 +26,7 @@ public class IA_manager : MonoBehaviour
     private void Start()
     {
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
+        if (!playerTeam) teamStrategy = (strategy)Random.Range(0, 3);
     }
 
     // Update is called once per frame

@@ -12,12 +12,18 @@ public class cameraMovement : MonoBehaviour
     PVE_Manager mg;
     public int fingerIdx;
 
+    GameObject canvas;
+    strategyUI guiInteractions;
+
     // Start is called before the first frame update
     void Start()
     {
         localCamPos = transform.localPosition;
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
         fingerIdx = -1;
+
+        canvas = GameObject.Find("Canvas");
+        guiInteractions = canvas.transform.GetChild(5).GetComponent <strategyUI>();
     }
 
     // Update is called once per frame
@@ -66,7 +72,7 @@ public class cameraMovement : MonoBehaviour
                 //if(startTouchWorld.x < transform.position.x) startTouchWorld = new Vector3 ()
             }
 
-            else if (swipe.phase == TouchPhase.Moved)
+            else if (swipe.phase == TouchPhase.Moved && !guiInteractions.isInteracting())
             {
                 Vector3 camPos = offset + startTouchWorld;//transform.parent.position + lastCamPosition - startTouchWorld;
                 float dist = Vector3.Distance(actualTouch, startTouch) / Screen.width*5;
@@ -88,7 +94,20 @@ public class cameraMovement : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos, Time.deltaTime);
+            Vector3 cameraBallOffset = Vector3.zero;
+            switch (mg.HasTheBall())
+            {
+                case 0:
+                    cameraBallOffset = Vector3.zero;
+                    break;
+                case 1:
+                    cameraBallOffset = new Vector3(0, 3, 0);
+                    break;
+                case 2:
+                    cameraBallOffset = new Vector3(0, -3, 0);
+                    break;
+            }
+            transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + localCamPos + cameraBallOffset, Time.deltaTime);
             lastCamPosition = transform.position;
         }
     }

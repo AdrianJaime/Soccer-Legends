@@ -70,7 +70,7 @@ public class PVE_Manager : MonoBehaviour
                     {
                         swipes[0] = swipe.position;
                     }
-                    else if(swipe.phase == TouchPhase.Moved)
+                    else if(swipe.phase == TouchPhase.Ended)
                     {
                         swipes[1] = swipe.position;
                         if (swipes[0].x > swipes[1].x) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Left";
@@ -124,7 +124,7 @@ public class PVE_Manager : MonoBehaviour
                     {
                         swipes[0] = swipe.position;
                     }
-                    else if (swipe.phase == TouchPhase.Moved)
+                    else if (swipe.phase == TouchPhase.Ended)
                     {
                         swipes[1] = swipe.position;
                         if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";

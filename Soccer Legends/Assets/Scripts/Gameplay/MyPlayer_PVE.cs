@@ -113,13 +113,6 @@ public class MyPlayer_PVE : MonoBehaviour
             checkCollisionDetection();
             //rePositionBall(); //To be implemented
         }
-        else if(!stunned && fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
-        {
-        //    mg.releaseTouchIdx(fingerIdx);
-        //    fingerIdx = -1;
-        //    passFrames = 0;
-        //    GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}
         //else if(!photonView.IsMine)

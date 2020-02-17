@@ -15,8 +15,7 @@ public class IA_manager : MonoBehaviour
     [SerializeField]
     GameObject[] ia_players;
 
-    [SerializeField]
-    bool playerTeam;
+    public bool playerTeam;
 
     [SerializeField]
     float separationDist;

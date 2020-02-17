@@ -32,7 +32,10 @@ public class strategyUI : MonoBehaviour
         stratText.text = mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy.ToString();
         interacting = false;
 
-        if(cooldown == 60) scrollbar.interactable = false;
+        if (isInteracting()) stratText.color = scrollbar.colors.pressedColor;
+        else stratText.color = scrollbar.colors.disabledColor;
+
+        if (cooldown == 60) scrollbar.interactable = false;
         if (cooldown > cooldownRef) scrollbar.interactable = true;
         else cooldown++;
         if (scrollbar.handleRect.position.y != lastButtonPos.y)

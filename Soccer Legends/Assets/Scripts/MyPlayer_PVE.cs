@@ -415,7 +415,7 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist - 0.1f && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);

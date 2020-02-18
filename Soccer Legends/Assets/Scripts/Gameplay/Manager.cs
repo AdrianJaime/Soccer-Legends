@@ -106,7 +106,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
             //IA Rival
             GameObject IA_Rival = Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
-            IA_Rival.GetComponent<IA_manager>().playerTeam = false;
+            IA_Rival.GetComponent<PVP_IA_manager>().playerTeam = false;
             myIA_Players = new GameObject[4];
             for (int i = 0; i < 4; i++)
             {
@@ -126,7 +126,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
             //IA Rival
             GameObject IA_Rival = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position + new Vector3(0, 5, 0), player1Prefab.transform.rotation);
-            IA_Rival.GetComponent<IA_manager>().playerTeam = false;
+            IA_Rival.GetComponent<PVP_IA_manager>().playerTeam = false;
             myIA_Players = new GameObject[4];
             for (int i = 0; i < 4; i++)
             {
@@ -150,6 +150,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void StartButton()
     {
+        Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
             releaseTouchIdx(fingerIdx);
@@ -340,7 +341,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         Debug.Log("Random value-> " + randomValue.ToString());
                         if (randomValue <= playerWithBall.GetComponent<MyPlayer>().stats.shoot)
                         {
-                        photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam);
+                        photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<PVP_IA_manager>().playerTeam);
                     }
                         else
                         {
@@ -350,7 +351,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     else
                     {
-                        if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam);
+                        if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<PVP_IA_manager>().playerTeam);
                         else
                         {
                             goalkeeper.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
@@ -370,7 +371,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void setFightDir(string dir) { fightDir = dir; }
 
-    private int HasTheBall()
+    public int HasTheBall()
     {
         if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null) return 0;
         for (int i = 0; i < myPlayers.Length; i++)
@@ -387,8 +388,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         for (int i = 0; i < myPlayers.Length; i++)
         {
-            MyPlayer_PVE player1 = myPlayers[i].GetComponent<MyPlayer_PVE>();
-            MyPlayer_PVE IA_Player = myIA_Players[i].GetComponent<MyPlayer_PVE>();
+            MyPlayer player1 = myPlayers[i].GetComponent<MyPlayer>();
+            MyPlayer IA_Player = myIA_Players[i].GetComponent<MyPlayer>();
             if (player1.ball != null) return player1.gameObject;
             else if (IA_Player.ball != null) return IA_Player.gameObject;
         }
@@ -439,8 +440,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         touchesIdx.Remove(idx);
         //Camera
-        if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx > idx)
-            GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx--;
+        if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<PVP_cameraMovement>().fingerIdx > idx)
+            GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<PVP_cameraMovement>().fingerIdx--;
         //Manager
         if (fingerIdx > idx) fingerIdx--;
 

@@ -141,17 +141,6 @@ public class MyPlayer_PVE : MonoBehaviour
                 touchTime = Time.time;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
             }
-            if (actualLine != null && TrailDistance() < maxSize && gameObject.name != "GoalKeeper")
-            {
-                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                if (IsPointCorrect(aux))
-                {
-                    onMove = true;
-                    points.Add(putZAxis(aux));
-                    actualLine.GetComponent<LineRenderer>().positionCount = points.Count;
-                    actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
-                }
-            }
             else if (swipe.phase == TouchPhase.Moved)
             {
                 mg.releaseTouchIdx(fingerIdx);
@@ -294,12 +283,6 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
-        if(ball.transform.localPosition.y > 0)
-        {
-            ball.transform.parent = null;
-            ball = null;
-            return;
-        }
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
 

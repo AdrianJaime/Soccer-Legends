@@ -73,7 +73,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         }
         SetName(gameObject.name);
         if (!photonView.IsMine) stats = new Stats(5, 3, 3);
-        else stats = new Stats(7, 5, 5);
+        else
+        {
+            stats = new Stats(7, 5, 5);
+        }
 
         //int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         //photonView.RPC("SetStats", RpcTarget.AllViaServer, starr);
@@ -143,17 +146,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 touchTime = Time.time;
                 aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
             }
-            if (actualLine != null && TrailDistance() < maxSize && gameObject.name != "GoalKeeper")
-            {
-                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                if (IsPointCorrect(aux))
-                {
-                    onMove = true;
-                    points.Add(putZAxis(aux));
-                    actualLine.GetComponent<LineRenderer>().positionCount = points.Count;
-                    actualLine.GetComponent<LineRenderer>().SetPositions(points.ToArray());
-                }
-            }
             else if (swipe.phase == TouchPhase.Moved)
             {
                 mg.releaseTouchIdx(fingerIdx);
@@ -198,11 +190,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
             stream.SendNext(fightDir);
+            //stream.SendNext(photonView.ViewID);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
             fightDir = (string)stream.ReceiveNext();
+            //photonView.ViewID = (int)stream.ReceiveNext();
         }
     }
 
@@ -292,12 +286,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
-        if (ball.transform.localPosition.y > 0)
-        {
-            ball.transform.parent = null;
-            ball = null;
-            return;
-        }
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
     }
@@ -320,7 +308,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (formationPos == IA_manager.formationPositions.GOALKEEPER && Mathf.Abs(objective[0]) > 1.25f)
             objective[0] = (objective[0] / Mathf.Abs(objective[0])) * 1.25f;
-        playerObjective = new Vector3(objective[0], objective[1], objective[2]);
+        playerObjective =  new Vector3(objective[0], objective[1], objective[2]);
     }
 
     private bool SameTeam(GameObject P1, GameObject P2)
@@ -391,11 +379,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                             if (gameObject == mg.myPlayers[i]) playerIdx = i;
                         }
                     }
-                    mg.chooseDirection(playerIdx, ia_Idx);
+                    //mg.chooseDirection(playerIdx, ia_Idx); // LLAMAR COMO RPC
+                    if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, rival.GetComponent<MyPlayer>().photonView.ViewID);
+                    else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, rival.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
                     return;
                     //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
-                    //if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, other.GetComponent<MyPlayer>().photonView.ViewID);
-                    //else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, other.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
                 }
                 else if (ball == null) foundCovered = covered = true;
             }

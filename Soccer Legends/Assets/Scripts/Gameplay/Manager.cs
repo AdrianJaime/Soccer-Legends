@@ -57,8 +57,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
         }
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
-        Debug.Log("Finger idx->" + fingerIdx.ToString());
-        Debug.Log("Touches->" + touchesIdx.Count.ToString());
 
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
         {
@@ -71,11 +69,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
             else if (swipe.phase == TouchPhase.Ended)
             {
                 swipes[1] = swipe.position;
-                if (swipes[0].x > swipes[1].x) myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir = "Left";
-                else myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir = "Right";
+                if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
 
-                if (myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir != null &&
-                myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir != null && HasTheBall() == 1) Fight();
+                if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
+                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && HasTheBall() == 1) Fight();
             }
         }
         else if (GameStarted && GameOn)
@@ -96,42 +94,21 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
-            GameObject localPlayer = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
+            GameObject localPlayer = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
             myPlayers = new GameObject[4];
-            Instantiate(ballPrefab.gameObject, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+            PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
             for (int i = 0; i < 4; i++)
             {
                 myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
-            }
-
-            //IA Rival
-            GameObject IA_Rival = Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
-            IA_Rival.GetComponent<PVP_IA_manager>().playerTeam = false;
-            myIA_Players = new GameObject[4];
-            for (int i = 0; i < 4; i++)
-            {
-                IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1;
-                myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
             }
         }
         else
         {
-            GameObject localPlayer = Instantiate(player2Prefab.gameObject, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+            GameObject localPlayer = PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
             myPlayers = new GameObject[4];
-            Instantiate(ballPrefab.gameObject, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
             for (int i = 0; i < 4; i++)
             {
                 myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
-            }
-
-            //IA Rival
-            GameObject IA_Rival = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position + new Vector3(0, 5, 0), player1Prefab.transform.rotation);
-            IA_Rival.GetComponent<PVP_IA_manager>().playerTeam = false;
-            myIA_Players = new GameObject[4];
-            for (int i = 0; i < 4; i++)
-            {
-                IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1;
-                myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
             }
         }
     }
@@ -153,6 +130,25 @@ public class Manager : MonoBehaviourPun, IPunObservable
         Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
+            GameObject T2 = GameObject.Find("Team 2(Clone)");
+            GameObject T1 = GameObject.Find("Team 1(Clone)");
+            myIA_Players = new GameObject[T1.transform.childCount];
+            if (myPlayers[0].transform.parent.gameObject != T1)
+            {
+                for(int i = 0; i < T1.transform.childCount; i++)
+                {
+                    myIA_Players[i] = T1.transform.GetChild(i).gameObject;
+                }
+            }
+            else
+            {
+                {
+                    for (int i = 0; i < T2.transform.childCount; i++)
+                    {
+                        myIA_Players[i] = T2.transform.GetChild(i).gameObject;
+                    }
+                }
+            }
             releaseTouchIdx(fingerIdx);
             fingerIdx = -1;
             photonView.RPC("StartGame", RpcTarget.AllViaServer);
@@ -198,8 +194,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
-        MyPlayer player1 = myPlayers[_player1].GetComponent<MyPlayer>();
-        MyPlayer IA_Player = myIA_Players[_player2].GetComponent<MyPlayer>();
+        MyPlayer player1 = PhotonView.Find(_player1).GetComponent<MyPlayer>();
+           // myPlayers[_player1].GetComponent<MyPlayer>();
+        MyPlayer IA_Player = PhotonView.Find(_player2).GetComponent<MyPlayer>();
+        //myIA_Players[_player2].GetComponent<MyPlayer>();
         if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
         {
             player1.ball = GameObject.FindGameObjectWithTag("Ball");
@@ -279,17 +277,17 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 GameOn = true;
                 directionButtons.SetActive(false);
                 GameObject playerWithBall, playerWithoutBall;
-                if (myPlayers[fightingPlayer].GetComponent<MyPlayer>().ball != null)
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
                 {
-                    playerWithBall = myPlayers[fightingPlayer];
-                    playerWithoutBall = myIA_Players[fightingIA];
+                    playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
+                    playerWithoutBall = PhotonView.Find(fightingIA).gameObject;
                 }
                 else
                 {
-                    playerWithoutBall = myPlayers[fightingPlayer];
-                    playerWithBall = myIA_Players[fightingIA];
+                    playerWithoutBall = PhotonView.Find(fightingPlayer).gameObject;
+                    playerWithBall = PhotonView.Find(fightingIA).gameObject;
                 }
-                if (myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir)
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir)
                 {
                     int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.technique + playerWithoutBall.GetComponent<MyPlayer>().stats.defense + 1);
                     Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() +
@@ -319,15 +317,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     GameOn = true;
                     shootButtons.SetActive(false);
                     GameObject goalkeeper;
-                    if (fightingPlayer != 3)
+                    if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
                     {
-                        playerWithBall = myPlayers[fightingPlayer];
-                        goalkeeper = myIA_Players[fightingIA];
+                        playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
+                        goalkeeper = PhotonView.Find(fightingIA).gameObject;
                     }
                     else
                     {
-                        goalkeeper = myPlayers[fightingPlayer];
-                        playerWithBall = myIA_Players[fightingIA];
+                        goalkeeper = PhotonView.Find(fightingPlayer).gameObject;
+                    playerWithBall = PhotonView.Find(fightingIA).gameObject;
                     }
                     if (playerWithBall.GetComponent<MyPlayer>().fightDir == goalkeeper.GetComponent<MyPlayer>().fightDir)
                     {

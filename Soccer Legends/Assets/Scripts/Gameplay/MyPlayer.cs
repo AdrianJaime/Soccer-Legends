@@ -101,27 +101,30 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
     private void Update()
     {
-        if (photonView.IsMine && mg.GameOn && !stunned) //Check if we're the local player
+        if (mg.GameOn)
         {
-            if (formationPos == IA_manager.formationPositions.GOALKEEPER) MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
-            if (startPosition == Vector2.zero) startPosition = transform.position;
-            if (photonView.IsMine && ball != null) ProcessInputs();
-            if (playerObjective != Vector3.zero)
+            if (photonView.IsMine && !stunned) //Check if we're the local player
             {
-                //Vector3 nextPos;
-                transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
-                //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
-                //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
-                if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+                if (formationPos == IA_manager.formationPositions.GOALKEEPER) MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
+                if (startPosition == Vector2.zero) startPosition = transform.position;
+                if (photonView.IsMine && ball != null) ProcessInputs();
+                if (playerObjective != Vector3.zero)
+                {
+                    //Vector3 nextPos;
+                    transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                    //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                    //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
+                    if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+                }
+                else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                checkCollisionDetection();
+                //rePositionBall(); //To be implemented
             }
-            else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            checkCollisionDetection();
-            //rePositionBall(); //To be implemented
-        }
-        else if(photonView.IsMine) checkGoal();
-        else if(!photonView.IsMine)
-        {
-            smoothMovement();
+            else if (photonView.IsMine) checkGoal();
+            else if (!photonView.IsMine)
+            {
+                smoothMovement();
+            }
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
@@ -133,6 +136,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void ProcessInputs()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            float[] dir = { 0, 0, ball.transform.position.x, ball.transform.position.y };
+            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+        }
         //Movement
         if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
@@ -225,19 +233,22 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (ball)
         {
-            if (ball.GetComponent<Ball>().direction == Vector2.zero && photonView.IsMine)
+            if (ball.GetComponent<Ball>().direction == Vector2.zero)
             {
                 ball.GetComponent<Ball>().shootPosition = new Vector2(_dir[2], _dir[3]);
                 ball.GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
                 if(info.Sender.IsMasterClient)ball.GetComponent<Ball>().shooterIsMaster = true;
                 else ball.GetComponent<Ball>().shooterIsMaster = false;
-                ball.GetComponent<Ball>().shoot = true;
+                //ball.GetComponent<Ball>().shoot = true;
                 shootFramesRef = Time.frameCount;
+
+                ball.transform.parent = null;
+                GameObject shootedBall = ball;
+                ball = null;
+                transform.gameObject.layer = 0;
+                mg.lastPlayer = gameObject;
+                shootedBall.GetComponent<Ball>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { _dir[0], _dir[1] });
             }
-            ball.transform.parent = null;
-            ball = null;
-            transform.gameObject.layer = 0;
-            mg.lastPlayer = gameObject;
         }
     }
 

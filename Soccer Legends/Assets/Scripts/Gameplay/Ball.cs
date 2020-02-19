@@ -75,6 +75,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
     }
 
+    [PunRPC]
     public void ShootBall(float[] _dir)
     {
         Vector2 shootDir = new Vector2(_dir[0] - shootPosition.x, _dir[1] - shootPosition.y).normalized;
@@ -85,6 +86,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             Debug.Log("Shoot direction is-> " + shootDir);
             shoot = false;
             direction = Vector2.zero;
+            transform.parent = null;
         }
     }
 

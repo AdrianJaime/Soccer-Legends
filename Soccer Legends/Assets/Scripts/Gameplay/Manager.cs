@@ -60,7 +60,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if(!GameOn && GameStarted)
         {
-            if ((Input.GetKey(KeyCode.L) || Input.GetKey(KeyCode.R)))
+            if ((Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.R)))
             {
                 if (Input.GetKey(KeyCode.L)) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
                 else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";

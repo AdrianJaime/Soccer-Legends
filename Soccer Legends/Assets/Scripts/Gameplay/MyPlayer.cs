@@ -105,9 +105,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             if (formationPos == IA_manager.formationPositions.GOALKEEPER) MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
             if (startPosition == Vector2.zero) startPosition = transform.position;
-            if (!!photonView.IsMine && ball != null) ProcessInputs();
-            if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
-            else if (playerObjective != Vector3.zero)
+            if (photonView.IsMine && ball != null) ProcessInputs();
+            if (playerObjective != Vector3.zero)
             {
                 //Vector3 nextPos;
                 transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
@@ -161,7 +160,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                         //Pass
                         float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                         photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
-                        //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -227,7 +225,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (ball)
         {
-            if (ball.GetComponent<Ball>().direction == Vector2.zero)
+            if (ball.GetComponent<Ball>().direction == Vector2.zero && photonView.IsMine)
             {
                 ball.GetComponent<Ball>().shootPosition = new Vector2(_dir[2], _dir[3]);
                 ball.GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
@@ -380,8 +378,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                         }
                     }
                     //mg.chooseDirection(playerIdx, ia_Idx); // LLAMAR COMO RPC
-                    if (PhotonNetwork.IsMasterClient) mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, rival.GetComponent<MyPlayer>().photonView.ViewID);
-                    else mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, rival.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
+                    mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, rival.GetComponent<MyPlayer>().photonView.ViewID);
+                    //else photonView.RPC("chooseDirection", RpcTarget.AllViaServer, rival.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
                     return;
                     //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
                 }
@@ -390,7 +388,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 25 < Time.frameCount)
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }

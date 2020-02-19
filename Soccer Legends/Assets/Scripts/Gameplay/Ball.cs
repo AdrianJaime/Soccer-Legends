@@ -25,11 +25,16 @@ public class Ball : MonoBehaviourPun, IPunObservable
     }
     private void Update()
     {
-        if (!photonView.IsMine)
+        if (!shoot)
         {
-            smoothMovement();
+            if (!photonView.IsMine)
+            {
+                smoothMovement();
+            }
+            if (transform.parent != null) transform.localPosition = new Vector3(0, -0.5f, 0);
         }
-        else if (shoot) {
+        else if (shoot)
+        {
             float[] dir = { direction.x, direction.y };
             ShootBall(dir);
         }
@@ -39,7 +44,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(new Vector3(transform.position.x, transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
         }
         else if (stream.IsReading)
         {
@@ -52,10 +57,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if (transform.parent != null)
             {
-                transform.position =transform.parent.position;
+                transform.localPosition = new Vector3(0, -0.5f, 0);
             }
-            else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
-            else transform.position = -smoothMove;
+            else if (Vector2.Distance(transform.position, smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
+            else transform.position = smoothMove;
         }
         else
         {

@@ -8,7 +8,7 @@ using Photon.Realtime;
 
 public class PVP_IA_manager : MonoBehaviour
 {
-    enum IA_State { FREE_BALL, PLAYER_HAS_BALL, IA_HAS_BALL}
+    enum IA_State { FREE_BALL, PLAYER_HAS_BALL, IA_HAS_BALL }
 
     public IA_manager.strategy teamStrategy;
     IA_State ia_State;
@@ -32,15 +32,17 @@ public class PVP_IA_manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!playerTeam) return;
-        checkIA_State();
-        processIA();
+        if (!ia_players[0].GetComponent<MyPlayer>().photonView.IsMine) return;
+        else if (mg.GameOn)
+        {
+            checkIA_State();
+            processIA();
+        }
     }
 
     private void LateUpdate()
     {
-        if (!playerTeam) return;
-        processSeparation();
+        if(mg.GameOn)processSeparation();
     }
 
     void checkIA_State()
@@ -50,7 +52,7 @@ public class PVP_IA_manager : MonoBehaviour
 
     void processIA()
     {
-        Vector2 ballPosition = new Vector2(GameObject.FindGameObjectWithTag("Ball").transform.position.x, GameObject.FindGameObjectWithTag("Ball").transform.position.y);       
+        Vector2 ballPosition = new Vector2(GameObject.FindGameObjectWithTag("Ball").transform.position.x, GameObject.FindGameObjectWithTag("Ball").transform.position.y);
         switch (ia_State)
         {
             case IA_State.FREE_BALL:
@@ -74,7 +76,7 @@ public class PVP_IA_manager : MonoBehaviour
         }
     }
 
-    void catchingBallAlgorithm(GameObject[]rivalPlayers, Vector3 ballPos)
+    void catchingBallAlgorithm(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         Vector2 IA_ObjectivePos = Vector2.zero;
         for (int i = 0; i < ia_players.Length; i++)
@@ -91,7 +93,7 @@ public class PVP_IA_manager : MonoBehaviour
             {
                 IA_ObjectivePos = new Vector2(ballPos.x, ballPos.y + 0.5f);
             }
-            ia_players[i].GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { IA_ObjectivePos.x, IA_ObjectivePos.y, 0.0f });
+            ia_players[i].GetComponent<MyPlayer>().MoveTo(new float[] { IA_ObjectivePos.x, IA_ObjectivePos.y, 0.0f });
         }
     }
 
@@ -108,7 +110,7 @@ public class PVP_IA_manager : MonoBehaviour
             case IA_manager.strategy.DEFFENSIVE:
                 defensiveDeffending(_rivalPlayers, _ballPos);
                 break;
-        } 
+        }
     }
 
     void atackAlgorithm(GameObject[] _rivalPlayers, Vector3 _ballPos)
@@ -201,14 +203,14 @@ public class PVP_IA_manager : MonoBehaviour
         //Set objectives
         if (playerWithBall.GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
         {
-            closeForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
             Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
-            farForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
+            farForward.GetComponent<MyPlayer>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
         }
         else
         {
-            farForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerWithBall.transform.position.x, (farForward.GetComponent<MyPlayer>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
-            closeForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
+            farForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, (farForward.GetComponent<MyPlayer>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
+            closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
         }
         //Set Cierre
         cierre = ia_players[0];
@@ -217,14 +219,14 @@ public class PVP_IA_manager : MonoBehaviour
         if (rival_in_our_Camp)
         {
             float y_value = cierre.GetComponent<MyPlayer>().startPosition.y;
-            if(Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
-            cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { ballPos.x, y_value, 0.0f });
+            if (Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
+            cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
         }
         else
         {
             pivotObjectivePos = new Vector2(ballPos.x + cierre.GetComponent<MyPlayer>().startPosition.x,
                     ballPos.y + cierre.GetComponent<MyPlayer>().startPosition.y) / 2.0f;
-            cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
+            cierre.GetComponent<MyPlayer>().MoveTo(new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
         }
     }
 
@@ -246,7 +248,7 @@ public class PVP_IA_manager : MonoBehaviour
         {
             playerPositions[i] = rivalPlayers[i].transform.position;
 
-            if(rivalPlayers[i].GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER &&  Vector2.Distance(playerPositions[i], goal.transform.position) < minGoalDist)
+            if (rivalPlayers[i].GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER && Vector2.Distance(playerPositions[i], goal.transform.position) < minGoalDist)
             {
                 minGoalDist = Vector2.Distance(playerPositions[i], goal.transform.position);
                 playerCloseToGoal = rivalPlayers[i];
@@ -298,17 +300,17 @@ public class PVP_IA_manager : MonoBehaviour
         //Set objectives
         if (playerWithBall.GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
         {
-            closePlayer.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            closePlayer.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
             Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
-            farPlayer.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
-            pivot.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { ballPos.x, playerCloseToGoal.transform.position.y, 0.0f });
+            farPlayer.GetComponent<MyPlayer>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
+            pivot.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, playerCloseToGoal.transform.position.y, 0.0f });
         }
         else
         {
-            farPlayer.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerWithBall.transform.position.x, (farPlayer.GetComponent<MyPlayer>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
-            closePlayer.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
+            farPlayer.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, (farPlayer.GetComponent<MyPlayer>().startPosition.y + playerCloseToBall.transform.position.y) / 2.0f, 0.0f });
+            closePlayer.GetComponent<MyPlayer>().MoveTo(new float[] { playerCloseToBall.transform.position.x, playerCloseToBall.transform.position.y - 2.0f, 0.0f });
             pivotObjectivePos = playerCloseToBall.transform.position + (playerWithBall.transform.position - playerCloseToBall.transform.position) / 2.0f;
-            pivot.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
+            pivot.GetComponent<MyPlayer>().MoveTo(new float[] { pivotObjectivePos.x, pivotObjectivePos.y, 0.0f });
         }
     }
 
@@ -370,14 +372,14 @@ public class PVP_IA_manager : MonoBehaviour
         Vector2 pivotObjectivePos = Vector2.zero;
         float y_value = cierre.GetComponent<MyPlayer>().startPosition.y;
         if (Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
-        cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { ballPos.x, y_value, 0.0f });
+        cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
         //Set Forwards
         y_value = closeForward.GetComponent<MyPlayer>().startPosition.y;
         if (Vector2.Distance(ballPos, closeForward.transform.position) < 1.0f) y_value = ballPos.y;
-        closeForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerWithBall.transform.position.x, y_value, 0.0f });
+        closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, y_value, 0.0f });
         y_value = farForward.GetComponent<MyPlayer>().startPosition.y;
         if (Vector2.Distance(ballPos, farForward.transform.position) < 1.0f) y_value = ballPos.y;
-        farForward.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { playerCloseToBall.transform.position.x, y_value, 0.0f });
+        farForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerCloseToBall.transform.position.x, y_value, 0.0f });
     }
 
     void equilibratedAtacking(GameObject[] rivalPlayers, Vector3 ballPos)
@@ -387,8 +389,7 @@ public class PVP_IA_manager : MonoBehaviour
             GameObject forward_with_ball, forward_without_ball, cierre, goal;
             bool cierreWithBall = false;
             cierre = ia_players[0];
-            if (!playerTeam) goal = GameObject.Find("Goal 1");
-            else goal = GameObject.Find("Goal 2");
+            goal = ia_players[0].GetComponent<MyPlayer>().goal.gameObject;
             if (ia_players[1].GetComponent<MyPlayer>().ball != null)
             {
                 forward_with_ball = ia_players[1];
@@ -419,31 +420,31 @@ public class PVP_IA_manager : MonoBehaviour
 
             if (forward_with_ball.transform.position.x < 0.0f)
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             else
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             if (Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
                 Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x, goal.transform.position.y + 8.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x, goal.transform.position.y + 8.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
             }
             else
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
         }
         else
         {
-            for(int i = 0; i < ia_players.Length; i++)
+            for (int i = 0; i < ia_players.Length; i++)
             {
                 MyPlayer player = ia_players[i].GetComponent<MyPlayer>();
                 player.MoveTo(new float[] { player.startPosition.x, player.startPosition.y, 0.0f });
@@ -458,8 +459,7 @@ public class PVP_IA_manager : MonoBehaviour
             GameObject forward_with_ball, forward_without_ball, cierre, goal;
             bool cierreWithBall = false;
             cierre = ia_players[0];
-            if (!playerTeam) goal = GameObject.Find("Goal 1");
-            else goal = GameObject.Find("Goal 2");
+            goal = ia_players[0].GetComponent<MyPlayer>().goal.gameObject;
             if (ia_players[1].GetComponent<MyPlayer>().ball != null)
             {
                 forward_with_ball = ia_players[1];
@@ -490,26 +490,26 @@ public class PVP_IA_manager : MonoBehaviour
 
             if (forward_with_ball.transform.position.x < 0.0f)
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             else
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             if (Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
                 Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x, goal.transform.position.y + 4.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x, goal.transform.position.y + 4.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
             }
             else
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
         }
         else
@@ -529,8 +529,7 @@ public class PVP_IA_manager : MonoBehaviour
             GameObject forward_with_ball, forward_without_ball, cierre, goal;
             bool cierreWithBall = false;
             cierre = ia_players[0];
-            if (!playerTeam) goal = GameObject.Find("Goal 1");
-            else goal = GameObject.Find("Goal 2");
+            goal = ia_players[0].GetComponent<MyPlayer>().goal.gameObject;
             if (ia_players[1].GetComponent<MyPlayer>().ball != null)
             {
                 forward_with_ball = ia_players[1];
@@ -562,26 +561,26 @@ public class PVP_IA_manager : MonoBehaviour
 
             if (forward_with_ball.transform.position.x < 0.0f)
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             else
             {
-                forward_with_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
+                forward_with_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x + 1.0f, forwardWithBall_Y, 0.0f });
                 if (Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) < Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
-                    forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
-                else forward_without_ball.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                    forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x - 1.0f, forwardWithoutBall_Y, 0.0f });
+                else forward_without_ball.GetComponent<MyPlayer>().MoveTo(new float[] { forward_without_ball.GetComponent<MyPlayer>().startPosition.x, forward_without_ball.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
             if (Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_with_ball.transform.position, goal.transform.position) &&
                 Vector2.Distance(cierre.transform.position, goal.transform.position) > Vector2.Distance(forward_without_ball.transform.position, goal.transform.position))
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { goal.transform.position.x, ia_players[1].transform.position.y + 8.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { goal.transform.position.x, ia_players[1].transform.position.y + 8.0f * (goal.transform.position.y / (Mathf.Abs(goal.transform.position.y))), 0.0f });
             }
             else
             {
-                cierre.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
+                cierre.GetComponent<MyPlayer>().MoveTo(new float[] { cierre.GetComponent<MyPlayer>().startPosition.x, cierre.GetComponent<MyPlayer>().startPosition.y, 0.0f });
             }
         }
         else
@@ -599,7 +598,7 @@ public class PVP_IA_manager : MonoBehaviour
     public void check_IA_Shoot()
     {
         GameObject playerWithBall = null;
-        foreach(GameObject player in mg.myIA_Players)
+        foreach (GameObject player in mg.myIA_Players)
         {
             if (player.GetComponent<MyPlayer>().ball != null)
             {
@@ -638,7 +637,7 @@ public class PVP_IA_manager : MonoBehaviour
                 break;
         }
 
-       //passToPlayer(playerWithBall);
+        //passToPlayer(playerWithBall);
     }
 
     void passToPlayer(GameObject playerWithBall)
@@ -759,7 +758,7 @@ public class PVP_IA_manager : MonoBehaviour
                 closePlayers.Remove(shootingTarget);
             }
         }
-        if(playerWithBall.transform.GetComponent<MyPlayer>().ball != null)
+        if (playerWithBall.transform.GetComponent<MyPlayer>().ball != null)
         {
 
             switch (playerWithBall.transform.GetComponent<MyPlayer>().formationPos)
@@ -769,7 +768,7 @@ public class PVP_IA_manager : MonoBehaviour
                     playerWithBall.GetComponent<MyPlayer>().stablishNewShootCheck();
                     break;
                 case IA_manager.formationPositions.ALA:
-                    if(playerWithBall.transform.position.y < -4)shootToGoal(playerWithBall);
+                    if (playerWithBall.transform.position.y < -4) shootToGoal(playerWithBall);
                     break;
                 case IA_manager.formationPositions.GOALKEEPER:
                     Vector2 randShoot = new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(1.0f, 10.0f));
@@ -784,11 +783,11 @@ public class PVP_IA_manager : MonoBehaviour
     {
         Debug.Log("Shooting to goal");
 
-        
 
-        if(mg.myIA_Players[3].transform.position.x < 0)
+
+        if (mg.myIA_Players[3].transform.position.x < 0)
         {
-            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x +0.5f,1.5f), -7.5f);
+            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x + 0.5f, 1.5f), -7.5f);
             playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
         }
         else

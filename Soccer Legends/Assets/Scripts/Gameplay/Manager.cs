@@ -58,24 +58,37 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
 
-        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
+        if(!GameOn && GameStarted)
         {
-            if (fingerIdx != 0) fingerIdx = getTouchIdx();
-            Touch swipe = Input.GetTouch(fingerIdx);
-            if (swipe.phase == TouchPhase.Began)
+            if ((Input.GetKey(KeyCode.L) || Input.GetKey(KeyCode.R)))
             {
-                swipes[0] = swipe.position;
-            }
-            else if (swipe.phase == TouchPhase.Ended)
-            {
-                swipes[1] = swipe.position;
-                if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                if (Input.GetKey(KeyCode.L)) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
                 else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
+                    " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+                Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
+                    " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
 
-                if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
-                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && HasTheBall() == 1) Fight();
             }
+            else if ((Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
+            {
+                if (fingerIdx != 0) fingerIdx = getTouchIdx();
+                Touch swipe = Input.GetTouch(fingerIdx);
+                if (swipe.phase == TouchPhase.Began)
+                {
+                    swipes[0] = swipe.position;
+                }
+                else if (swipe.phase == TouchPhase.Ended)
+                {
+                    swipes[1] = swipe.position;
+                    if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                    else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                }
+            }
+            if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
+            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && HasTheBall() == 1) Fight();
         }
+        
         else if (GameStarted && GameOn)
         {
             if (fingerIdx != -1)
@@ -130,25 +143,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
         Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
-            GameObject T2 = GameObject.Find("Team 2(Clone)");
-            GameObject T1 = GameObject.Find("Team 1(Clone)");
-            myIA_Players = new GameObject[T1.transform.childCount];
-            if (myPlayers[0].transform.parent.gameObject != T1)
-            {
-                for(int i = 0; i < T1.transform.childCount; i++)
-                {
-                    myIA_Players[i] = T1.transform.GetChild(i).gameObject;
-                }
-            }
-            else
-            {
-                {
-                    for (int i = 0; i < T2.transform.childCount; i++)
-                    {
-                        myIA_Players[i] = T2.transform.GetChild(i).gameObject;
-                    }
-                }
-            }
             releaseTouchIdx(fingerIdx);
             fingerIdx = -1;
             photonView.RPC("StartGame", RpcTarget.AllViaServer);
@@ -156,7 +150,27 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
+    public void StartGame() {
+        GameStarted = true; GameOn = true;
+        startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
+        GameObject T2 = GameObject.Find("Team 2(Clone)");
+        GameObject T1 = GameObject.Find("Team 1(Clone)");
+        myIA_Players = new GameObject[T1.transform.childCount];
+        if (myPlayers[0].transform.parent.gameObject != T1)
+        {
+            for (int i = 0; i < T1.transform.childCount; i++)
+            {
+                myIA_Players[i] = T1.transform.GetChild(i).gameObject;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < T2.transform.childCount; i++)
+            {
+                myIA_Players[i] = T2.transform.GetChild(i).gameObject;
+            }
+        }
+    }
 
     public void chooseDirectionLocal(int _player1, int _player2)
     {
@@ -194,6 +208,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
+
+        if (HasTheBall() != 1)
+        {
+            int aux = _player1;
+            _player1 = _player2;
+            _player2 = aux;
+        }
         MyPlayer player1 = PhotonView.Find(_player1).GetComponent<MyPlayer>();
            // myPlayers[_player1].GetComponent<MyPlayer>();
         MyPlayer IA_Player = PhotonView.Find(_player2).GetComponent<MyPlayer>();
@@ -216,7 +237,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 float[] arr = { player1.transform.position.x, player1.transform.position.y, player1.transform.position.z };
                 IA_Player.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
-                IA_Player.GetComponent<MyPlayer>().photonView.RPC("chooseDirection", RpcTarget.AllViaServer, _player2, _player1);
+                player1.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
+                //IA_Player.GetComponent<MyPlayer>().mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, _player2, _player1);
             }
             GameOn = false;
             directionButtons.SetActive(true);
@@ -269,10 +291,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
         switch (state)
         {
             case fightState.FIGHT:
-                Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
-                    " chose direction " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
-                Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
-                    " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
+                //Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
+                //    " chose direction " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
+                //Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
+                //    " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
 
                 GameOn = true;
                 directionButtons.SetActive(false);
@@ -307,7 +329,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 else playerWithoutBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                 releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
-            break;
+                photonView.RPC("StartGame", RpcTarget.AllViaServer);
+                break;
             case fightState.SHOOT:
                     Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
                         " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);

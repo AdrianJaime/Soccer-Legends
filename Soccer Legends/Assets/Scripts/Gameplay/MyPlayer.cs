@@ -131,6 +131,15 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void smoothMovement()
     {
+        if (Vector2.Distance(smoothMove, transform.position) < 0.75f)
+        {
+            //Vector3 nextPos;
+            transform.position = Vector3.MoveTowards(transform.position, smoothMove, Time.deltaTime * speed);
+            //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+            //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
+            if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
+        }
+        else
         transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
     }
 
@@ -196,12 +205,14 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
             stream.SendNext(fightDir);
+            stream.SendNext(stunned);
             //stream.SendNext(photonView.ViewID);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
             fightDir = (string)stream.ReceiveNext();
+            stunned = (bool)stream.ReceiveNext();
             //photonView.ViewID = (int)stream.ReceiveNext();
         }
     }
@@ -235,19 +246,18 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             if (ball.GetComponent<Ball>().direction == Vector2.zero)
             {
-                ball.GetComponent<Ball>().shootPosition = new Vector2(_dir[2], _dir[3]);
-                ball.GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
-                if(info.Sender.IsMasterClient)ball.GetComponent<Ball>().shooterIsMaster = true;
-                else ball.GetComponent<Ball>().shooterIsMaster = false;
+                PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootPosition = new Vector2(_dir[2], _dir[3]);
+                PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().direction = new Vector2(_dir[0], _dir[1]);
+                if(info.Sender.IsMasterClient) PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shooterIsMaster = true;
+                else PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shooterIsMaster = false;
                 //ball.GetComponent<Ball>().shoot = true;
                 shootFramesRef = Time.frameCount;
 
-                ball.transform.parent = null;
-                GameObject shootedBall = ball;
+                PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent = null;
                 ball = null;
                 transform.gameObject.layer = 0;
                 mg.lastPlayer = gameObject;
-                shootedBall.GetComponent<Ball>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { _dir[0], _dir[1] });
+                PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { _dir[0], _dir[1] });
             }
         }
     }
@@ -269,6 +279,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
+        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
         if (ball)
         {
             ball.transform.parent = null;
@@ -293,6 +304,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void GetBall()
     {
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null)
+        {
+            return;
+        }
         ball = GameObject.FindGameObjectWithTag("Ball");
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -364,8 +379,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         GameObject[] rivals;
         bool foundCovered = false;
 
-        if (!photonView.IsMine) rivals = mg.myPlayers;
-        else rivals = mg.myIA_Players;
+        rivals = mg.myIA_Players;
         foreach (GameObject rival in rivals)
         {
             if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist + 0.1 && !rival.GetComponent<MyPlayer>().stunned)
@@ -399,7 +413,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 25 < Time.frameCount)
+        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 100 < Time.frameCount)
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }

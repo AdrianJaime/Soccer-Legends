@@ -15,6 +15,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public Vector2 direction, shootPosition;
     public bool shooterIsMaster;
     public int kick;
+    public bool freeBall = false;
 
     GameObject mainCamera;
 
@@ -31,12 +32,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
             {
                 smoothMovement();
             }
-            if (transform.parent != null) transform.localPosition = new Vector3(0, -0.5f, 0);
-        }
-        else if (shoot)
-        {
-            float[] dir = { direction.x, direction.y };
-            ShootBall(dir);
+            if (transform.parent != null)
+            {
+                transform.localPosition = new Vector3(0, -0.5f, 0);
+            }
         }
     }
 
@@ -59,7 +58,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             {
                 transform.localPosition = new Vector3(0, -0.5f, 0);
             }
-            else if (Vector2.Distance(transform.position, smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
+            else if (Vector2.Distance(transform.position, smoothMove) < 1.5f) transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 20);
             else transform.position = smoothMove;
         }
         else

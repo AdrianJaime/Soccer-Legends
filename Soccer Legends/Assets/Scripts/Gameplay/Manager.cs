@@ -83,6 +83,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     swipes[1] = swipe.position;
                     if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
                     else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                    releaseTouchIdx(fingerIdx);
+                    fingerIdx = -1;
                 }
             }
             if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
@@ -172,43 +174,17 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void chooseDirectionLocal(int _player1, int _player2)
+    [PunRPC]
+    public void resumeGame()
     {
-        MyPlayer player1 = myPlayers[_player1].GetComponent<MyPlayer>();
-        MyPlayer IA_Player = myIA_Players[_player2].GetComponent<MyPlayer>();
-        if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
-        {
-            player1.ball = GameObject.FindGameObjectWithTag("Ball");
-            player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-            IA_Player.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-        }
-        else if (IA_Player.formationPos == IA_manager.formationPositions.GOALKEEPER)
-        {
-            IA_Player.ball = GameObject.FindGameObjectWithTag("Ball");
-            IA_Player.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-            player1.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-        }
-        else if (!directionButtons.activeSelf)
-        {
-           float[] arr = { player1.transform.position.x, player1.transform.position.y, player1.transform.position.z };
-           IA_Player.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
-            GameOn = false;
-            directionButtons.SetActive(true);
-            state = fightState.FIGHT;
-            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-            player1.fightDir = null;
-            IA_Player.fightDir = null;
-            fightingPlayer = _player1;
-            fightingIA = _player2;
-            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        }
+        GameStarted = true; GameOn = true;
+        startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
     }
 
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
-
+        if (!GameOn) return;
         if (HasTheBall() != 1)
         {
             int aux = _player1;
@@ -296,8 +272,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 //Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
                 //    " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
 
-                GameOn = true;
-                directionButtons.SetActive(false);
+             
                 GameObject playerWithBall, playerWithoutBall;
                 if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
                 {
@@ -327,18 +302,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
                 }
                 else playerWithoutBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
-                photonView.RPC("StartGame", RpcTarget.AllViaServer);
                 break;
             case fightState.SHOOT:
-                    Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
-                        " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
-                    Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
-                        " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
-
-                    GameOn = true;
-                    shootButtons.SetActive(false);
+                    //Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
+                    //    " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
+                    //Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
+                    //    " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
                     GameObject goalkeeper;
                     if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
                     {
@@ -382,12 +351,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
-                    releaseTouchIdx(fingerIdx);
-                    fingerIdx = -1;
                 break;
 
-
         }
+
     }
 
     public void setFightDir(string dir) { fightDir = dir; }

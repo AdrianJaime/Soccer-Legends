@@ -438,11 +438,6 @@ public class MyPlayer_PVE : MonoBehaviour
                 //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                 //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
             }
-            else if (rival_goal.bounds.Contains(GameObject.FindGameObjectWithTag("Ball").transform.position))
-            {
-                if (iaPlayer) mg.Goal(true);
-                else mg.Goal(false);
-            }
         }
         else return;
     }

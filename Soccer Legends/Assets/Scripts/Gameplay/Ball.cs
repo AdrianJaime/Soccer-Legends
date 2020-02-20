@@ -80,8 +80,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         Vector2 shootDir = new Vector2(_dir[0] - shootPosition.x, _dir[1] - shootPosition.y).normalized;
         if (rb.velocity == Vector2.zero)
         {
-            if(shooterIsMaster)GetComponent<Rigidbody2D>().AddForce(-shootDir * kick, ForceMode2D.Impulse);
-            else  GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
+            GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
             Debug.Log("Shoot direction is-> " + shootDir);
             shoot = false;
             direction = Vector2.zero;

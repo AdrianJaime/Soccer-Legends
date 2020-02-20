@@ -48,7 +48,6 @@ public class PVP_IA_manager : MonoBehaviour
     void checkIA_State()
     {
         ia_State = (IA_State)mg.HasTheBall();
-        Debug.Log(ia_State.ToString());
     }
 
     void processIA()

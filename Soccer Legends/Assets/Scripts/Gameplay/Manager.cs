@@ -62,12 +62,25 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             if ((Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.R)))
             {
-                if (Input.GetKey(KeyCode.L)) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
-                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
-                Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
+                if(state == fightState.FIGHT)
+                {
+                    if (Input.GetKey(KeyCode.L)) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                    else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                }
+                else if (state == fightState.SHOOT)
+                {
+                    if (Input.GetKey(KeyCode.L)) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
+                    else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
+                }
+                    Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
                     " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                 Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
                     " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
+
+                Debug.Log(myIA_Players[0].GetComponent<MyPlayer>().fightDir);
+                Debug.Log(myIA_Players[1].GetComponent<MyPlayer>().fightDir);
+                Debug.Log(myIA_Players[2].GetComponent<MyPlayer>().fightDir);
+                Debug.Log(myIA_Players[3].GetComponent<MyPlayer>().fightDir);
 
             }
             else if ((Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
@@ -81,8 +94,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 else if (swipe.phase == TouchPhase.Ended)
                 {
                     swipes[1] = swipe.position;
-                    if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
-                    else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                    if(state == fightState.FIGHT)
+                    {
+                        if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                        else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
+                    }
+                    else if(state == fightState.SHOOT)
+                    {
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1)
+                        {
+                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
+                            energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
+                        }
+                        else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
+                    }
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -230,9 +255,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void Goal(bool isLocal)
+    public void Goal()
     {
-        if (isLocal) score[0]++;
+        bool isLocal;
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
+            isLocal = false;
+        else isLocal = true;
+            if (isLocal) score[0]++;
         else score[1]++;
 
         lastPlayer = null;
@@ -245,9 +274,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void ChooseShoot(int _player1, int _player2)
     {
-        MyPlayer player1 = myPlayers[_player1].GetComponent<MyPlayer>();
-        MyPlayer IA_Player = myIA_Players[_player2].GetComponent<MyPlayer>();
-        if (!directionButtons.activeSelf)
+        if (!GameOn) return;
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
+        {
+            int aux = _player1;
+            _player1 = _player2;
+            _player2 = aux;
+        }
+        MyPlayer player1 = PhotonView.Find(_player1).GetComponent<MyPlayer>();
+        // myPlayers[_player1].GetComponent<MyPlayer>();
+        MyPlayer IA_Player = PhotonView.Find(_player2).GetComponent<MyPlayer>();
+        //myIA_Players[_player2].GetComponent<MyPlayer>();
+
+        if (!shootButtons.activeSelf)
         {
             GameOn = false;
             shootButtons.SetActive(true);

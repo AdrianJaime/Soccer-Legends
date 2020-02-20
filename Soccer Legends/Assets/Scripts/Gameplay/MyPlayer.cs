@@ -308,7 +308,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             return;
         }
-        ball = GameObject.FindGameObjectWithTag("Ball");
+        ball = PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).gameObject;
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
@@ -413,11 +413,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 100 < Time.frameCount)
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 100 < Time.frameCount)
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }
-        else ball = null;
+        else if(PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != transform) ball = null;
 
     }
 

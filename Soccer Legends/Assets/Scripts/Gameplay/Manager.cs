@@ -361,7 +361,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public int HasTheBall()
     {
-        if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null) return 0;
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null) return 0;
         for (int i = 0; i < myPlayers.Length; i++)
         {
             MyPlayer player1 = myPlayers[i].GetComponent<MyPlayer>();
@@ -369,6 +369,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (player1.ball != null) return 1;
             else if (IA_Player.ball != null) return 2;
         }
+        Debug.Log("late 0");
         return 0;
     }
 

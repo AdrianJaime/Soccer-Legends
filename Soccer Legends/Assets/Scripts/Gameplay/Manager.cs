@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    enum fightState { FIGHT, SHOOT };
+    enum fightState { FIGHT, SHOOT, NONE };
 
     public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = true;
@@ -88,7 +88,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
             }
             if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
-            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && HasTheBall() == 1) Fight();
+            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && PhotonNetwork.IsMasterClient) Fight();
         }
         
         else if (GameStarted && GameOn)
@@ -352,8 +352,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
                 break;
+            case fightState.NONE:
+                return;
 
         }
+        state = fightState.NONE;
 
     }
 

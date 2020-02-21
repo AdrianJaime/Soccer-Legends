@@ -119,14 +119,17 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                         if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
                     }
                     else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                    checkCollisionDetection();
-                    //rePositionBall(); //To be implemented
-                    checkGoal();
                 }
             }
             else if (!photonView.IsMine)
             {
                 smoothMovement();
+            }
+            if (GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.IsMine)
+            {
+                checkCollisionDetection();
+                //rePositionBall(); //To be implemented
+                checkGoal();
             }
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;

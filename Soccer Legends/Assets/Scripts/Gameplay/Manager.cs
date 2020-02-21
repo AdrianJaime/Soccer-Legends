@@ -370,7 +370,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         Debug.Log("Random value-> " + randomValue.ToString());
                         if (randomValue <= playerWithBall.GetComponent<MyPlayer>().stats.shoot)
                         {
-                        photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<PVP_IA_manager>().playerTeam);
+                        photonView.RPC("Goal", RpcTarget.AllViaServer);
                     }
                         else
                         {
@@ -380,7 +380,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     else
                     {
-                        if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") photonView.RPC("Goal", RpcTarget.AllViaServer, playerWithBall.transform.parent.GetComponent<PVP_IA_manager>().playerTeam);
+                        if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") photonView.RPC("Goal", RpcTarget.AllViaServer);
                         else
                         {
                             goalkeeper.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);

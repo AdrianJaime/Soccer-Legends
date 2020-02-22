@@ -5,55 +5,38 @@ using UnityEngine.UI;
 
 public class ChangeOption : MonoBehaviour
 {
-    [SerializeField] GameObject soundOptions, graphicOptions, extraOptions;
-    [SerializeField] Button soundButton, graphicButton, extraButton;
+    [SerializeField] List<GameObject> options;
+    [SerializeField] List<Button> buttons;
     // Start is called before the first frame update
     void Start()
     {
-        soundOptions.SetActive(true);
-        graphicOptions.SetActive(false);
-        extraOptions.SetActive(false);
-        soundButton.interactable = false;
-        graphicButton.interactable = true;
-        extraButton.interactable = true;
-
+        SetOption(0);
     }
 
-    public void SetOption(string _name)
+    public void SetOption(int _index)
     {
-        switch (_name)
+        Button predictedButton;
+        if (_index<buttons.Count&& _index >= 0)
         {
-            case "sound":
-            case "Sound":
-                soundOptions.SetActive(true);
-                graphicOptions.SetActive(false);
-                extraOptions.SetActive(false);
-
-                soundButton.interactable = false;
-                graphicButton.interactable = true;
-                extraButton.interactable = true;
-                break;
-            case "graphic":
-            case "Graphic":
-                soundOptions.SetActive(false);
-                graphicOptions.SetActive(true);
-                extraOptions.SetActive(false);
-
-                soundButton.interactable = true;
-                graphicButton.interactable = false;
-                extraButton.interactable = true;
-                break;
-            case "extra":
-            case "Extra":
-                soundOptions.SetActive(false);
-                graphicOptions.SetActive(false);
-                extraOptions.SetActive(true);
-
-                soundButton.interactable = true;
-                graphicButton.interactable = true;
-                extraButton.interactable = false;
-                break;
+            predictedButton = buttons[_index];
+            int auxIndex = 0;
+            foreach (Button button in buttons)
+            {
+                if (button == predictedButton)
+                {
+                    options[auxIndex].SetActive(true);
+                    buttons[auxIndex].interactable = false;
+                }
+                else
+                {
+                    options[auxIndex].SetActive(false);
+                    buttons[auxIndex].interactable = true;
+                }
+                auxIndex++;
+            }
         }
+
+        
     }
 
 }

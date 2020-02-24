@@ -15,6 +15,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public Vector2 direction, shootPosition;
     public bool shooterIsMaster;
     public int kick;
+    public bool freeBall = false;
 
     GameObject mainCamera;
 
@@ -25,13 +26,16 @@ public class Ball : MonoBehaviourPun, IPunObservable
     }
     private void Update()
     {
-        if (!photonView.IsMine)
+        if (!shoot)
         {
-            smoothMovement();
-        }
-        else if (shoot) {
-            float[] dir = { direction.x, direction.y };
-            ShootBall(dir);
+            if (!photonView.IsMine)
+            {
+                smoothMovement();
+            }
+            if (transform.parent != null)
+            {
+                transform.localPosition = new Vector3(0, -0.5f, 0);
+            }
         }
     }
 
@@ -39,7 +43,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(new Vector3(transform.position.x, transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
         }
         else if (stream.IsReading)
         {
@@ -52,10 +56,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if (transform.parent != null)
             {
-                transform.position =transform.parent.position;
+                transform.localPosition = new Vector3(0, -0.5f, 0);
             }
-            else if (Vector2.Distance(transform.position, -smoothMove) < 4) transform.position = Vector3.Lerp(transform.position, -smoothMove, Time.deltaTime * 10);
-            else transform.position = -smoothMove;
+            else if (Vector2.Distance(transform.position, smoothMove) < 1.5f) transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 20);
+            else transform.position = smoothMove;
         }
         else
         {
@@ -70,16 +74,17 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
     }
 
+    [PunRPC]
     public void ShootBall(float[] _dir)
     {
         Vector2 shootDir = new Vector2(_dir[0] - shootPosition.x, _dir[1] - shootPosition.y).normalized;
         if (rb.velocity == Vector2.zero)
         {
-            if(shooterIsMaster)GetComponent<Rigidbody2D>().AddForce(-shootDir * kick, ForceMode2D.Impulse);
-            else  GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
+            GetComponent<Rigidbody2D>().AddForce(shootDir * kick, ForceMode2D.Impulse);
             Debug.Log("Shoot direction is-> " + shootDir);
             shoot = false;
             direction = Vector2.zero;
+            transform.parent = null;
         }
     }
 

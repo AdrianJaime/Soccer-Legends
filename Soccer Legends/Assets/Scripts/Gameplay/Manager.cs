@@ -158,10 +158,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(GameStarted); //Solo se envía si se está moviendo.
+            //stream.SendNext(fig);
         }
         else if (stream.IsReading)
         {
             GameStarted = (bool)stream.ReceiveNext();
+            //if(info.Sender.IsMasterClient)
+            //{
+
+            //}
         }
     }
 
@@ -210,7 +215,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void chooseDirection(int _player1, int _player2)
     {
         if (!GameOn) return;
-        if (HasTheBall() != 1)
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
             _player1 = _player2;

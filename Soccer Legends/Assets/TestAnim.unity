@@ -270,11 +270,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7105352011257591129, guid: fdaa8e8341682a14393758b3ecff236f,
+    - target: {fileID: 7105352011257591128, guid: fdaa8e8341682a14393758b3ecff236f,
         type: 3}
-      propertyPath: m_Name
-      value: New Sprite
-      objectReference: {fileID: 0}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: b43746bcc8fd69d439abcf6817648c52, type: 2}
     - target: {fileID: 7105352011257591134, guid: fdaa8e8341682a14393758b3ecff236f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -330,5 +330,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7105352011257591135, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5a181f5184ba6654591d02dab410ccb9,
+        type: 3}
+    - target: {fileID: 7105352011257591129, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: m_Name
+      value: New Sprite
+      objectReference: {fileID: 0}
+    - target: {fileID: 4209466108772711809, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: SpriteSheetName
+      value: Acuario 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4209466108772711809, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}

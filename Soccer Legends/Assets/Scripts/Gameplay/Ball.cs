@@ -15,13 +15,15 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public Vector2 direction, shootPosition;
     public bool shooterIsMaster;
     public int kick;
-    public bool freeBall = false;
+    private bool newBall;
 
     GameObject mainCamera;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null) transform.GetChild(0).gameObject.AddComponent<PVP_cameraMovement>();
+        else transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
         RepositionBall();
     }
     private void Update()
@@ -85,6 +87,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             shoot = false;
             direction = Vector2.zero;
             transform.parent = null;
+            newBall = false;
         }
     }
 
@@ -94,13 +97,14 @@ public class Ball : MonoBehaviourPun, IPunObservable
         transform.parent = null;
         transform.position = Vector3.zero;
         ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y });
+        newBall = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Wall" && (photonView.IsMine || GameObject.Find("Manager").GetComponent<PVE_Manager>() != null))
         {
-            if ((collision.name == "U_Wall" || collision.name == "D_Wall") && (Mathf.Abs(transform.position.x) >  1.25f || GameObject.Find("Manager").GetComponent<PVE_Manager>().lastPlayer == null)) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
+            if ((collision.name == "U_Wall" || collision.name == "D_Wall") && (Mathf.Abs(transform.position.x) >  1.25f || newBall)) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
             if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
         }
     }

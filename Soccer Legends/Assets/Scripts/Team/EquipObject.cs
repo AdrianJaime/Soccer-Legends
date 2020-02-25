@@ -30,7 +30,10 @@ public class EquipObject : MonoBehaviour
         return -1;
     }
 
-
+    /// <summary>
+    /// Esta funcion se tiene que implementar con BD y gestionarse sola como los characteers
+    /// </summary>
+    /// <param name="inventory"></param>
     public void LoadEquipBD(InventoryManager inventory)
     {
         int aux = 0;

@@ -44,6 +44,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private int passFrames = 0;
     public int fingerIdx = -1;
 
+    [SerializeField] Animator animator;
+    [SerializeField] SpriteRenderer characterSprite;
+    float velocity0 = 0;
+
 
     private void Start()
     {
@@ -113,7 +117,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     if (playerObjective != Vector3.zero)
                     {
                         //Vector3 nextPos;
-                        transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                        Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                        velocity0 = (newPos - transform.position).magnitude;
+                        transform.position = newPos;
                         //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                         //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
                         if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
@@ -133,6 +139,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+
+        SetAnimatorValues();
     }
 
     private void smoothMovement()
@@ -140,13 +148,19 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (Vector2.Distance(smoothMove, transform.position) < 0.75f)
         {
             //Vector3 nextPos;
-            transform.position = Vector3.MoveTowards(transform.position, smoothMove, Time.deltaTime * speed);
+            Vector3 newPos = Vector3.MoveTowards(transform.position, smoothMove, Time.deltaTime * speed);
+            velocity0 = (newPos - transform.position).magnitude;
+            transform.position = newPos;
             //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
             if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
         }
         else
-        transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
+        {
+            Vector3 newPos = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 10);
+            velocity0 = (newPos - transform.position).magnitude;
+            transform.position = newPos;
+        }
     }
 
     private void ProcessInputs()
@@ -299,9 +313,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         var endTime = Time.time + waitTime;
         while (Time.time < endTime)
         {
-            GetComponent<Renderer>().enabled = false;
+            characterSprite.enabled = false;
             yield return new WaitForSeconds(0.2f);
-            GetComponent<Renderer>().enabled = true;
+            characterSprite.enabled = true;
             yield return new WaitForSeconds(0.2f);
         }
         stunned = false;
@@ -471,5 +485,27 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
         }
         else return;
+    }
+
+    void SetAnimatorValues()
+    {
+        Vector2 direction = Vector3.zero;
+        if (photonView.IsMine)
+        {
+            direction = (playerObjective - transform.position).normalized;
+        }
+        else
+        {
+            direction = (smoothMove - transform.position).normalized;
+        }
+        animator.SetFloat("DirectionX", direction.x);
+        animator.SetFloat("DirectionY", direction.y);
+        if (velocity0 < 0.01)
+            animator.SetBool("Moving", false);
+        else
+            animator.SetBool("Moving", true);
+
+        if (mg.GameOn != animator.enabled)
+            animator.enabled = mg.GameOn;
     }
 }

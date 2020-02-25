@@ -6,7 +6,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Sprite
+  m_Name: CharactersAnimator
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: DirectionX
@@ -21,8 +21,8 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Velocity
-    m_Type: 1
+  - m_Name: Moving
+    m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -67,7 +67,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: d85e31ccf8fe47f4cb994f2a4d810042, type: 2}
     m_Threshold: 0.2857143
-    m_Position: {x: -1, y: -1}
+    m_Position: {x: -0.5, y: -0.5}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: DirectionX
@@ -75,7 +75,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: 91acd96a0e0fc1f4b9e9db9edee0e05c, type: 2}
     m_Threshold: 0.42857143
-    m_Position: {x: 1, y: -1}
+    m_Position: {x: 0.5, y: -0.5}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: DirectionX
@@ -83,7 +83,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: ce3ef743bcc20474f8038ddecbeb20f0, type: 2}
     m_Threshold: 0.5714286
-    m_Position: {x: -1, y: 1}
+    m_Position: {x: -0.5, y: 0.5}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: DirectionX
@@ -91,7 +91,7 @@ BlendTree:
   - serializedVersion: 2
     m_Motion: {fileID: 7400000, guid: 29ae1daf05c6bfa4b891ea34a7cc0692, type: 2}
     m_Threshold: 0.71428573
-    m_Position: {x: 1, y: 1}
+    m_Position: {x: 0.5, y: 0.5}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: DirectionX
@@ -127,8 +127,8 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 4
-    m_ConditionEvent: Velocity
+  - m_ConditionMode: 2
+    m_ConditionEvent: Moving
     m_EventTreshold: 0.1
   - m_ConditionMode: 3
     m_ConditionEvent: DirectionY
@@ -155,9 +155,9 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 3
-    m_ConditionEvent: Velocity
-    m_EventTreshold: 0.1
+  - m_ConditionMode: 1
+    m_ConditionEvent: Moving
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102118906395326798}
   m_Solo: 0
@@ -230,8 +230,8 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 4
-    m_ConditionEvent: Velocity
+  - m_ConditionMode: 2
+    m_ConditionEvent: Moving
     m_EventTreshold: 0.1
   - m_ConditionMode: 4
     m_ConditionEvent: DirectionY

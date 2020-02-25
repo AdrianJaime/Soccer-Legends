@@ -41,6 +41,10 @@ public class MyPlayer_PVE : MonoBehaviour
     private int passFrames = 0;
     public int fingerIdx = -1;
 
+    [SerializeField] Animator animator;
+    [SerializeField] SpriteRenderer characterSprite;
+    float velocity0 = 0;
+
     //IA
     bool iaPlayer;
 
@@ -91,6 +95,8 @@ public class MyPlayer_PVE : MonoBehaviour
         points = new List<Vector3>();
         shootFramesRef = Time.frameCount - 5;
     }
+
+
     private void Update()
     {
         //if (photonView.IsMine) //Check if we're the local player
@@ -104,7 +110,9 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (playerObjective != Vector3.zero)
             {
                 //Vector3 nextPos;
-                transform.position = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                velocity0 = (newPos - transform.position).magnitude;
+                transform.position = newPos;
                 //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                 //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
                 if (transform.position == playerObjective) MoveTo(new float[] { 0, 0, 0 });
@@ -120,6 +128,7 @@ public class MyPlayer_PVE : MonoBehaviour
         // smoothMovement();
         //}
         checkGoal();
+        if(!iaPlayer)SetAnimatorValues();
     }
 
     private void smoothMovement()
@@ -271,9 +280,9 @@ public class MyPlayer_PVE : MonoBehaviour
         var endTime = Time.time + waitTime;
         while (Time.time < endTime)
         {
-            GetComponent<Renderer>().enabled = false;
+            characterSprite.enabled = false;
             yield return new WaitForSeconds(0.2f);
-            GetComponent<Renderer>().enabled = true;
+            characterSprite.enabled = true;
             yield return new WaitForSeconds(0.2f);
         }
         stunned = false;
@@ -440,5 +449,21 @@ public class MyPlayer_PVE : MonoBehaviour
             }
         }
         else return;
+    }
+
+    void SetAnimatorValues()
+    {
+        Vector2 direction=(playerObjective-transform.position).normalized;
+
+        animator.SetFloat("DirectionX", direction.x);
+        animator.SetFloat("DirectionY", direction.y);
+        Debug.Log(velocity0);
+        if(velocity0<0.01)
+            animator.SetBool("Moving", false);
+        else
+            animator.SetBool("Moving", true);
+
+        if(mg.GameOn!= animator.enabled)
+            animator.enabled = mg.GameOn;
     }
 }

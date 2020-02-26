@@ -57,17 +57,25 @@ public class MyPlayer_PVE : MonoBehaviour
             case 0:
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
+                stats = new Stats(StaticInfo.teamSelectedToPlay[1].info.atk, StaticInfo.teamSelectedToPlay[1].info.teq,
+                    StaticInfo.teamSelectedToPlay[1].info.def);
                 break;
             case 1:
                     formationPos = IA_manager.formationPositions.ALA;
                     gameObject.name = "Ala";
+                stats = new Stats(StaticInfo.teamSelectedToPlay[3].info.atk, StaticInfo.teamSelectedToPlay[3].info.teq,
+                    StaticInfo.teamSelectedToPlay[3].info.def);
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
+                stats = new Stats(StaticInfo.teamSelectedToPlay[2].info.atk, StaticInfo.teamSelectedToPlay[2].info.teq,
+                    StaticInfo.teamSelectedToPlay[2].info.def);
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
+                stats = new Stats(StaticInfo.teamSelectedToPlay[0].info.atk, StaticInfo.teamSelectedToPlay[0].info.teq,
+                    StaticInfo.teamSelectedToPlay[0].info.def);
                 break;
             default:
 

@@ -136,7 +136,7 @@ public class MyPlayer_PVE : MonoBehaviour
         // smoothMovement();
         //}
         checkGoal();
-        if(!iaPlayer)SetAnimatorValues();
+        SetAnimatorValues();
     }
 
     private void smoothMovement()
@@ -463,10 +463,8 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         Vector2 direction=(playerObjective-transform.position).normalized;
 
-        if (direction.y > 0) characterSprite.transform.position = new Vector3(characterSprite.transform.position.x,
-             characterSprite.transform.position.y, -0.05f);
-        else characterSprite.transform.position = new Vector3(characterSprite.transform.position.x,
-             characterSprite.transform.position.y, 0.05f);
+        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
+        else if(ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);
 
         animator.SetFloat("DirectionX", direction.x);
         animator.SetFloat("DirectionY", direction.y);

@@ -36,7 +36,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             }
             if (transform.parent != null)
             {
-                transform.localPosition = new Vector3(0, -0.5f, 0);
+                transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
         }
     }
@@ -58,7 +58,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if (transform.parent != null)
             {
-                transform.localPosition = new Vector3(0, -0.5f, 0);
+                transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
             else if (Vector2.Distance(transform.position, smoothMove) < 1.5f) transform.position = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 20);
             else transform.position = smoothMove;
@@ -67,7 +67,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if (transform.parent != null)
             {
-                transform.localPosition = new Vector3(0, -0.5f, 0);
+                transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
             else if(GameObject.Find("Manager").GetComponent<PVE_Manager>().FindWhoHasTheBall() != null)
             {

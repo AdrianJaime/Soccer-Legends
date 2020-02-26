@@ -498,6 +498,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             direction = (smoothMove - transform.position).normalized;
         }
+
+        if (direction.y > 0) characterSprite.transform.position = new Vector3(characterSprite.transform.position.x,
+             characterSprite.transform.position.y, -0.05f);
+        else characterSprite.transform.position = new Vector3(characterSprite.transform.position.x,
+             characterSprite.transform.position.y, 0.05f);
+
         animator.SetFloat("DirectionX", direction.x);
         animator.SetFloat("DirectionY", direction.y);
         if (velocity0 < 0.01)

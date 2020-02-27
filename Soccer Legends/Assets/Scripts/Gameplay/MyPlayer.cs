@@ -444,7 +444,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     void checkGoal()
     {
-        Debug.Log("checkGoal");
         if (mg.GameOn && mg.lastPlayer == gameObject)
         {
             if (goal.bounds.Contains(PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.position)

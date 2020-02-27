@@ -74,6 +74,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
+                speed *= 3;
                 stats = new Stats(StaticInfo.teamSelectedToPlay[0].info.atk, StaticInfo.teamSelectedToPlay[0].info.teq,
                     StaticInfo.teamSelectedToPlay[0].info.def);
                 break;
@@ -135,7 +136,6 @@ public class MyPlayer_PVE : MonoBehaviour
         //{
         // smoothMovement();
         //}
-        checkGoal();
         SetAnimatorValues();
     }
 
@@ -152,7 +152,7 @@ public class MyPlayer_PVE : MonoBehaviour
             if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
             else if(fingerIdx == -1)return;
             Touch swipe = Input.GetTouch(fingerIdx);
-            aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+            aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0.0f)));
             if (swipe.phase == TouchPhase.Began)
             {
                 touchTime = Time.time;
@@ -170,10 +170,14 @@ public class MyPlayer_PVE : MonoBehaviour
 
                     if (ball != null)
                     {
-                        //Pass
-                        float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
-                        ShootBall(dir);
-                        //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
+                        else
+                        {
+                            //Pass
+                            float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
+                            ShootBall(dir);
+                            //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        }
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -220,7 +224,7 @@ public class MyPlayer_PVE : MonoBehaviour
         return false;
     }
 
-    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, 0); }
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, goal.transform.position.z); }
 
 
 
@@ -419,10 +423,6 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void checkGoal()
     {
-        if (mg.GameOn && mg.lastPlayer == gameObject)
-        {
-            if (goal.bounds.Contains(GameObject.FindGameObjectWithTag("Ball").transform.position))
-            {
                 //Goal
                 int ia_Idx = 3;
                 int playerIdx = 0;
@@ -438,25 +438,9 @@ public class MyPlayer_PVE : MonoBehaviour
                         }
                     }
                 }
-                else
-                {
-                    playerIdx = 3;
-                    for (int i = 0; i < mg.myIA_Players.Length; i++)
-                    {
-
-                        if (gameObject == mg.myIA_Players[i])
-                        {
-                            ia_Idx = i;
-                            break;
-                        }
-                    }
-                }
                 mg.ChooseShoot(playerIdx, ia_Idx);
                 //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                 //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
-            }
-        }
-        else return;
     }
 
     void SetAnimatorValues()
@@ -468,7 +452,6 @@ public class MyPlayer_PVE : MonoBehaviour
 
         animator.SetFloat("DirectionX", direction.x);
         animator.SetFloat("DirectionY", direction.y);
-        Debug.Log(velocity0);
         if(velocity0<0.01)
             animator.SetBool("Moving", false);
         else

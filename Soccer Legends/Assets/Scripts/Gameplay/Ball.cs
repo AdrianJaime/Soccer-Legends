@@ -17,6 +17,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public int kick;
     private bool newBall;
 
+    Collider2D area1, area2;
+
+    public bool inArea = false;
+
     GameObject mainCamera;
 
     private void Start()
@@ -24,6 +28,8 @@ public class Ball : MonoBehaviourPun, IPunObservable
         rb = GetComponent<Rigidbody2D>();
         if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null) transform.GetChild(0).gameObject.AddComponent<PVP_cameraMovement>();
         else transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
+        area1 = GameObject.Find("Area 1").GetComponent<Collider2D>();
+        area2 = GameObject.Find("Area 2").GetComponent<Collider2D>();
         RepositionBall();
     }
     private void Update()
@@ -38,7 +44,14 @@ public class Ball : MonoBehaviourPun, IPunObservable
             {
                 transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
+            else if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null && GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall() != null)
+            {
+                transform.parent = GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall().transform;
+            }
         }
+        if (area1.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area1.transform.position.z)) ||
+            area2.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area2.transform.position.z))) inArea = true;
+        else inArea = false;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -96,6 +109,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         transform.parent = null;
         transform.position = Vector3.zero;
+        rb.velocity = Vector2.zero;
         ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y });
         newBall = true;
     }
@@ -106,6 +120,20 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if ((collision.name == "U_Wall" || collision.name == "D_Wall") && (Mathf.Abs(transform.position.x) >  1.25f || newBall)) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
             if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+            if(!newBall && (collision.name == "Goal 1" || collision.name == "Goal 2"))
+            {
+                if (GameObject.Find("Manager").GetComponent<PVE_Manager>() != null)
+                {
+                    if (GameObject.Find("Manager").GetComponent<PVE_Manager>().GameOn) return;
+                    if (transform.position.y > 0) GameObject.Find("Manager").GetComponent<PVE_Manager>().Goal(true);
+                    else GameObject.Find("Manager").GetComponent<PVE_Manager>().Goal(false);
+                }
+                else if (GameObject.Find("Manager").GetComponent<Manager>() != null)
+                {
+                    if (GameObject.Find("Manager").GetComponent<Manager>().GameOn) return;
+                    GameObject.Find("Manager").GetComponent<Manager>().photonView.RPC("Goal", RpcTarget.AllViaServer);
+                }
+            }
         }
     }
 }

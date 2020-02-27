@@ -309,7 +309,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.parent = null;
             ball = null;
         }
-        StartCoroutine(Blink(2.0f));
+        StartCoroutine(Blink(4.0f));
     }
 
     private IEnumerator Blink(float waitTime)

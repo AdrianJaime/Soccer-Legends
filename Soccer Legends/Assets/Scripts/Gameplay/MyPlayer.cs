@@ -266,6 +266,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     private void ShootBall(float[] _dir, PhotonMessageInfo info)
     {
+        if (!mg.GameOn && fightDir == null) return;
         if (ball)
         {
             if (ball.GetComponent<Ball>().direction == Vector2.zero)

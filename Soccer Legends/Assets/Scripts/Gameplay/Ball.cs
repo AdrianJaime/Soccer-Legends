@@ -118,7 +118,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         if (collision.tag == "Wall" && (photonView.IsMine || GameObject.Find("Manager").GetComponent<PVE_Manager>() != null))
         {
-            if ((collision.name == "U_Wall" || collision.name == "D_Wall") && (Mathf.Abs(transform.position.x) >  1.25f || newBall)) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
+            if ((collision.name == "U_Wall" || collision.name == "D_Wall")) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
             if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
             if(!newBall && (collision.name == "Goal 1" || collision.name == "Goal 2"))
             {

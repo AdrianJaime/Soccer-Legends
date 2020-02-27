@@ -401,7 +401,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     void checkCollisionDetection()
     {
         if (!mg.GameOn || stunned) return;
-        float detectionDist = 0.5f;
+        float detectionDist;
+        detectionDist = GetComponent<CircleCollider2D>().radius = 0.75f;
         GameObject[] rivals;
         bool foundCovered = false;
 
@@ -478,7 +479,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 //        }
                 //    }
                 //}
-                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, ga.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
+                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
                 //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                 //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
     }

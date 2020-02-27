@@ -385,8 +385,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                         else
                         {
-                            goalkeeper.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                            playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        float[] dir = { goalkeeper.transform.position.x, goalkeeper.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
+                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
+                        {
+                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
+                        }
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                     }
                     else
@@ -403,7 +408,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     else
                     {
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        goalkeeper.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                        float[] dir = { goalkeeper.transform.position.x, goalkeeper.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
+                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
+                        {
+                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
+                        }
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+
                     }
                         energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     }

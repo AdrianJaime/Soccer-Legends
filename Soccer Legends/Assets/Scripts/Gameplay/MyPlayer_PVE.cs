@@ -373,7 +373,8 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void checkCollisionDetection()
     {
-        float detectionDist = 0.5f;
+        float detectionDist;
+        detectionDist = GetComponent<CircleCollider2D>().radius = 0.75f;
         GameObject[] rivals;
         bool foundCovered = false;
 

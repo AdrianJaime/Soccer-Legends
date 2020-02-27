@@ -70,6 +70,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
+                speed *= 3;
                 break;
             default:
 
@@ -135,7 +136,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             {
                 checkCollisionDetection();
                 //rePositionBall(); //To be implemented
-                checkGoal();
             }
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -194,9 +194,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
                     if (ball != null)
                     {
-                        //Pass
-                        float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
-                        photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
+                        else
+                        {
+                            //Pass
+                            float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
+                            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        }
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -247,7 +251,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         return false;
     }
 
-    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, 0); }
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, goal.transform.position.z); }
 
     private MyPlayer findGoalKeeper()
     {
@@ -324,7 +328,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void GetBall()
     {
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null)
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null || !mg.GameOn)
         {
             return;
         }
@@ -396,6 +400,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     void checkCollisionDetection()
     {
+        if (!mg.GameOn || stunned) return;
         float detectionDist = 0.5f;
         GameObject[] rivals;
         bool foundCovered = false;
@@ -444,11 +449,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     void checkGoal()
     {
-        if (mg.GameOn && mg.lastPlayer == gameObject)
-        {
-            if (goal.bounds.Contains(PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.position)
-                && PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner == photonView.Owner)
-            {
                 //Goal
                 int ia_Idx = 3;
                 //int playerIdx = 0;
@@ -478,12 +478,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 //        }
                 //    }
                 //}
-                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, mg.lastPlayer.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
+                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, ga.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
                 //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
                 //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
-            }
-        }
-        else return;
     }
 
     void SetAnimatorValues()

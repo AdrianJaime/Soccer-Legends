@@ -91,7 +91,9 @@ public class PVP_IA_manager : MonoBehaviour
             }
             else
             {
+                if(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.IsMine)
                 IA_ObjectivePos = new Vector2(ballPos.x, ballPos.y + 0.5f);
+                else IA_ObjectivePos = new Vector2(ballPos.x, ballPos.y - 0.5f);
             }
             ia_players[i].GetComponent<MyPlayer>().MoveTo(new float[] { IA_ObjectivePos.x, IA_ObjectivePos.y, 0.0f });
         }

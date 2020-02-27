@@ -44,7 +44,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             {
                 transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
-            else if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null && GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall() != null)
+            else if (GameObject.Find("Manager").GetComponent<Manager>() != null && GameObject.Find("Manager").GetComponent<Manager>().GameStarted && GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall() != null)
             {
                 transform.parent = GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall().transform;
             }

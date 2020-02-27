@@ -627,7 +627,8 @@ public class IA_manager : MonoBehaviour
             case formationPositions.PIVOT:
                 float randVal = Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101);
                 Debug.Log(randVal);
-                if (randVal > 90) shootToGoal(playerWithBall);
+                if (playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea) shootToGoal(playerWithBall);
+                else if (randVal > 90) shootToGoal(playerWithBall);
                 else passToPlayer(playerWithBall);
                 break;
             case formationPositions.GOALKEEPER:
@@ -766,7 +767,7 @@ public class IA_manager : MonoBehaviour
                     playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
                     break;
                 case formationPositions.ALA:
-                    if(playerWithBall.transform.position.y < -4)shootToGoal(playerWithBall);
+                    if(playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea) shootToGoal(playerWithBall);
                     break;
                 case formationPositions.GOALKEEPER:
                     Vector2 randShoot = new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(1.0f, 10.0f));
@@ -779,20 +780,32 @@ public class IA_manager : MonoBehaviour
 
     void shootToGoal(GameObject playerWithBall)
     {
+        if (!playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea) return;
         Debug.Log("Shooting to goal");
 
-        
+        int playerIdx = 3;
+        int ia_Idx = 0;
+        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        {
 
-        if(mg.myIA_Players[3].transform.position.x < 0)
-        {
-            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x +0.5f,1.5f), -7.5f);
-            playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+            if (playerWithBall == mg.myIA_Players[i])
+            {
+                ia_Idx = i;
+                break;
+            }
         }
-        else
-        {
-            Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x - 0.5f, -1.5f), -7.5f);
-            playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
-        }
+        mg.ChooseShoot(playerIdx, ia_Idx);
+
+        //if(mg.myIA_Players[3].transform.position.x < 0)
+        //{
+        //    Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x +0.5f,1.5f), -7.5f);
+        //    playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+        //}
+        //else
+        //{
+        //    Vector2 randShoot = new Vector2(Random.Range(mg.myIA_Players[3].transform.position.x - 0.5f, -1.5f), -7.5f);
+        //    playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
+        //}
 
     }
 }

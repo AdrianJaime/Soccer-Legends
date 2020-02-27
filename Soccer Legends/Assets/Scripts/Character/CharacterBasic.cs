@@ -56,6 +56,8 @@ public class CharacterBasic : MonoBehaviour
             info = response;
         });
 
+        ///ALFA CHANGE
+        info.owned = true;
 
 
     }

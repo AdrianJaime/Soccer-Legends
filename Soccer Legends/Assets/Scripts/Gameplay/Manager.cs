@@ -33,6 +33,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     //Hardcoded bug fixes
     int frameCount = 0;
+    int goalRefFrame;
 
     // Start is called before the first frame update
     void Start()
@@ -56,6 +57,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 frameCount = 0;
             }
         }
+
+        if(goalRefFrame == Time.frameCount + 60) photonView.RPC("Goal", RpcTarget.AllViaServer);
+
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
 
         if(!GameOn && GameStarted)
@@ -214,7 +218,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
-        if (!GameOn) return;
+        if (!GameOn || PhotonView.Find(_player1).GetComponent<MyPlayer>().stunned || PhotonView.Find(_player2).GetComponent<MyPlayer>().stunned) return;
         if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
@@ -270,6 +274,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         else score[1]++;
 
         GameOn = true;
+        goalRefFrame = 0;
         lastPlayer = null;
         UpdateScoreBoard();
         Reposition();
@@ -381,17 +386,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         {
                             dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
                         }
+                        goalRefFrame = Time.frameCount;
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                         else
                         {
                             playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        float[] dir = { goalkeeper.transform.position.x, goalkeeper.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
-                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
-                        {
-                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
-                        }
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                     }
                     else
@@ -403,18 +403,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         {
                             dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
                         }
+                        goalRefFrame = Time.frameCount;
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                     else
                     {
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        float[] dir = { goalkeeper.transform.position.x, goalkeeper.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
-                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
-                        {
-                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
-                        }
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
-
                     }
                         energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     }

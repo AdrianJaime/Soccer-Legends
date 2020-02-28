@@ -279,6 +279,11 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
+        if (fightDir == "Special" || fightDir == "Normal")
+        {
+            float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            ShootBall(dir);
+        }
         if (ball)
         {
             ball.transform.parent = null;

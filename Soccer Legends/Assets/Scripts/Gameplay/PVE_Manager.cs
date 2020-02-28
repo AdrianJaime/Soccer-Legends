@@ -31,6 +31,7 @@ public class PVE_Manager : MonoBehaviour
     Vector2[] swipes;
 
     //Hardcoded bug fixes
+    int goalRefFrame;
     int frameCount = 0;
 
     // Start is called before the first frame update
@@ -55,6 +56,12 @@ public class PVE_Manager : MonoBehaviour
                 frameCount = 0;
             }
         }
+
+        if (goalRefFrame == Time.frameCount + 60) {
+            if (lastPlayer.transform.position.y > 0) Goal(true);
+            else Goal(false);
+        }
+
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
@@ -159,10 +166,10 @@ public class PVE_Manager : MonoBehaviour
                             if(randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
                             {
                                 playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
+                                goalRefFrame = Time.frameCount;
                             }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
                                 GameOn = true;
                             }
@@ -170,10 +177,12 @@ public class PVE_Manager : MonoBehaviour
                         else
                         {
                             if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special")
-                                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] {-1.0f*(goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
+                            {
+                                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
+                                goalRefFrame = Time.frameCount;
+                            }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
                                 GameOn = true;
                             }
@@ -318,7 +327,10 @@ public class PVE_Manager : MonoBehaviour
     {
         MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
-        if(player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
+
+        if (!GameOn || player1.stunned || IA_Player.stunned) return;
+
+        if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
         {
             player1.ball = GameObject.FindGameObjectWithTag("Ball");
             player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
@@ -351,6 +363,7 @@ public class PVE_Manager : MonoBehaviour
         else score[1]++;
 
         GameOn = true;
+        goalRefFrame = 0;
         lastPlayer = null;
         UpdateScoreBoard();
         Reposition();

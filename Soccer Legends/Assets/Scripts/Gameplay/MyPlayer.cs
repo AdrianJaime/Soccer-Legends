@@ -304,6 +304,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
+        if(fightDir == "Special" || fightDir == "Normal")
+        {
+            float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+        }
         mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
         if (ball)
         {

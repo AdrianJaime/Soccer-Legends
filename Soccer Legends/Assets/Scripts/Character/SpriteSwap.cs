@@ -15,6 +15,7 @@ public class SpriteSwap : MonoBehaviour
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        SpriteSheetName = spriteRenderer.sprite.name;
 
         LoadSpriteSheet();
     }

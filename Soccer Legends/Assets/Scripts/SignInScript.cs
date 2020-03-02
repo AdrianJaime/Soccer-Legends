@@ -20,7 +20,7 @@ public class SignInScript : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
         Debug.LogFormat("SignInOnClick: Play Games Configuration initialized");
-        txt.text = "SignInOnClick: Play Games Configuration initialized";
+        //txt.text = "SignInOnClick: Play Games Configuration initialized";
 
     }
 
@@ -28,15 +28,15 @@ public class SignInScript : MonoBehaviour
     public void SignInWithPlayGames()
     {
 
-        txt.text = "Pressed";
+        //txt.text = "Pressed";
         // Initialize Firebase Auth
         Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        txt.text = "He pasado";
+        //txt.text = "He pasado";
         // Sign In and Get a server auth code.
         UnityEngine.Social.localUser.Authenticate((bool success) => {
             if (!success)
             {
-                txt.text = "SignInOnClick: Failed to Sign into Play Games Services.";
+                //txt.text = "SignInOnClick: Failed to Sign into Play Games Services.";
                 Debug.LogError("SignInOnClick: Failed to Sign into Play Games Services.");
                 return;
             }
@@ -44,7 +44,7 @@ public class SignInScript : MonoBehaviour
             string authCode = PlayGamesPlatform.Instance.GetServerAuthCode();
             if (string.IsNullOrEmpty(authCode))
             {
-                txt.text = "SignInOnClick: Signed into Play Games Services but failed to get the server auth code.";
+               // txt.text = "SignInOnClick: Signed into Play Games Services but failed to get the server auth code.";
                 Debug.LogError("SignInOnClick: Signed into Play Games Services but failed to get the server auth code.");
                 return;
             }
@@ -57,20 +57,20 @@ public class SignInScript : MonoBehaviour
             auth.SignInWithCredentialAsync(credential).ContinueWith(task => {
                 if (task.IsCanceled)
                 {
-                    txt.text = "SignInOnClick was canceled.";
+                 //   txt.text = "SignInOnClick was canceled.";
                     Debug.LogError("SignInOnClick was canceled.");
                     return;
                 }
                 if (task.IsFaulted)
                 {
-                    txt.text = "SignInOnClick encountered an error: " + task.Exception;
+                    //txt.text = "SignInOnClick encountered an error: " + task.Exception;
                     Debug.LogError("SignInOnClick encountered an error: " + task.Exception);
                     return;
                 }
 
                 Firebase.Auth.FirebaseUser newUser = task.Result;
                 Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
-                txt.text = newUser.UserId;
+                //txt.text = newUser.UserId;
                 SceneManager.LoadScene("MainMenuScene");
             });
         });

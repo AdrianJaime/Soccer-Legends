@@ -70,6 +70,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
+                speed *= 3;
                 break;
             default:
 
@@ -135,7 +136,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             {
                 checkCollisionDetection();
                 //rePositionBall(); //To be implemented
-                checkGoal();
             }
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
@@ -194,9 +194,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
                     if (ball != null)
                     {
-                        //Pass
-                        float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
-                        photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
+                        else
+                        {
+                            //Pass
+                            float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
+                            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                        }
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -247,7 +251,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         return false;
     }
 
-    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, 0); }
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, goal.transform.position.z); }
 
     private MyPlayer findGoalKeeper()
     {
@@ -262,6 +266,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     private void ShootBall(float[] _dir, PhotonMessageInfo info)
     {
+        if (!mg.GameOn && fightDir == null) return;
         if (ball)
         {
             if (ball.GetComponent<Ball>().direction == Vector2.zero)
@@ -299,13 +304,18 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
-        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
-        if (ball)
+        if(fightDir == "Special" || fightDir == "Normal")
+        {
+            float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+        }
+        else if (ball)
         {
             ball.transform.parent = null;
             ball = null;
         }
-        StartCoroutine(Blink(2.0f));
+        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
+        StartCoroutine(Blink(4.0f));
     }
 
     private IEnumerator Blink(float waitTime)
@@ -324,7 +334,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void GetBall()
     {
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null)
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null || !mg.GameOn)
         {
             return;
         }
@@ -374,7 +384,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         transform.gameObject.layer = 0;
         transform.position = startPosition;
-        Lose();
+        //Lose();
+        stunned = true;
+        StartCoroutine(Blink(2.0f));
         GameObject.Destroy(actualLine);
         onMove = false;
     }
@@ -396,7 +408,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     void checkCollisionDetection()
     {
-        float detectionDist = 0.5f;
+        if (!mg.GameOn || stunned) return;
+        float detectionDist;
+        detectionDist = GetComponent<CircleCollider2D>().radius = 0.75f;
         GameObject[] rivals;
         bool foundCovered = false;
 
@@ -444,47 +458,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     void checkGoal()
     {
-        Debug.Log("checkGoal");
-        if (mg.GameOn && mg.lastPlayer == gameObject)
-        {
-            if (goal.bounds.Contains(PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.position)
-                && PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner == photonView.Owner)
-            {
                 //Goal
                 int ia_Idx = 3;
-                //int playerIdx = 0;
-                //fightDir = null;
-                //if (!!photonView.IsMine)
-                //{
-                //    for (int i = 0; i < mg.myPlayers.Length; i++)
-                //    {
-
-                //        if (gameObject == mg.myPlayers[i])
-                //        {
-                //            playerIdx = i;
-                //            break;
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    playerIdx = 3;
-                //    for (int i = 0; i < mg.myIA_Players.Length; i++)
-                //    {
-
-                //        if (gameObject == mg.myIA_Players[i])
-                //        {
-                //            ia_Idx = i;
-                //            break;
-                //        }
-                //    }
-                //}
-                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, mg.lastPlayer.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
-                //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
-                //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
-            }
-        }
-        else return;
+                if (ball.transform.position.y / Mathf.Abs(ball.transform.position.y)
+                    != mg.myIA_Players[ia_Idx].transform.position.y / Mathf.Abs(mg.myIA_Players[ia_Idx].transform.position.y)) return;
+        
+        mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
+      
     }
 
     void SetAnimatorValues()
@@ -492,12 +472,27 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         Vector2 direction = Vector3.zero;
         if (photonView.IsMine)
         {
-            direction = (playerObjective - transform.position).normalized;
+            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (playerObjective - transform.position).normalized;
         }
         else
         {
-            direction = (smoothMove - transform.position).normalized;
+            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (smoothMove - transform.position).normalized;
         }
+
+        if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+        {
+            float inverseFactor;
+            if (velocity0 >= 0.01) inverseFactor = -1.0f;
+            else inverseFactor = 1.0f;
+            direction = new Vector2(direction.x, Mathf.Abs(direction.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+
+        }
+
+        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
+        else if (ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);
+
         animator.SetFloat("DirectionX", direction.x);
         animator.SetFloat("DirectionY", direction.y);
         if (velocity0 < 0.01)

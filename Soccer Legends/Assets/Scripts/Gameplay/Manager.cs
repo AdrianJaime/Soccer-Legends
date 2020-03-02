@@ -33,6 +33,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     //Hardcoded bug fixes
     int frameCount = 0;
+    int goalRefFrame;
 
     // Start is called before the first frame update
     void Start()
@@ -56,6 +57,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 frameCount = 0;
             }
         }
+
+        if(goalRefFrame == Time.frameCount + 60) photonView.RPC("Goal", RpcTarget.AllViaServer);
+
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
 
         if(!GameOn && GameStarted)
@@ -214,7 +218,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
-        if (!GameOn) return;
+        if (!GameOn || PhotonView.Find(_player1).GetComponent<MyPlayer>().stunned || PhotonView.Find(_player2).GetComponent<MyPlayer>().stunned) return;
         if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
@@ -269,6 +273,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (isLocal) score[0]++;
         else score[1]++;
 
+        resumeGame();
+        goalRefFrame = 0;
         lastPlayer = null;
         UpdateScoreBoard();
         Reposition();
@@ -375,20 +381,33 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         Debug.Log("Random value-> " + randomValue.ToString());
                         if (randomValue <= playerWithBall.GetComponent<MyPlayer>().stats.shoot)
                         {
-                        photonView.RPC("Goal", RpcTarget.AllViaServer);
+                        float[] dir = { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
+                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
+                        {
+                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
+                        }
+                        goalRefFrame = Time.frameCount;
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                         else
                         {
-                            goalkeeper.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                            playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
                     }
                     else
                     {
-                        if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") photonView.RPC("Goal", RpcTarget.AllViaServer);
-                        else
+                    if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special")
+                    {
+                        float[] dir = { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
+                        if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
                         {
-                            goalkeeper.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                            dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
+                        }
+                        goalRefFrame = Time.frameCount;
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                    }
+                    else
+                    {
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
                         energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
@@ -443,12 +462,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void Reposition()
     {
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         for (int i = 0; i < myPlayers.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer>().RepositionPlayer();
         }
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
 

@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class PVE_Manager : MonoBehaviour
 {
-    enum fightState { FIGHT, SHOOT };
+    enum fightState { FIGHT, SHOOT, NONE };
 
     public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
     public bool GameStarted = false, GameOn = true;
@@ -31,6 +31,7 @@ public class PVE_Manager : MonoBehaviour
     Vector2[] swipes;
 
     //Hardcoded bug fixes
+    int goalRefFrame;
     int frameCount = 0;
 
     // Start is called before the first frame update
@@ -55,9 +56,13 @@ public class PVE_Manager : MonoBehaviour
                 frameCount = 0;
             }
         }
+
+        if (goalRefFrame == Time.frameCount + 60) {
+            if (lastPlayer.transform.position.y > 0) Goal(true);
+            else Goal(false);
+        }
+
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
-        Debug.Log("Finger idx->" + fingerIdx.ToString());
-        Debug.Log("Touches->" + touchesIdx.Count.ToString());
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
             switch(state)
@@ -135,7 +140,7 @@ public class PVE_Manager : MonoBehaviour
                         Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
                             " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir);
 
-                        GameOn = true;
+                        
                         shootButtons.SetActive(false);
                         GameObject playerWithBall, goalkeeper;
                         if (fightingPlayer != 3)
@@ -160,21 +165,26 @@ public class PVE_Manager : MonoBehaviour
                             Debug.Log("Random value-> " + randomValue.ToString());          
                             if(randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
                             {
-                                Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
+                                goalRefFrame = Time.frameCount;
                             }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
-                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose(); 
+                                playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                                GameOn = true;
                             }
                         }
                         else
                         {
-                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") Goal(playerWithBall.transform.parent.name.Substring(0, 7) == "Team IA" ? false : true);
+                            if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special")
+                            {
+                                playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
+                                goalRefFrame = Time.frameCount;
+                            }
                             else
                             {
-                                goalkeeper.GetComponent<MyPlayer_PVE>().GetBall();
                                 playerWithBall.GetComponent<MyPlayer_PVE>().Lose();
+                                GameOn = true;
                             }
                             energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                         }
@@ -182,7 +192,10 @@ public class PVE_Manager : MonoBehaviour
                         if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
                         releaseTouchIdx(fingerIdx);
                         fingerIdx = -1;
+                        state = fightState.NONE;
                     }
+                    break;
+                case fightState.NONE:
                     break;
 
             }
@@ -314,7 +327,10 @@ public class PVE_Manager : MonoBehaviour
     {
         MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
-        if(player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
+
+        if (!GameOn || player1.stunned || IA_Player.stunned) return;
+
+        if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
         {
             player1.ball = GameObject.FindGameObjectWithTag("Ball");
             player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
@@ -346,6 +362,8 @@ public class PVE_Manager : MonoBehaviour
         if (isLocal) score[0]++;
         else score[1]++;
 
+        GameOn = true;
+        goalRefFrame = 0;
         lastPlayer = null;
         UpdateScoreBoard();
         Reposition();
@@ -498,12 +516,13 @@ public class PVE_Manager : MonoBehaviour
 
     public void Reposition()
     {
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         for (int i = 0; i < myPlayers.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
         }
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
+        
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
 

@@ -281,7 +281,9 @@ public class MyPlayer_PVE : MonoBehaviour
         stunned = true;
         if (fightDir == "Special" || fightDir == "Normal")
         {
-            float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            float[] dir;
+            if (iaPlayer)dir = new float[] { mg.myPlayers[3].transform.position.x, mg.myPlayers[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            else dir = new float[] { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
             ShootBall(dir);
         }
         if (ball)
@@ -356,7 +358,9 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         transform.gameObject.layer = 0;
         transform.position = startPosition;
-        Lose();
+        //Lose();
+        stunned = true;
+        StartCoroutine(Blink(2.0f));
         GameObject.Destroy(actualLine);
         onMove = false;
     }
@@ -433,6 +437,10 @@ public class MyPlayer_PVE : MonoBehaviour
                 int ia_Idx = 3;
                 int playerIdx = 0;
                 fightDir = null;
+
+                if(ball.transform.position.y / Mathf.Abs(ball.transform.position.y)
+                    != mg.myIA_Players[ia_Idx].transform.position.y / Mathf.Abs(mg.myIA_Players[ia_Idx].transform.position.y)) return;
+
                 if (!iaPlayer) {
                     for (int i = 0; i < mg.myPlayers.Length; i++)
                     {
@@ -451,7 +459,27 @@ public class MyPlayer_PVE : MonoBehaviour
 
     void SetAnimatorValues()
     {
-        Vector2 direction=(playerObjective-transform.position).normalized;
+        Vector2 direction;
+
+        if (!iaPlayer)
+        {
+            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (playerObjective - transform.position).normalized;
+        }
+        else
+        {
+            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (playerObjective - transform.position).normalized;
+        }
+
+        if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+        {
+            float inverseFactor;
+            if (velocity0 >= 0.01) inverseFactor =  -1.0f;
+            else inverseFactor = 1.0f;
+            direction = new Vector2(direction.x, Mathf.Abs(direction.y) * ( inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+            
+        }
 
         if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
         else if(ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);

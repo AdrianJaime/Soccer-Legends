@@ -309,12 +309,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
             photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
         }
-        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
-        if (ball)
+        else if (ball)
         {
             ball.transform.parent = null;
             ball = null;
         }
+        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
         StartCoroutine(Blink(4.0f));
     }
 
@@ -384,7 +384,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         transform.gameObject.layer = 0;
         transform.position = startPosition;
-        Lose();
+        //Lose();
+        stunned = true;
+        StartCoroutine(Blink(2.0f));
         GameObject.Destroy(actualLine);
         onMove = false;
     }
@@ -458,36 +460,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
                 //Goal
                 int ia_Idx = 3;
-                //int playerIdx = 0;
-                //fightDir = null;
-                //if (!!photonView.IsMine)
-                //{
-                //    for (int i = 0; i < mg.myPlayers.Length; i++)
-                //    {
-
-                //        if (gameObject == mg.myPlayers[i])
-                //        {
-                //            playerIdx = i;
-                //            break;
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    playerIdx = 3;
-                //    for (int i = 0; i < mg.myIA_Players.Length; i++)
-                //    {
-
-                //        if (gameObject == mg.myIA_Players[i])
-                //        {
-                //            ia_Idx = i;
-                //            break;
-                //        }
-                //    }
-                //}
-                mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
-                //if(PhotonNetwork.IsMasterClient) mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, photonView.ViewID, findGoalKeeper().photonView.ViewID);
-                //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
+                if (ball.transform.position.y / Mathf.Abs(ball.transform.position.y)
+                    != mg.myIA_Players[ia_Idx].transform.position.y / Mathf.Abs(mg.myIA_Players[ia_Idx].transform.position.y)) return;
+        
+        mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
+      
     }
 
     void SetAnimatorValues()
@@ -495,11 +472,22 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         Vector2 direction = Vector3.zero;
         if (photonView.IsMine)
         {
-            direction = (playerObjective - transform.position).normalized;
+            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (playerObjective - transform.position).normalized;
         }
         else
         {
-            direction = (smoothMove - transform.position).normalized;
+            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else direction = (smoothMove - transform.position).normalized;
+        }
+
+        if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+        {
+            float inverseFactor;
+            if (velocity0 >= 0.01) inverseFactor = -1.0f;
+            else inverseFactor = 1.0f;
+            direction = new Vector2(direction.x, Mathf.Abs(direction.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+
         }
 
         if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);

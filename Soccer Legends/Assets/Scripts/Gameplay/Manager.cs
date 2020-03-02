@@ -273,7 +273,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (isLocal) score[0]++;
         else score[1]++;
 
-        GameOn = true;
+        resumeGame();
         goalRefFrame = 0;
         lastPlayer = null;
         UpdateScoreBoard();
@@ -462,12 +462,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void Reposition()
     {
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         for (int i = 0; i < myPlayers.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer>().RepositionPlayer();
         }
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
 

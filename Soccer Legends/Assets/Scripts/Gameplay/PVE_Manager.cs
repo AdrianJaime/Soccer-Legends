@@ -516,12 +516,13 @@ public class PVE_Manager : MonoBehaviour
 
     public void Reposition()
     {
+        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
         for (int i = 0; i < myPlayers.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
         }
-        GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
+        
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
     }
 

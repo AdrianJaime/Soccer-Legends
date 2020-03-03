@@ -58,7 +58,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
         }
 
-        if(goalRefFrame == Time.frameCount + 60) photonView.RPC("Goal", RpcTarget.AllViaServer);
+        if(goalRefFrame + 60 == Time.frameCount) photonView.RPC("Goal", RpcTarget.AllViaServer);
 
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
 
@@ -215,6 +215,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         GameStarted = true; GameOn = true;
         startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
+        for (int i = 0; i < myIA_Players.Length; i++)
+        {
+            myPlayers[i].GetComponent<MyPlayer>().fightDir = null;
+            myIA_Players[i].GetComponent<MyPlayer>().fightDir = null;
+        }
     }
 
     [PunRPC]

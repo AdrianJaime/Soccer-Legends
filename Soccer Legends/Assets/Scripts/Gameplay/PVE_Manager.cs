@@ -61,7 +61,7 @@ public class PVE_Manager : MonoBehaviour
             }
         }
 
-        if (goalRefFrame == Time.frameCount + 60) {
+        if (goalRefFrame + 60 == Time.frameCount) {
             if (lastPlayer.transform.position.y > 0) Goal(true);
             else Goal(false);
         }
@@ -131,6 +131,11 @@ public class PVE_Manager : MonoBehaviour
     {
         GameStarted = true; GameOn = true;
         startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
+        for(int i = 0; i < myIA_Players.Length; i++)
+        {
+            myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
+            myIA_Players[i].GetComponent<MyPlayer_PVE>().fightDir = null;
+        }
     }
 
     public void chooseDirection(int _player1, int _player2)
@@ -164,6 +169,7 @@ public class PVE_Manager : MonoBehaviour
             fightingPlayer = _player1;
             fightingIA = _player2;
             //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            //Set sprites
             animator.SetTrigger("Confrontation");
         }
     }
@@ -205,6 +211,7 @@ public class PVE_Manager : MonoBehaviour
 
     private void Fight()
     {
+        string fightType, fightResult;
         switch (state)
         {
             case fightState.FIGHT:
@@ -232,17 +239,15 @@ public class PVE_Manager : MonoBehaviour
                     {
                         playerWithBall = myPlayers[fightingPlayer];
                         playerWithoutBall = myIA_Players[fightingIA];
-                        animator.SetBool("PlayerHasBall", true);
                     }
                     else
                     {
                         playerWithoutBall = myPlayers[fightingPlayer];
                         playerWithBall = myIA_Players[fightingIA];
-                        animator.SetBool("PlayerHasBall", false);
                     }
                     if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir)
                     {
-                        animator.SetTrigger("Battle");
+                        fightType = "Battle";
                         int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
                         Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() +
                         " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
@@ -253,18 +258,19 @@ public class PVE_Manager : MonoBehaviour
                         Debug.Log("Random value-> " + randomValue.ToString());
                         if (randomValue > playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique)
                         {
-                            animator.SetTrigger(playerWithoutBall == myPlayers[fightingPlayer] ? "Win" : "Lose");
+                            fightResult = playerWithoutBall == myPlayers[fightingPlayer] ? "Win" : "Lose";
                         }
                         else
                         {
-                            animator.SetTrigger(playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose");
+                            fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose";
                         }
 
                     }
                     else
                     {
-                        animator.SetTrigger("Elude");
+                        fightResult = fightType = "Elude";
                     }
+                    setAnims(fightType, fightResult);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -283,17 +289,14 @@ public class PVE_Manager : MonoBehaviour
                     if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                     else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
-                    animator.SetBool("PlayerSpecial", myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special");
-                    animator.SetBool("EnemySpecial", myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special");
-
                     Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
                         " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir);
                     Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
                         " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir);
 
-                    if(myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special" ||
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") animator.SetTrigger("SpecialAttack");
-                    else animator.SetTrigger("Battle");
+                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special" ||
+                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") fightType = "SpecialAttack";
+                    else fightType = "Battle";
 
                     shootButtons.SetActive(false);
                     GameObject playerWithBall, goalkeeper;
@@ -319,27 +322,28 @@ public class PVE_Manager : MonoBehaviour
                         Debug.Log("Random value-> " + randomValue.ToString());
                         if (randomValue <= playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot)
                         {
-                            animator.SetTrigger(playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose");
+                            fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose";
                         }
                         else
                         {
-                            animator.SetTrigger(playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win");
+                            fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win";
                         }
                     }
                     else
                     {
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special")
                         {
-                            animator.SetTrigger(playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose");
+                            fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Win" : "Lose";
                         }
                         else
                         {
-                            animator.SetTrigger(playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win");
+                            fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win";
                         }
                         energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     }
                     if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
+                    setAnims(fightType, fightResult);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                     state = fightState.NONE;
@@ -349,6 +353,18 @@ public class PVE_Manager : MonoBehaviour
                 break;
 
         }
+    }
+
+    void setAnims(string fightType, string fightResult)
+    {
+        //Set booleans
+        animator.SetBool("PlayerHasBall", myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null ? true : false);
+        animator.SetBool("PlayerSpecial", myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special");
+        animator.SetBool("EnemySpecial", myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special");
+
+        //Set triggers
+        animator.SetTrigger(fightType);
+        animator.SetTrigger(fightResult);
     }
 
     public void fightResult(string anim)

@@ -31,7 +31,6 @@ public class strategyUI : MonoBehaviour
     void LateUpdate() {
         stratText.text = mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy.ToString();
         interacting = false;
-        Debug.Log(scrollbar.handleRect.transform.localPosition);
         if (isInteracting()) stratText.color = scrollbar.colors.pressedColor;
         else stratText.color = scrollbar.colors.disabledColor;
 

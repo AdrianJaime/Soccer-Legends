@@ -43,6 +43,8 @@ public class MyPlayer_PVE : MonoBehaviour
 
     [SerializeField] Animator animator;
     [SerializeField] SpriteRenderer characterSprite;
+    public Sprite interactionSprite;
+    public Sprite specialSprite;
     float velocity0 = 0;
 
     //IA

@@ -105,7 +105,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     else if(state == fightState.SHOOT)
                     {
-                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1)
+                        if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1 &&
+                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
@@ -424,7 +425,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     }
 
-    public void setFightDir(string dir) { fightDir = dir; }
+    public void fightResult(string anim)
+    {
+        ;
+    }
 
     public int HasTheBall()
     {

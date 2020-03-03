@@ -327,6 +327,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             yield return new WaitForSeconds(0.2f);
             characterSprite.enabled = true;
             yield return new WaitForSeconds(0.2f);
+            if (!mg.GameOn) endTime += 0.4f;
         }
         stunned = false;
     }

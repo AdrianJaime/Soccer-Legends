@@ -291,6 +291,7 @@ public class MyPlayer_PVE : MonoBehaviour
             ball.transform.parent = null;
             ball = null;
         }
+        mg.resumeGame();
         StartCoroutine(Blink(4.0f));
     }
 
@@ -303,6 +304,7 @@ public class MyPlayer_PVE : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
             characterSprite.enabled = true;
             yield return new WaitForSeconds(0.2f);
+            if (!mg.GameOn) endTime += 0.4f;
         }
         stunned = false;
     }

@@ -24,32 +24,32 @@ public class strategyUI : MonoBehaviour
     {
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
         scrollbar = GetComponent<Scrollbar>();
+        lastButtonPos = startButtonPos = Vector3.zero;
     }
 
     // Update is called once per frame
     void LateUpdate() {
-        if (startButtonPos == Vector3.zero) { startButtonPos = scrollbar.handleRect.position; lastButtonPos = scrollbar.handleRect.position; }
         stratText.text = mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy.ToString();
         interacting = false;
-
+        Debug.Log(scrollbar.handleRect.transform.localPosition);
         if (isInteracting()) stratText.color = scrollbar.colors.pressedColor;
         else stratText.color = scrollbar.colors.disabledColor;
 
         if (cooldown == 60) scrollbar.interactable = false;
         if (cooldown > cooldownRef) scrollbar.interactable = true;
         else cooldown++;
-        if (scrollbar.handleRect.position.y != lastButtonPos.y)
+        if (scrollbar.handleRect.transform.localPosition.y != lastButtonPos.y)
         {
             cooldown = 0;
-            if (scrollbar.handleRect.position.y == startButtonPos.y)
+            if (scrollbar.handleRect.transform.localPosition.y == startButtonPos.y)
                 mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.EQUILIBRATED;
-            else if (scrollbar.handleRect.position.y > startButtonPos.y)
+            else if (scrollbar.handleRect.transform.localPosition.y > startButtonPos.y)
                 mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.OFFENSIVE;
-            else if (scrollbar.handleRect.position.y < startButtonPos.y)
+            else if (scrollbar.handleRect.transform.localPosition.y < startButtonPos.y)
                 mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.DEFFENSIVE;
         }
 
-        lastButtonPos = scrollbar.handleRect.position;
+        lastButtonPos = scrollbar.handleRect.transform.localPosition;
     }
 
     public void guiInteracting() {

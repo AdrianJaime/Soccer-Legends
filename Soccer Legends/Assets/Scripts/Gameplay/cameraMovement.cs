@@ -24,6 +24,7 @@ public class cameraMovement : MonoBehaviour
 
         canvas = GameObject.Find("Canvas");
         guiInteractions = canvas.transform.GetChild(5).GetComponent <strategyUI>();
+        canvas.GetComponent<Canvas>().worldCamera = GetComponent<Camera>();
     }
 
     // Update is called once per frame

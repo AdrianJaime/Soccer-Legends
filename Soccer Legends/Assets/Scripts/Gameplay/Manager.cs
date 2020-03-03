@@ -38,7 +38,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     // Start is called before the first frame update
     void Start()
     {
-        timeStart = Time.time;
+        
         touchesIdx = new List<int>();
         fingerIdx = -1;
         swipes = new Vector2[2];
@@ -187,6 +187,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     [PunRPC]
     public void StartGame() {
+        timeStart = Time.time;
         GameStarted = true; GameOn = true;
         startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
         GameObject T2 = GameObject.Find("Team 2(Clone)");

@@ -76,6 +76,7 @@ public class MyPlayer_PVE : MonoBehaviour
         points = new List<Vector3>();
         shootFramesRef = Time.frameCount - 5;
         animator.SetBool("Moving", true);
+        StartCoroutine(SetAnimatorValues());
     }
 
     void setPlayer()
@@ -158,7 +159,6 @@ public class MyPlayer_PVE : MonoBehaviour
         //{
         // smoothMovement();
         //}
-        SetAnimatorValues();
     }
 
     private void smoothMovement()
@@ -481,8 +481,9 @@ public class MyPlayer_PVE : MonoBehaviour
                 //else mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, findGoalKeeper().photonView.ViewID, photonView.ViewID);
     }
 
-    void SetAnimatorValues()
+    IEnumerator SetAnimatorValues()
     {
+        yield return new WaitForSeconds(0.25f);
         Vector2 direction;
 
         if (!iaPlayer)
@@ -517,5 +518,6 @@ public class MyPlayer_PVE : MonoBehaviour
 
         if(mg.GameStarted && mg.GameOn!= animator.enabled)
             animator.enabled = mg.GameOn;
+        StartCoroutine(SetAnimatorValues());
     }
 }

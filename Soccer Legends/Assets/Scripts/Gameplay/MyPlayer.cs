@@ -83,6 +83,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         //}
         points = new List<Vector3>();
         shootFramesRef = Time.frameCount - 5;
+        StartCoroutine(SetAnimatorValues());
     }
 
     void setPlayer()
@@ -170,7 +171,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
-        SetAnimatorValues();
     }
 
     private void smoothMovement()
@@ -498,8 +498,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
       
     }
 
-    void SetAnimatorValues()
+    IEnumerator SetAnimatorValues()
     {
+        yield return new WaitForSeconds(0.25f);
+
         Vector2 direction = Vector3.zero;
         if (photonView.IsMine)
         {
@@ -533,5 +535,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
         if (mg.GameOn != animator.enabled)
             animator.enabled = mg.GameOn;
+        StartCoroutine(SetAnimatorValues());
     }
 }

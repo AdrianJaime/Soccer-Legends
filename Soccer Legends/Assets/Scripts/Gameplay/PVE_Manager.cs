@@ -38,9 +38,9 @@ public class PVE_Manager : MonoBehaviour
     [SerializeField]
     Image iaConfrontationImage;
     [SerializeField]
-    Image specialAtqImage;
-    Sprite mySpecialAtq;
-    Sprite iaSpecialAtq;
+    Image mySpecialAtqImage;
+    [SerializeField]
+    Image iaSpecialAtqImage;
     //Hardcoded bug fixes
     int goalRefFrame;
     int frameCount = 0;
@@ -143,6 +143,12 @@ public class PVE_Manager : MonoBehaviour
             myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
             myIA_Players[i].GetComponent<MyPlayer_PVE>().fightDir = null;
         }
+        animator.ResetTrigger("Confrontation");
+        animator.ResetTrigger("Battle");
+        animator.ResetTrigger("Elude");
+        animator.ResetTrigger("Lose");
+        animator.ResetTrigger("Win");
+        animator.ResetTrigger("SpecialAttack");
     }
 
     public void chooseDirection(int _player1, int _player2)
@@ -179,6 +185,8 @@ public class PVE_Manager : MonoBehaviour
             //Set sprites
             myConfrontationImage.sprite = player1.confrontationSprite;
             iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+            mySpecialAtqImage.sprite = player1.specialSprite;
+            iaSpecialAtqImage.sprite = IA_Player.specialSprite;
             animator.SetTrigger("Confrontation");
         }
     }
@@ -217,6 +225,8 @@ public class PVE_Manager : MonoBehaviour
         }
         myConfrontationImage.sprite = player1.confrontationSprite;
         iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+        mySpecialAtqImage.sprite = player1.specialSprite;
+        iaSpecialAtqImage.sprite = IA_Player.specialSprite;
         animator.SetTrigger("Confrontation");
     }
 

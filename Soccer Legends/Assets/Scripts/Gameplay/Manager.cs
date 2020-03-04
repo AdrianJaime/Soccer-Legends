@@ -120,7 +120,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     void SpawnPlayers()
     {
 
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
+        if (!PhotonNetwork.IsMasterClient)
         {
             GameObject localPlayer = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
             myPlayers = new GameObject[4];

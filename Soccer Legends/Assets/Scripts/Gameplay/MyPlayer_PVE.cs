@@ -43,7 +43,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     [SerializeField] Animator animator;
     [SerializeField] SpriteRenderer characterSprite;
-    public Sprite interactionSprite;
+    public Sprite confrontationSprite;
     public Sprite specialSprite;
     float velocity0 = 0;
 
@@ -59,26 +59,39 @@ public class MyPlayer_PVE : MonoBehaviour
             case 0:
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
-                stats = new Stats(StaticInfo.teamSelectedToPlay[1].info.atk, StaticInfo.teamSelectedToPlay[1].info.teq,
-                    StaticInfo.teamSelectedToPlay[1].info.def);
+                stats = new Stats(StaticInfo.teamSelectedToPlay[2].info.atk, StaticInfo.teamSelectedToPlay[1].info.teq,
+                    StaticInfo.teamSelectedToPlay[2].info.def);
+                confrontationSprite = StaticInfo.teamSelectedToPlay[2].basicInfo.artworkConforntation;
+                specialSprite = StaticInfo.teamSelectedToPlay[2].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = StaticInfo.teamSelectedToPlay[2].basicInfo.animator_character;
                 break;
             case 1:
                     formationPos = IA_manager.formationPositions.ALA;
                     gameObject.name = "Ala";
-                stats = new Stats(StaticInfo.teamSelectedToPlay[3].info.atk, StaticInfo.teamSelectedToPlay[3].info.teq,
-                    StaticInfo.teamSelectedToPlay[3].info.def);
+                stats = new Stats(StaticInfo.teamSelectedToPlay[0].info.atk, StaticInfo.teamSelectedToPlay[3].info.teq,
+                    StaticInfo.teamSelectedToPlay[0].info.def);
+                confrontationSprite = StaticInfo.teamSelectedToPlay[0].basicInfo.artworkConforntation;
+                specialSprite = StaticInfo.teamSelectedToPlay[0].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = StaticInfo.teamSelectedToPlay[0].basicInfo.animator_character;
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
-                stats = new Stats(StaticInfo.teamSelectedToPlay[2].info.atk, StaticInfo.teamSelectedToPlay[2].info.teq,
-                    StaticInfo.teamSelectedToPlay[2].info.def);
+                stats = new Stats(StaticInfo.teamSelectedToPlay[1].info.atk, StaticInfo.teamSelectedToPlay[2].info.teq,
+                    StaticInfo.teamSelectedToPlay[1].info.def);
+                confrontationSprite = StaticInfo.teamSelectedToPlay[1].basicInfo.artworkConforntation;
+                specialSprite = StaticInfo.teamSelectedToPlay[1].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = StaticInfo.teamSelectedToPlay[1].basicInfo.animator_character;
+
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 speed *= 3;
-                stats = new Stats(StaticInfo.teamSelectedToPlay[0].info.atk, StaticInfo.teamSelectedToPlay[0].info.teq,
-                    StaticInfo.teamSelectedToPlay[0].info.def);
+                stats = new Stats(StaticInfo.teamSelectedToPlay[3].info.atk, StaticInfo.teamSelectedToPlay[0].info.teq,
+                    StaticInfo.teamSelectedToPlay[3].info.def);
+                confrontationSprite = StaticInfo.teamSelectedToPlay[3].basicInfo.artworkConforntation;
+                specialSprite = StaticInfo.teamSelectedToPlay[3].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = StaticInfo.teamSelectedToPlay[3].basicInfo.animator_character;
                 break;
             default:
 
@@ -105,6 +118,7 @@ public class MyPlayer_PVE : MonoBehaviour
         //}
         points = new List<Vector3>();
         shootFramesRef = Time.frameCount - 5;
+        animator.SetBool("Moving", true);
     }
 
 
@@ -495,7 +509,7 @@ public class MyPlayer_PVE : MonoBehaviour
         else
             animator.SetBool("Moving", true);
 
-        if(mg.GameOn!= animator.enabled)
+        if(mg.GameStarted && mg.GameOn!= animator.enabled)
             animator.enabled = mg.GameOn;
     }
 }

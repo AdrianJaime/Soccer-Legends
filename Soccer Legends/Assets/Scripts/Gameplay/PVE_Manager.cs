@@ -32,8 +32,15 @@ public class PVE_Manager : MonoBehaviour
 
     Vector2[] swipes;
 
-    //Animator
-
+    //Confrontation
+    [SerializeField]
+    Image myConfrontationImage;
+    [SerializeField]
+    Image iaConfrontationImage;
+    [SerializeField]
+    Image specialAtqImage;
+    Sprite mySpecialAtq;
+    Sprite iaSpecialAtq;
     //Hardcoded bug fixes
     int goalRefFrame;
     int frameCount = 0;
@@ -170,6 +177,8 @@ public class PVE_Manager : MonoBehaviour
             fightingIA = _player2;
             //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             //Set sprites
+            myConfrontationImage.sprite = player1.confrontationSprite;
+            iaConfrontationImage.sprite = IA_Player.confrontationSprite;
             animator.SetTrigger("Confrontation");
         }
     }
@@ -206,6 +215,8 @@ public class PVE_Manager : MonoBehaviour
             fightingIA = _player2;
             GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
+        myConfrontationImage.sprite = player1.confrontationSprite;
+        iaConfrontationImage.sprite = IA_Player.confrontationSprite;
         animator.SetTrigger("Confrontation");
     }
 

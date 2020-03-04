@@ -35,5 +35,9 @@ public class Formation : MonoBehaviour
         }
         return -1;
     }
-
+     public void reorderTeam()
+    {
+        StaticInfo.teamSelectedToPlay.Clear();
+        StaticInfo.teamSelectedToPlay.AddRange(listOfCharacters);
+    }
 }

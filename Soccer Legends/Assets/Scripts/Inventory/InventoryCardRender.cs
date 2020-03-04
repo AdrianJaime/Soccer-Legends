@@ -66,7 +66,7 @@ public class InventoryCardRender : MonoBehaviour
         if (characterInfo != null)
         {
             nameText.text = characterInfo.basicInfo.nameCharacter;
-            artworkImage.sprite = characterInfo.basicInfo.artwork;
+            artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
 
             if (!characterInfo.info.owned)
             {

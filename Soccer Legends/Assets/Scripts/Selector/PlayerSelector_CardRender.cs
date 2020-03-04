@@ -32,7 +32,7 @@ public class PlayerSelector_CardRender : MonoBehaviour
             artworkImage.color = opaque;
 
             nameText.text = characterInfo.basicInfo.nameCharacter;
-            artworkImage.sprite = characterInfo.basicInfo.artwork;
+            artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
             powerText.text = characterInfo.power.ToString();
         }
 

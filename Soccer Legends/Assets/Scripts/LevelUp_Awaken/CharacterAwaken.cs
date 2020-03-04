@@ -16,7 +16,7 @@ public class CharacterAwaken : MonoBehaviour
         character = new CharacterBasic(StaticInfo.characterToAcces);
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
-        artworkLocation.sprite = character.basicInfo.artwork;
+        artworkLocation.sprite = character.basicInfo.artworkIcon;
 
         UpdateUI();
     }

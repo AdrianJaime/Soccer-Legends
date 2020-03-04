@@ -27,7 +27,7 @@ public class CharacterViewManager : MonoBehaviour
             technicalStat.text = actualCharacter.info.teq.ToString();
             nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
             levelCharacter.text = actualCharacter.info.level.ToString();
-            imageCharacter.sprite = actualCharacter.basicInfo.artwork;
+            imageCharacter.sprite = actualCharacter.basicInfo.artworkIcon;
     }
 
     public void LoadPreviousScene()

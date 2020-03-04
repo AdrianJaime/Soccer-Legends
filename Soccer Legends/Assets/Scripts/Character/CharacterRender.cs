@@ -28,6 +28,6 @@ public class CharacterRender : MonoBehaviour
         shotText.text = characterInfo.info.atk.ToString();
         defenseText.text = characterInfo.info.def.ToString();
         techinqueText.text = characterInfo.info.teq.ToString();
-        artworkImage.sprite = characterInfo.basicInfo.artwork;
+        artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
     }
 }

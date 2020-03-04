@@ -33,6 +33,16 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     Vector2[] swipes;
 
+    //Confrontation
+    [SerializeField]
+    Image myConfrontationImage;
+    [SerializeField]
+    Image iaConfrontationImage;
+    [SerializeField]
+    Image mySpecialAtqImage;
+    [SerializeField]
+    Image iaSpecialAtqImage;
+
     //Hardcoded bug fixes
     int frameCount = 0;
     int goalRefFrame;
@@ -256,6 +266,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
             fightingPlayer = _player1;
             fightingIA = _player2;
             //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            myConfrontationImage.sprite = player1.confrontationSprite;
+            iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+            mySpecialAtqImage.sprite = player1.specialSprite;
+            iaSpecialAtqImage.sprite = IA_Player.specialSprite;
             animator.SetTrigger("Confrontation");
         }
     }
@@ -307,6 +321,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
             fightingIA = _player2;
             GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
+        myConfrontationImage.sprite = player1.confrontationSprite;
+        iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+        mySpecialAtqImage.sprite = player1.specialSprite;
+        iaSpecialAtqImage.sprite = IA_Player.specialSprite;
         animator.SetTrigger("Confrontation");
     }
 

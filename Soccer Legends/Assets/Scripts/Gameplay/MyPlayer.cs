@@ -46,6 +46,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     [SerializeField] Animator animator;
     [SerializeField] SpriteRenderer characterSprite;
+    public Sprite confrontationSprite;
+    public Sprite specialSprite;
     float velocity0 = 0;
 
 
@@ -54,29 +56,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
         Debug.Log(photonView.isActiveAndEnabled);
-        switch (gameObject.transform.GetSiblingIndex())
-        {
-            case 0:
-                formationPos = IA_manager.formationPositions.CIERRE;
-                gameObject.name = "Cierre";
-                break;
-            case 1:
-                formationPos = IA_manager.formationPositions.ALA;
-                gameObject.name = "Ala";
-                break;
-            case 2:
-                formationPos = IA_manager.formationPositions.PIVOT;
-                gameObject.name = "Pivot";
-                break;
-            case 3:
-                formationPos = IA_manager.formationPositions.GOALKEEPER;
-                speed *= 3;
-                break;
-            default:
-
-                break;
-        }
-        SetName(gameObject.name);
+        setPlayer();
         if (!photonView.IsMine) stats = new Stats(5, 3, 3);
         else
         {
@@ -104,6 +84,56 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         points = new List<Vector3>();
         shootFramesRef = Time.frameCount - 5;
     }
+
+    void setPlayer()
+    {
+        List<CharacterBasic> teamInfo = !photonView.IsMine ? StaticInfo.rivalTeam : StaticInfo.teamSelectedToPlay;
+        switch (gameObject.transform.GetSiblingIndex())
+        {
+            case 0:
+                formationPos = IA_manager.formationPositions.CIERRE;
+                gameObject.name = "Cierre";
+                stats = new Stats(teamInfo[2].info.atk, teamInfo[1].info.teq,
+                    teamInfo[2].info.def);
+                confrontationSprite = teamInfo[2].basicInfo.artworkConforntation;
+                specialSprite = teamInfo[2].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = teamInfo[2].basicInfo.animator_character;
+                break;
+            case 1:
+                formationPos = IA_manager.formationPositions.ALA;
+                gameObject.name = "Ala";
+                stats = new Stats(teamInfo[0].info.atk, teamInfo[3].info.teq,
+                    teamInfo[0].info.def);
+                confrontationSprite = teamInfo[0].basicInfo.artworkConforntation;
+                specialSprite = teamInfo[0].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = teamInfo[0].basicInfo.animator_character;
+                break;
+            case 2:
+                formationPos = IA_manager.formationPositions.PIVOT;
+                gameObject.name = "Pivot";
+                stats = new Stats(teamInfo[1].info.atk, teamInfo[2].info.teq,
+                    teamInfo[1].info.def);
+                confrontationSprite = teamInfo[1].basicInfo.artworkConforntation;
+                specialSprite = teamInfo[1].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = teamInfo[1].basicInfo.animator_character;
+
+                break;
+            case 3:
+                formationPos = IA_manager.formationPositions.GOALKEEPER;
+                speed *= 3;
+                stats = new Stats(teamInfo[3].info.atk, teamInfo[0].info.teq,
+                    teamInfo[3].info.def);
+                confrontationSprite = teamInfo[3].basicInfo.artworkConforntation;
+                specialSprite = teamInfo[3].basicInfo.artworkSpecialAttack;
+                animator.runtimeAnimatorController = teamInfo[3].basicInfo.animator_character;
+                break;
+            default:
+
+                break;
+        }
+        SetName(gameObject.name);
+    }
+
     private void Update()
     {
         if (mg.GameOn)

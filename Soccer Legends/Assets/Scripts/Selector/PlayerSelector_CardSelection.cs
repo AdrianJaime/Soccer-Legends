@@ -18,7 +18,7 @@ public class PlayerSelector_CardSelection : MonoBehaviour
     {
         if (first&&!selected)//Si no está seleccionado el pj
         {
-            if (manager.AddPlayerSelected(characterBasic)==true)
+            if (characterBasic.basicInfo != null && manager.AddPlayerSelected(characterBasic)==true)
             {
                 gameObject.GetComponent<PlayerSelector_CardRender>().SelectedRender();
                 selected = true;

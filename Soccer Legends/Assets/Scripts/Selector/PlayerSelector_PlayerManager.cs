@@ -37,6 +37,7 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
     public void OnConfirmationClick()
     {
         StaticInfo.teamSelectedToPlay = characterSelected;
+        StaticInfo.rivalTeam = new List<CharacterBasic>(characterSelected);
         SceneManager.LoadScene("FormationScene");
     }
 }

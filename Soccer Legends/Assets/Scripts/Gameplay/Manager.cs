@@ -169,7 +169,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
             }
         }
-        StartGame();
+        StartCoroutine(StartGame());
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -200,8 +200,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
     }
 
-    [PunRPC]
-    public void StartGame() {
+    IEnumerator StartGame() {
+
+        while (GameObject.Find("Team 1(Clone)") == null || GameObject.Find("Team 2(Clone)") == null)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+
         timeStart = Time.time;
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);

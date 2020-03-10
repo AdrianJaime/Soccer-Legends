@@ -204,8 +204,14 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
             if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
-            else if (fingerIdx == -1) return;
-            Touch swipe = Input.GetTouch(fingerIdx);
+            Touch swipe;
+            if (Input.touchCount > fingerIdx) swipe = Input.GetTouch(fingerIdx);
+            else
+            {
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+                return;
+            }
             aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
             if (swipe.phase == TouchPhase.Began)
             {

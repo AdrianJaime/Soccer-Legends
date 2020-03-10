@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -10,7 +11,13 @@ public class PVE_Manager : MonoBehaviour
 {
     enum fightState { FIGHT, SHOOT, NONE };
 
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionButtons, shootButtons, scoreBoard, startButton, energyBar;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar;
+    [SerializeField]
+    GameObject timmer;
+    [SerializeField]
+    GameObject energyNumbers;
+    [SerializeField]
+    GameObject statsUI;
     public bool GameStarted = false, GameOn = true;
     public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
@@ -21,7 +28,7 @@ public class PVE_Manager : MonoBehaviour
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
-    private int energySegments;
+    private int energySegments = 0;
 
     private float timeStart = 0;
     private int fightingPlayer = 0, fightingIA = 0;
@@ -52,7 +59,6 @@ public class PVE_Manager : MonoBehaviour
         touchesIdx = new List<int>();
         fingerIdx = -1;
         swipes = new Vector2[2];
-        energySegments = energyBar.transform.GetChild(1).childCount - 1;
         SpawnPlayers();
     }
 
@@ -74,6 +80,11 @@ public class PVE_Manager : MonoBehaviour
         }
 
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
+        else
+        {
+            if (!GameOn) timeStart += Time.deltaTime;
+            timmer.GetComponent<TextMeshProUGUI>().SetText(((int)(timeStart + 180 - Time.time)).ToString());
+        }
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
         {
             Fight();
@@ -85,8 +96,12 @@ public class PVE_Manager : MonoBehaviour
                 releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
             }
-           if(energyBar.GetComponent<Scrollbar>().size != 1) energyBar.GetComponent<Scrollbar>().size += (eneregyFill * Time.deltaTime) / energySegments;
-            if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / energySegments;
+
+            //Energy Bar
+            if (energyBar.GetComponent<Slider>().value != 1) energyBar.GetComponent<Slider>().value += (eneregyFill * Time.deltaTime);
+            else if (energySegments < 5) { energySegments++; energyBar.GetComponent<Slider>().value = 0; }
+            energyNumbers.GetComponent<Text>().text = energyNumbers.transform.GetChild(0).GetComponent<Text>().text = energySegments.ToString();
+            if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / 5.0f;
         }
     }
 
@@ -102,14 +117,14 @@ public class PVE_Manager : MonoBehaviour
         }
 
         //IA Rival
-        GameObject IA_Rival =  Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
+        GameObject IA_Rival = Instantiate(player2Prefab.gameObject, player2Prefab.transform.position + new Vector3(0, 5, 0), player2Prefab.transform.rotation);
         myIA_Players = new GameObject[4];
         for (int i = 0; i < 4; i++)
         {
             IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1;
             myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
         }
-        //player.transform.GetChild(0).GetComponent<MyPlayer>().photonView.RPC("SetName", RpcTarget.AllBufferedViaServer, PhotonNetwork.LocalPlayer.NickName);       
+        StartGame();
     }
 
     //public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -132,13 +147,13 @@ public class PVE_Manager : MonoBehaviour
         fingerIdx = -1;
     }
 
-    public void StartGame() { GameStarted = true; GameOn = true; startButton.SetActive(false); scoreBoard.SetActive(true); }
+    public void StartGame() { GameStarted = true; GameOn = true;scoreBoard.SetActive(true); }
 
     public void resumeGame()
     {
         GameStarted = true; GameOn = true;
-        startButton.SetActive(false); scoreBoard.SetActive(true); directionButtons.SetActive(false); shootButtons.SetActive(false);
-        for(int i = 0; i < myIA_Players.Length; i++)
+        scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
+        for (int i = 0; i < myIA_Players.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
             myIA_Players[i].GetComponent<MyPlayer_PVE>().fightDir = null;
@@ -157,37 +172,62 @@ public class PVE_Manager : MonoBehaviour
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
 
         if (!GameOn || player1.stunned || IA_Player.stunned) return;
-
-        if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
+        try
         {
-            player1.ball = GameObject.FindGameObjectWithTag("Ball");
-            player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-            IA_Player.GetComponent<MyPlayer_PVE>().Lose();
-        }
-        else if(IA_Player.formationPos == IA_manager.formationPositions.GOALKEEPER)
+            if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
+            {
+                player1.GetComponent<MyPlayer_PVE>().GetBall();
+                IA_Player.GetComponent<MyPlayer_PVE>().Lose();
+            }
+            else if (IA_Player.formationPos == IA_manager.formationPositions.GOALKEEPER)
+            {
+                IA_Player.GetComponent<MyPlayer_PVE>().GetBall();
+                player1.GetComponent<MyPlayer_PVE>().Lose();
+            }
+            else if (!directionSlide.activeSelf)
+            {
+                GameOn = false;
+                directionSlide.SetActive(true);
+                state = fightState.FIGHT;
+                player1.fightDir = null;
+                IA_Player.fightDir = null;
+                fightingPlayer = _player1;
+                fightingIA = _player2;
+                myConfrontationImage.sprite = player1.confrontationSprite;
+                iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+                mySpecialAtqImage.sprite = player1.specialSprite;
+                iaSpecialAtqImage.sprite = IA_Player.specialSprite;
+                //Set stats UI
+                statsUI.SetActive(true);
+                GameObject playerWithBall, playerWithoutBall;
+                if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
+                {
+                    playerWithBall = myPlayers[fightingPlayer];
+                    playerWithoutBall = myIA_Players[fightingIA];
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = "TEQ "
+                        + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString();
+                    statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                        playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString() + " DEF";
+                }
+                else
+                {
+                    playerWithoutBall = myPlayers[fightingPlayer];
+                    playerWithBall = myIA_Players[fightingIA];
+                    statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() + " TEQ";
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
+                        + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
+                }
+                playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
+                animator.SetTrigger("Confrontation");
+            }
+        } catch (NullReferenceException e)
         {
-            IA_Player.ball = GameObject.FindGameObjectWithTag("Ball");
-            IA_Player.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-            player1.GetComponent<MyPlayer_PVE>().Lose();
-        }
-        else if (!directionButtons.activeSelf)
-        {
-            GameOn = false;
-            directionButtons.SetActive(true);
-            state = fightState.FIGHT;
-            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-            player1.fightDir = null;
-            IA_Player.fightDir = null;
-            fightingPlayer = _player1;
-            fightingIA = _player2;
-            //GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            //Set sprites
-            myConfrontationImage.sprite = player1.confrontationSprite;
-            iaConfrontationImage.sprite = IA_Player.confrontationSprite;
-            mySpecialAtqImage.sprite = player1.specialSprite;
-            iaSpecialAtqImage.sprite = IA_Player.specialSprite;
-            animator.SetTrigger("Confrontation");
+            resumeGame();
         }
     }
 
@@ -210,24 +250,58 @@ public class PVE_Manager : MonoBehaviour
     {
         MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
-        if (!directionButtons.activeSelf)
+        try
         {
-            GameOn = false;
-            shootButtons.SetActive(true);
-            state = fightState.SHOOT;
-            //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
-            //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
-            player1.fightDir = null;
-            IA_Player.fightDir = null;
-            fightingPlayer = _player1;
-            fightingIA = _player2;
-            GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            if (!directionSlide.activeSelf)
+            {
+                GameOn = false;
+                directionSlide.SetActive(true);
+                if (energyBar.GetComponent<Slider>().value + energySegments > 1.0f) specialSlide.SetActive(true);
+                state = fightState.SHOOT;
+                //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
+                //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
+                player1.fightDir = null;
+                IA_Player.fightDir = null;
+                fightingPlayer = _player1;
+                fightingIA = _player2;
+                GameObject.FindGameObjectWithTag("Ball").GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            }
+            myConfrontationImage.sprite = player1.confrontationSprite;
+            iaConfrontationImage.sprite = IA_Player.confrontationSprite;
+            mySpecialAtqImage.sprite = player1.specialSprite;
+            iaSpecialAtqImage.sprite = IA_Player.specialSprite;
+            //Set stats UI
+            statsUI.SetActive(true);
+            GameObject playerWithBall, goalkeeper;
+            if (fightingPlayer != 3)
+            {
+                playerWithBall = myPlayers[fightingPlayer];
+                goalkeeper = myIA_Players[fightingIA];
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = "ATQ "
+                        + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString();
+                statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString() + " DEF";
+            }
+            else
+            {
+                goalkeeper = myPlayers[fightingPlayer];
+                playerWithBall = myIA_Players[fightingIA];
+                statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() + " ATQ";
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
+                    + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
+            }
+            playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
+            animator.SetTrigger("Confrontation");
         }
-        myConfrontationImage.sprite = player1.confrontationSprite;
-        iaConfrontationImage.sprite = IA_Player.confrontationSprite;
-        mySpecialAtqImage.sprite = player1.specialSprite;
-        iaSpecialAtqImage.sprite = IA_Player.specialSprite;
-        animator.SetTrigger("Confrontation");
+        catch (NullReferenceException e)
+        {
+            resumeGame();
+        }
     }
 
     private void Fight()
@@ -236,7 +310,7 @@ public class PVE_Manager : MonoBehaviour
         switch (state)
         {
             case fightState.FIGHT:
-                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 ? "Left" : "Right";
+                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 2) == 0 ? "Left" : "Right";
                 if (fingerIdx != 0) fingerIdx = getTouchIdx();
                 Touch swipe = Input.GetTouch(fingerIdx);
                 if (swipe.phase == TouchPhase.Began)
@@ -249,12 +323,13 @@ public class PVE_Manager : MonoBehaviour
                     if (swipes[0].x > swipes[1].x) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Left";
                     else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Right";
 
+                    directionSlide.SetActive(false); specialSlide.SetActive(false);
+
                     Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
                         " chose direction " + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir);
                     Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
                         " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir);
 
-                    directionButtons.SetActive(false);
                     GameObject playerWithBall, playerWithoutBall;
                     if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
                     {
@@ -269,7 +344,7 @@ public class PVE_Manager : MonoBehaviour
                     if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir)
                     {
                         fightType = "Battle";
-                        int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                        int randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
                         Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() +
                         " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
                         Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name + "has a deffense of " + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
@@ -297,7 +372,7 @@ public class PVE_Manager : MonoBehaviour
                 }
                 break;
             case fightState.SHOOT:
-                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = Random.Range(0, 2) == 0 && enemySpecialBar * energySegments >= 1 ? "Special" : "Normal";
+                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 2) == 0 && enemySpecialBar * 5.0f >= 1 ? "Special" : "Normal";
                 if (fingerIdx != 0) fingerIdx = getTouchIdx();
                 swipe = Input.GetTouch(fingerIdx);
                 if (swipe.phase == TouchPhase.Began)
@@ -307,9 +382,10 @@ public class PVE_Manager : MonoBehaviour
                 else if (swipe.phase == TouchPhase.Ended)
                 {
                     swipes[1] = swipe.position;
-                    if (swipes[0].x > swipes[1].x && energyBar.GetComponent<Scrollbar>().size * energySegments >= 1) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                    if (swipes[0].y > swipes[1].y && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
+                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                     else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
-
+                    directionSlide.SetActive(false); specialSlide.SetActive(false);
                     Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
                         " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir);
                     Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
@@ -319,7 +395,6 @@ public class PVE_Manager : MonoBehaviour
                         myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") fightType = "SpecialAttack";
                     else fightType = "Battle";
 
-                    shootButtons.SetActive(false);
                     GameObject playerWithBall, goalkeeper;
                     if (fightingPlayer != 3)
                     {
@@ -333,7 +408,7 @@ public class PVE_Manager : MonoBehaviour
                     }
                     if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == goalkeeper.GetComponent<MyPlayer_PVE>().fightDir)
                     {
-                        int randomValue = Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                        int randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
                         Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() +
                         " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString());
                         Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name + "has a deffense of " + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
@@ -360,10 +435,16 @@ public class PVE_Manager : MonoBehaviour
                         {
                             fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win";
                         }
-                        energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     }
-                    if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
-                    if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
+                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") enemySpecialBar -= 1 / 5.0f;
+                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special")
+                    {
+                        float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                        energyBar.GetComponent<Slider>().value = energySegments = 0;
+                        energy -= 1.0f;
+                        while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                        energyBar.GetComponent<Slider>().value = energy;
+                    }
                     setAnims(fightType, fightResult);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
@@ -390,7 +471,7 @@ public class PVE_Manager : MonoBehaviour
 
     public void fightResult(string anim)
     {
-        switch(anim)
+        switch (anim)
         {
             case "PlayerWinBattle":
                 if(fightingIA == 3 || fightingPlayer == 3)
@@ -505,7 +586,8 @@ public class PVE_Manager : MonoBehaviour
 
     public void releaseTouchIdx(int idx)
     {
-        touchesIdx.Remove(idx);
+        if (touchesIdx.Contains(idx)) touchesIdx.Remove(idx);
+        else return;
         //Camera
         if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx > idx)
             GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<cameraMovement>().fingerIdx--;

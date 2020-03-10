@@ -122,6 +122,20 @@ public class IA_manager : MonoBehaviour
                 defensiveAtacking(_rivalPlayers, _ballPos);
                 break;
         }
+        if (!playerTeam)
+        {
+            if(Vector2.Distance(_ballPos, mg.myPlayers[3].transform.position) < 1.5f)
+            {
+                for(int i = 0; i < mg.myIA_Players.Length; i++)
+                {
+                    if (mg.myIA_Players[i].GetComponent<MyPlayer_PVE>().ball)
+                    {
+                        shootToGoal(mg.myIA_Players[i]);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     void processSeparation()
@@ -612,8 +626,6 @@ public class IA_manager : MonoBehaviour
             return;
         }
 
-        ;
-
         switch (playerWithBall.transform.GetComponent<MyPlayer_PVE>().formationPos)
         {
             case formationPositions.CIERRE:
@@ -770,7 +782,7 @@ public class IA_manager : MonoBehaviour
                     if(playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea) shootToGoal(playerWithBall);
                     break;
                 case formationPositions.GOALKEEPER:
-                    Vector2 randShoot = new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(1.0f, 10.0f));
+                    Vector2 randShoot = new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(-1.0f, -2.5f));
                     playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { randShoot.x, randShoot.y, playerWithBall.transform.position.x, playerWithBall.transform.position.y });
                     break;
             }

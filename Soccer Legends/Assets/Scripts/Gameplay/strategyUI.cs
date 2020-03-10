@@ -6,15 +6,12 @@ using UnityEngine.UI;
 public class strategyUI : MonoBehaviour
 {
     [SerializeField]
-    Text stratText;
-    Scrollbar scrollbar;
+    GameObject estrategias;
+    Button button;
 
     PVE_Manager mg;
 
-    Vector3 startButtonPos = Vector3.zero;
-    Vector3 lastButtonPos;
-
-    bool interacting;
+    bool interacting = false;
 
     int cooldown = 60 * 10;
     int cooldownRef = 60 * 10;
@@ -23,37 +20,40 @@ public class strategyUI : MonoBehaviour
     void Start()
     {
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
-        scrollbar = GetComponent<Scrollbar>();
-        lastButtonPos = startButtonPos = Vector3.zero;
+        button = GetComponent<Button>();
     }
 
     // Update is called once per frame
     void LateUpdate() {
-        stratText.text = mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy.ToString();
         interacting = false;
-        if (isInteracting()) stratText.color = scrollbar.colors.pressedColor;
-        else stratText.color = scrollbar.colors.disabledColor;
-
-        if (cooldown == 60) scrollbar.interactable = false;
-        if (cooldown > cooldownRef) scrollbar.interactable = true;
+        if (cooldown == 60 * 2) estrategias.SetActive(false);
+        if (cooldown > cooldownRef) button.interactable = true;
         else cooldown++;
-        if (scrollbar.handleRect.transform.localPosition.y != lastButtonPos.y)
-        {
-            cooldown = 0;
-            if (scrollbar.handleRect.transform.localPosition.y == startButtonPos.y)
-                mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.EQUILIBRATED;
-            else if (scrollbar.handleRect.transform.localPosition.y > startButtonPos.y)
-                mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.OFFENSIVE;
-            else if (scrollbar.handleRect.transform.localPosition.y < startButtonPos.y)
-                mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = IA_manager.strategy.DEFFENSIVE;
-        }
-
-        lastButtonPos = scrollbar.handleRect.transform.localPosition;
+        transform.GetChild(1).gameObject.SetActive(button.interactable);
     }
 
     public void guiInteracting() {
         interacting = true;
+        if(estrategias.activeSelf)
+        {
+            estrategias.SetActive(false);
+            cooldown = cooldownRef + 1;
+        }
+        else if(!estrategias.activeSelf)
+        {
+            estrategias.SetActive(true);
+            cooldown = 0;
+        }
     }
 
-    public bool isInteracting() { return cooldown < 60 ? true : false; }
+    public void setStrategy(int _strat)
+    {
+        interacting = true;
+        mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
+        button.interactable = false;
+        cooldown = 60 * 2 + 1;
+        estrategias.SetActive(false);
+    }
+
+    public bool isInteracting() { return interacting; }
 }

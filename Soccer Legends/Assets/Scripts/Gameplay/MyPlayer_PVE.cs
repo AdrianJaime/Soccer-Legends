@@ -45,6 +45,10 @@ public class MyPlayer_PVE : MonoBehaviour
     [SerializeField] SpriteRenderer characterSprite;
     public Sprite confrontationSprite;
     public Sprite specialSprite;
+    strategyUI strategyScript;
+
+    float goalKeeperRef;
+
     float velocity0 = 0;
 
     //IA
@@ -52,6 +56,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     private void Start()
     {
+        strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<strategyUI>();
         if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
         else iaPlayer = false;
         setPlayer();
@@ -135,7 +140,15 @@ public class MyPlayer_PVE : MonoBehaviour
         //{
         if (mg.GameOn && !stunned)
         {
-            if (formationPos == IA_manager.formationPositions.GOALKEEPER) MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
+            if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+            {
+                MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
+                if (!iaPlayer && ball && goalKeeperRef + 5.0f < Time.time)
+                {
+                    Vector2 randShoot = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(1.0f, 5.0f));
+                    ShootBall(new float[] { randShoot.x, randShoot.y, transform.position.x, transform.position.y });
+                }
+            }
             if (startPosition == Vector2.zero) startPosition = transform.position;
             if (!iaPlayer && ball != null) ProcessInputs();
             if (points.Count > 1 && mg.GameOn && !stunned) FollowLine();
@@ -151,7 +164,7 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             checkCollisionDetection();
-            //rePositionBall(); //To be implemented
+            if (iaPlayer && ball && Time.frameCount % 120 == 0) stablishNewShootCheck();
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}
@@ -172,8 +185,14 @@ public class MyPlayer_PVE : MonoBehaviour
         if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
             if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
-            else if(fingerIdx == -1)return;
-            Touch swipe = Input.GetTouch(fingerIdx);
+            Touch swipe;
+            if (Input.touchCount > fingerIdx)swipe = Input.GetTouch(fingerIdx);
+            else
+            {
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+                return;
+            }
             aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0.0f)));
             if (swipe.phase == TouchPhase.Began)
             {
@@ -187,7 +206,7 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             if (swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= shootTime * 2 && mg.GameOn && !stunned)
+                if (Time.time - touchTime <= shootTime * 2 && mg.GameOn && !stunned && !strategyScript.isInteracting())
                 {
 
                     if (ball != null)
@@ -337,8 +356,8 @@ public class MyPlayer_PVE : MonoBehaviour
         ball.transform.parent = transform;
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.gameObject.layer = 2;
-
-        if (iaPlayer)stablishNewShootCheck();
+        if (iaPlayer) stablishNewShootCheck();
+        else if (formationPos == IA_manager.formationPositions.GOALKEEPER && goalKeeperRef + 5.0f < Time.time) goalKeeperRef = Time.time;
         //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null))
         //{
         //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -362,6 +381,8 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         if (formationPos == IA_manager.formationPositions.GOALKEEPER && Mathf.Abs(objective[0]) > 1.25f)
             objective[0] = (objective[0] / Mathf.Abs(objective[0])) * 1.25f;
+        else if (formationPos != IA_manager.formationPositions.GOALKEEPER && ball)
+            objective[1] = goal.transform.position.y;
         playerObjective = new Vector3(objective[0], objective[1], objective[2]);
     }
 
@@ -399,7 +420,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void stablishNewShootCheck()
     {
-        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(1.0f, 3.0f)));
+        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(1.0f, 2.0f)));
     }
 
     
@@ -415,7 +436,7 @@ public class MyPlayer_PVE : MonoBehaviour
         else rivals = mg.myIA_Players;
         foreach (GameObject rival in rivals)
         {
-            if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist + 0.1 && !rival.GetComponent<MyPlayer_PVE>().stunned)
+            if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist && !rival.GetComponent<MyPlayer_PVE>().stunned)
             {
                 if (ball != null && rival.GetComponent<MyPlayer_PVE>().ball == null)
                 {
@@ -446,12 +467,12 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (!foundCovered) covered = false;
         }
 
-        if (Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }
-        else ball = null;
+        else if(GameObject.FindGameObjectWithTag("Ball").transform.parent != transform) ball = null;
         
     }
 

@@ -438,7 +438,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Lose" : "Win";
                         //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
-                        energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     }
                     if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
                     if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
@@ -604,7 +603,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void releaseTouchIdx(int idx)
     {
-        touchesIdx.Remove(idx);
+        if (touchesIdx.Contains(idx)) touchesIdx.Remove(idx);
+        else return;
         //Camera
         if (GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<PVP_cameraMovement>().fingerIdx > idx)
             GameObject.FindGameObjectWithTag("Ball").transform.GetChild(0).GetComponent<PVP_cameraMovement>().fingerIdx--;

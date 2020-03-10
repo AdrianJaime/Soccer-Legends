@@ -438,7 +438,7 @@ public class MyPlayer_PVE : MonoBehaviour
         {
             if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist && !rival.GetComponent<MyPlayer_PVE>().stunned)
             {
-                if (ball != null && rival.GetComponent<MyPlayer_PVE>().ball == null)
+                if (ball != null && rival.GetComponent<MyPlayer_PVE>().ball == null && mg.fightRef + 2.0f < Time.time)
                 {
                     int ia_Idx = 0;
                     int playerIdx = 0;

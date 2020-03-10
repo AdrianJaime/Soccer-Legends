@@ -32,7 +32,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     private int energySegments = 0;
 
     private float timeStart = 0;
-    private float fightRef = 0;
+    public float fightRef = 0;
     private int fightingPlayer = 0, fightingIA = 0;
     private string fightDir;
     private bool shooting = false;
@@ -251,7 +251,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void chooseDirection(int _player1, int _player2)
     {
-        if (!GameOn || PhotonView.Find(_player1).GetComponent<MyPlayer>().stunned || PhotonView.Find(_player2).GetComponent<MyPlayer>().stunned || fightRef + 2.0f > Time.time) return;
+        if (!GameOn || PhotonView.Find(_player1).GetComponent<MyPlayer>().stunned || PhotonView.Find(_player2).GetComponent<MyPlayer>().stunned) return;
         if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
@@ -532,8 +532,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
                     }
-                    if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special") energyBar.GetComponent<Scrollbar>().size -= 1 / (float)energySegments;
-                    if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Special") enemySpecialBar -= 1 / (float)energySegments;
                 photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult);
                 break;
             case fightState.NONE:

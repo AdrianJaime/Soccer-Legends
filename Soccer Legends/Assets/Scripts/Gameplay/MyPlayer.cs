@@ -414,6 +414,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (formationPos == IA_manager.formationPositions.GOALKEEPER && Mathf.Abs(objective[0]) > 1.25f)
             objective[0] = (objective[0] / Mathf.Abs(objective[0])) * 1.25f;
+        else if (formationPos != IA_manager.formationPositions.GOALKEEPER && ball)
+            objective[1] = goal.transform.position.y;
         playerObjective =  new Vector3(objective[0], objective[1], objective[2]);
     }
 
@@ -470,7 +472,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist && !rival.GetComponent<MyPlayer>().stunned)
             {
-                if (ball != null && rival.GetComponent<MyPlayer>().ball == null)
+                if (ball != null && rival.GetComponent<MyPlayer>().ball == null && mg.fightRef + 2.0f < Time.time)
                 {
                     int ia_Idx = 0;
                     int playerIdx = 0;

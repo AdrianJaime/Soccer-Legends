@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Formation : MonoBehaviour
 {
-
     public EquipCardFormationLogic[] arraySlots = new EquipCardFormationLogic[4];
     public List<CharacterBasic> arrayCharactersTeam;
     public CharacterBasic[] listOfCharacters = new CharacterBasic[4];
     public bool[] arrayEquiped = new bool[4];
+    [SerializeField] Button confirmButton;
 
     private void Awake()
     {
@@ -19,6 +19,12 @@ public class Formation : MonoBehaviour
             a++;
         }
     }
+
+    private void Update()
+    {
+        confirmButton.interactable = (listOfCharacters[0] != null && listOfCharacters[1] != null && listOfCharacters[2] != null && listOfCharacters[3] != null);
+    }
+
     // public bool preferent;
     public int isUsed(CharacterBasic _aux)
     {

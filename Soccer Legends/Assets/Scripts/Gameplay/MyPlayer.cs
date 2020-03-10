@@ -401,13 +401,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public void SetName(string name)
     {
         //transform.GetChild(0).GetComponentInChildren<Text>().text = "O";
-        MeshRenderer meshRenderer = transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
-        // Get the current material applied on the GameObject
-        Material oldMaterial = transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
-        // Set the new material on the GameObject
-        if (photonView.IsMine)
-            meshRenderer.material = mg.local;
-        else meshRenderer.material = mg.rival;
+        SpriteRenderer renderer = transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+        Color rival = new Color(1, 0, 0, 0.5f);
+        Color local = new Color(0, 0, 1, 0.5f);
+        if (photonView.IsMine) renderer.color = local;
+        else renderer.color = rival;
     }
 
     [PunRPC]

@@ -794,7 +794,7 @@ public class IA_manager : MonoBehaviour
     {
         if (!playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea || 
             (playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y / Mathf.Abs(playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y))
-            != mg.myPlayers[3].transform.position.y / Mathf.Abs(mg.myPlayers[3].transform.position.y)) return;
+            != mg.myPlayers[3].transform.position.y / Mathf.Abs(mg.myPlayers[3].transform.position.y) || !mg.GameOn) return;
         Debug.Log("Shooting to goal");
 
         int playerIdx = 3;

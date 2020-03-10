@@ -23,7 +23,7 @@ public class PVE_Manager : MonoBehaviour
     public GameObject[] myIA_Players;
     public float eneregyFill;
     public GameObject lastPlayer;
-   [SerializeField]
+    [SerializeField]
     Animator animator;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
@@ -35,14 +35,13 @@ public class PVE_Manager : MonoBehaviour
     private int fightingPlayer = 0, fightingIA = 0;
     private string fightDir;
     private bool shooting = false;
-    private Vector2 score = new Vector2( 0, 0 );
+    private Vector2 score = new Vector2(0, 0);
     fightState state = fightState.FIGHT;
 
     Vector2[] swipes;
 
-    //Shadows
-    public Material rival;
-    public Material local;
+    [SerializeField]
+    GameObject field;
 
     //Confrontation
     [SerializeField]
@@ -53,6 +52,8 @@ public class PVE_Manager : MonoBehaviour
     Image mySpecialAtqImage;
     [SerializeField]
     Image iaSpecialAtqImage;
+    List<SpriteRenderer> confontationAnimSprites;
+
     //Hardcoded bug fixes
     int goalRefFrame;
     int frameCount = 0;
@@ -60,6 +61,7 @@ public class PVE_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        confontationAnimSprites = new List<SpriteRenderer>();
         timeStart = Time.time;
         touchesIdx = new List<int>();
         fingerIdx = -1;
@@ -90,13 +92,13 @@ public class PVE_Manager : MonoBehaviour
             if (!GameOn) timeStart += Time.deltaTime;
             timmer.GetComponent<TextMeshProUGUI>().SetText(((int)(timeStart + 180 - Time.time)).ToString());
         }
-        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0|| fingerIdx != -1))
+        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
         {
             Fight();
         }
         else if (GameStarted && GameOn)
         {
-            if(fingerIdx != -1)
+            if (fingerIdx != -1)
             {
                 releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
@@ -152,7 +154,7 @@ public class PVE_Manager : MonoBehaviour
         fingerIdx = -1;
     }
 
-    public void StartGame() { GameStarted = true; GameOn = true;scoreBoard.SetActive(true); }
+    public void StartGame() { GameStarted = true; GameOn = true; scoreBoard.SetActive(true); }
 
     public void resumeGame()
     {
@@ -229,6 +231,7 @@ public class PVE_Manager : MonoBehaviour
                         + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
                 }
                 playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
+                StartCoroutine(enableConfrontationAnim());
                 animator.SetTrigger("Confrontation");
             }
         } catch (NullReferenceException e)
@@ -302,6 +305,7 @@ public class PVE_Manager : MonoBehaviour
                     + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
             }
             playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
+            StartCoroutine(enableConfrontationAnim());
             animator.SetTrigger("Confrontation");
         }
         catch (NullReferenceException e)
@@ -476,11 +480,12 @@ public class PVE_Manager : MonoBehaviour
     }
 
     public void fightResult(string anim)
-    { 
+    {
+        StartCoroutine(disableConfrontationAnim());
         switch (anim)
         {
             case "PlayerWinBattle":
-                if(fightingIA == 3 || fightingPlayer == 3)
+                if (fightingIA == 3 || fightingPlayer == 3)
                 {
                     GameObject playerWithBall, goalkeeper;
                     if (fightingPlayer != 3)
@@ -521,7 +526,7 @@ public class PVE_Manager : MonoBehaviour
                 break;
             case "PlayerDodge":
             case "EnemyDodge":
-                if(animator.GetBool("PlayerHasBall")) myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().Lose();
+                if (animator.GetBool("PlayerHasBall")) myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().Lose();
                 else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().Lose();
                 break;
         }
@@ -566,8 +571,50 @@ public class PVE_Manager : MonoBehaviour
             myPlayers[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer_PVE>().RepositionPlayer();
         }
-        
+
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
+    }
+
+    IEnumerator enableConfrontationAnim()
+        {
+        confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
+        for(int i = 0; i < myPlayers.Length; i++)
+        {
+            if(i != fightingPlayer) confontationAnimSprites.AddRange(myPlayers[i].GetComponentsInChildren<SpriteRenderer>(true));
+            if (i != fightingIA) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));
+        }
+
+        while (!GameOn && confontationAnimSprites[0].color.r > 0.4f) 
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+            foreach (SpriteRenderer rend in confontationAnimSprites)
+            {
+                Color c = rend.color;
+                c.r -= 0.075f;
+                c.g -= 0.075f;
+                c.b -= 0.075f;
+                rend.color = c;
+            }
+        }
+            
+        }
+
+    IEnumerator disableConfrontationAnim()
+    {
+        while (confontationAnimSprites[0].color.r < 1.0f)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+
+            foreach (SpriteRenderer rend in confontationAnimSprites)
+            {
+                Color c = rend.color;
+                c.r += 0.075f;
+                c.g += 0.075f;
+                c.b += 0.075f;
+                rend.color = c;
+            }
+        }
+        confontationAnimSprites.Clear();
     }
 
     public int getTouchIdx()

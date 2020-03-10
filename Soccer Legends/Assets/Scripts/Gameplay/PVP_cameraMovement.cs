@@ -8,6 +8,7 @@ public class PVP_cameraMovement : MonoBehaviour
     private Vector3 startTouchWorld;
     private Vector3 lastCamPosition;
     private Vector3 localCamPos;
+    Vector3 cameraBallOffset = Vector3.zero;
     Vector3 offset;
     Manager mg;
     public int fingerIdx;
@@ -29,12 +30,18 @@ public class PVP_cameraMovement : MonoBehaviour
     void Update()
     {
         if (mg.GameOn) ProcessInputs();
-        else if (fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
+        else
         {
-            mg.releaseTouchIdx(fingerIdx);
-            fingerIdx = -1;
+            if (fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
+            {
+                mg.releaseTouchIdx(fingerIdx);
+                fingerIdx = -1;
+            }
+            if (cameraBallOffset.y == -3) transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 1.0f, transform.position.z), Time.deltaTime);
+            else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 4.0f, transform.position.z), Time.deltaTime);
+            lastCamPosition = transform.position;
         }
-        }
+    }
 
     private void ProcessInputs()
     {
@@ -93,7 +100,6 @@ public class PVP_cameraMovement : MonoBehaviour
         }
         else
         {
-            Vector3 cameraBallOffset = Vector3.zero;
             switch (mg.HasTheBall())
             {
                 case 0:

@@ -41,9 +41,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     Vector2[] swipes;
 
-    //Shadows
-    public Material rival;
-    public Material local;
+    [SerializeField]
+    GameObject field;
 
     //Confrontation
     [SerializeField]
@@ -54,6 +53,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     Image mySpecialAtqImage;
     [SerializeField]
     Image iaSpecialAtqImage;
+    List<SpriteRenderer> confontationAnimSprites;
 
     //Hardcoded bug fixes
     int frameCount = 0;
@@ -62,7 +62,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     // Start is called before the first frame update
     void Start()
     {
-        
+        confontationAnimSprites = new List<SpriteRenderer>();
         touchesIdx = new List<int>();
         fingerIdx = -1;
         swipes = new Vector2[2];
@@ -329,6 +329,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         + playerWithoutBall.GetComponent<MyPlayer>().stats.defense.ToString();
                 }
                 playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+                StartCoroutine(enableConfrontationAnim());
                 animator.SetTrigger("Confrontation");
             }
         }
@@ -417,6 +418,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     + goalkeeper.GetComponent<MyPlayer>().stats.defense.ToString();
             }
             playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
+            StartCoroutine(enableConfrontationAnim());
             animator.SetTrigger("Confrontation");
         }
         catch (NullReferenceException e)
@@ -568,6 +570,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void fightResult(string anim)
     {
+        StartCoroutine(disableConfrontationAnim());
         switch (anim)
         {
             case "PlayerWinBattle":
@@ -674,6 +677,48 @@ public class Manager : MonoBehaviourPun, IPunObservable
             myIA_Players[i].GetComponent<MyPlayer>().RepositionPlayer();
         }
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
+    }
+
+    IEnumerator enableConfrontationAnim()
+    {
+        confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
+        for (int i = 0; i < myPlayers.Length; i++)
+        {
+            if (myPlayers[i] != PhotonView.Find(fightingPlayer).gameObject) confontationAnimSprites.AddRange(myPlayers[i].GetComponentsInChildren<SpriteRenderer>(true));
+            if (myIA_Players[i] != PhotonView.Find(fightingIA).gameObject) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));
+        }
+
+        while (!GameOn && confontationAnimSprites[0].color.r > 0.4f)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+            foreach (SpriteRenderer rend in confontationAnimSprites)
+            {
+                Color c = rend.color;
+                c.r -= 0.075f;
+                c.g -= 0.075f;
+                c.b -= 0.075f;
+                rend.color = c;
+            }
+        }
+
+    }
+
+    IEnumerator disableConfrontationAnim()
+    {
+        while (confontationAnimSprites[0].color.r < 1.0f)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+
+            foreach (SpriteRenderer rend in confontationAnimSprites)
+            {
+                Color c = rend.color;
+                c.r += 0.075f;
+                c.g += 0.075f;
+                c.b += 0.075f;
+                rend.color = c;
+            }
+        }
+        confontationAnimSprites.Clear();
     }
 
     public int getTouchIdx()

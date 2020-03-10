@@ -40,6 +40,10 @@ public class PVE_Manager : MonoBehaviour
 
     Vector2[] swipes;
 
+    //Shadows
+    public Material rival;
+    public Material local;
+
     //Confrontation
     [SerializeField]
     Image myConfrontationImage;

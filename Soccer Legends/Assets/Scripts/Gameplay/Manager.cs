@@ -41,6 +41,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     Vector2[] swipes;
 
+    //Shadows
+    public Material rival;
+    public Material local;
+
     //Confrontation
     [SerializeField]
     Image myConfrontationImage;

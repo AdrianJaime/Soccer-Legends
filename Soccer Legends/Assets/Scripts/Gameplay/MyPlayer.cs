@@ -61,6 +61,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
         Debug.Log(photonView.isActiveAndEnabled);
+        mg = GameObject.Find("Manager").GetComponent<Manager>();
         strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
         setPlayer();
         
@@ -74,7 +75,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         fightDir = null;
         //if (photonView.IsMine)
         //{
-        mg = GameObject.Find("Manager").GetComponent<Manager>();
+        
         if (!photonView.IsMine)
         {
             goal = GameObject.Find("Goal 1").GetComponent<Collider2D>();
@@ -399,7 +400,14 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void SetName(string name)
     {
-        transform.GetChild(0).GetComponentInChildren<Text>().text = name;
+        //transform.GetChild(0).GetComponentInChildren<Text>().text = "O";
+        MeshRenderer meshRenderer = transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
+        // Get the current material applied on the GameObject
+        Material oldMaterial = transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
+        // Set the new material on the GameObject
+        if (photonView.IsMine)
+            meshRenderer.material = mg.local;
+        else meshRenderer.material = mg.rival;
     }
 
     [PunRPC]

@@ -31,6 +31,7 @@ public class PVE_Manager : MonoBehaviour
     private int energySegments = 0;
 
     private float timeStart = 0;
+    private float fightRef = 0;
     private int fightingPlayer = 0, fightingIA = 0;
     private string fightDir;
     private bool shooting = false;
@@ -164,6 +165,7 @@ public class PVE_Manager : MonoBehaviour
         animator.ResetTrigger("Lose");
         animator.ResetTrigger("Win");
         animator.ResetTrigger("SpecialAttack");
+        fightRef = Time.time;
     }
 
     public void chooseDirection(int _player1, int _player2)
@@ -171,7 +173,7 @@ public class PVE_Manager : MonoBehaviour
         MyPlayer_PVE player1 = myPlayers[_player1].GetComponent<MyPlayer_PVE>();
         MyPlayer_PVE IA_Player = myIA_Players[_player2].GetComponent<MyPlayer_PVE>();
 
-        if (!GameOn || player1.stunned || IA_Player.stunned) return;
+        if (!GameOn || player1.stunned || IA_Player.stunned || fightRef + 2.0f > Time.time) return;
         try
         {
             if (player1.formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -470,7 +472,7 @@ public class PVE_Manager : MonoBehaviour
     }
 
     public void fightResult(string anim)
-    {
+    { 
         switch (anim)
         {
             case "PlayerWinBattle":

@@ -584,7 +584,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 490716942}
+      - m_Target: {fileID: 490716944}
         m_MethodName: setStrategy
         m_Mode: 3
         m_Arguments:
@@ -1141,7 +1141,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 490716942}
+      - m_Target: {fileID: 490716944}
         m_MethodName: setStrategy
         m_Mode: 3
         m_Arguments:
@@ -1291,26 +1291,44 @@ PrefabInstance:
       propertyPath: estrategias
       value: 
       objectReference: {fileID: 67981002}
-    m_RemovedComponents: []
+    - target: {fileID: 7854181918670329423, guid: 155a6c22ec8da43438dca1aec25fc2f4,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 490716944}
+    - target: {fileID: 7854181918670329423, guid: 155a6c22ec8da43438dca1aec25fc2f4,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: guiInteracting
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7854181918670329422, guid: 155a6c22ec8da43438dca1aec25fc2f4, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 155a6c22ec8da43438dca1aec25fc2f4, type: 3}
---- !u!114 &490716942 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7854181918670329422, guid: 155a6c22ec8da43438dca1aec25fc2f4,
+--- !u!1 &490716942 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7854181917765434064, guid: 155a6c22ec8da43438dca1aec25fc2f4,
     type: 3}
   m_PrefabInstance: {fileID: 490716941}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81774924ddfd91e4883fcda9c11076e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &490716943 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7854181917765434071, guid: 155a6c22ec8da43438dca1aec25fc2f4,
     type: 3}
   m_PrefabInstance: {fileID: 490716941}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &490716944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490716942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c718d2db7984c44b2e4fca70fe22d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  estrategias: {fileID: 67981002}
 --- !u!1 &516981088
 GameObject:
   m_ObjectHideFlags: 0
@@ -1693,7 +1711,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 490716942}
+      - m_Target: {fileID: 490716944}
         m_MethodName: setStrategy
         m_Mode: 3
         m_Arguments:
@@ -1998,6 +2016,18 @@ PrefabInstance:
 --- !u!224 &608583404 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1353531771821022126, guid: d6b03cb1ee9966b48b41f1ac5da08f45,
+    type: 3}
+  m_PrefabInstance: {fileID: 608583403}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &608583405 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1353531771333403391, guid: d6b03cb1ee9966b48b41f1ac5da08f45,
+    type: 3}
+  m_PrefabInstance: {fileID: 608583403}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &608583406 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1353531771821022127, guid: d6b03cb1ee9966b48b41f1ac5da08f45,
     type: 3}
   m_PrefabInstance: {fileID: 608583403}
   m_PrefabAsset: {fileID: 0}
@@ -2791,6 +2821,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1278050164}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1278050166 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6382675551995387193, guid: e18a6734326f1224696a298349582ae4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1278050164}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1278050167 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 768252499876247611, guid: e18a6734326f1224696a298349582ae4,
+    type: 3}
+  m_PrefabInstance: {fileID: 1278050164}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1281325424
 GameObject:
   m_ObjectHideFlags: 0
@@ -3071,6 +3113,12 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1469257317}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1469257319 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6283791711236603411, guid: 10cef5ab141c54d48927fbc033530a70,
+    type: 3}
+  m_PrefabInstance: {fileID: 1469257317}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1508418377
 GameObject:
   m_ObjectHideFlags: 0
@@ -3121,11 +3169,13 @@ MonoBehaviour:
     type: 3}
   ballPrefab: {fileID: 5445093676735528279, guid: d1cf774281d3af54fae6a3819b6e22d7,
     type: 3}
-  directionButtons: {fileID: 0}
-  shootButtons: {fileID: 0}
-  scoreBoard: {fileID: 0}
-  startButton: {fileID: 0}
-  energyBar: {fileID: 0}
+  directionSlide: {fileID: 608583406}
+  specialSlide: {fileID: 608583405}
+  scoreBoard: {fileID: 1990905988}
+  energyBar: {fileID: 1278050167}
+  timmer: {fileID: 1469257319}
+  energyNumbers: {fileID: 1278050166}
+  statsUI: {fileID: 860405146}
   GameStarted: 0
   GameOn: 0
   myPlayers: []

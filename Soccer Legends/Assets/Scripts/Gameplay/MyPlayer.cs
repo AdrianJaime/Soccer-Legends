@@ -48,6 +48,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [SerializeField] SpriteRenderer characterSprite;
     public Sprite confrontationSprite;
     public Sprite specialSprite;
+
+    PVP_strategyUI strategyScript;
+
+    float goalKeeperRef;
+
     float velocity0 = 0;
 
 
@@ -56,9 +61,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         PhotonNetwork.SendRate = 20;
         PhotonNetwork.SerializationRate = 15;
         Debug.Log(photonView.isActiveAndEnabled);
+        strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
         setPlayer();
-        if (!photonView.IsMine) stats = new Stats(5, 3, 3);
-        else
+        
         {
             stats = new Stats(7, 5, 5);
         }
@@ -143,7 +148,15 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             {
                 if (!stunned)
                 {
-                    if (formationPos == IA_manager.formationPositions.GOALKEEPER) MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
+                    if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+                    {
+                        MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
+                        if (ball && goalKeeperRef + 5.0f < Time.time)
+                        {
+                            Vector2 randShoot = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(1.0f, 5.0f));
+                            photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { randShoot.x, randShoot.y, transform.position.x, transform.position.y });
+                        }
+                    }
                     if (startPosition == Vector2.zero) startPosition = transform.position;
                     if (photonView.IsMine && ball != null) ProcessInputs();
                     if (playerObjective != Vector3.zero)
@@ -225,7 +238,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             }
             if (swipe.phase == TouchPhase.Ended)
             {
-                if (Time.time - touchTime <= shootTime * 2 && mg.GameOn && !stunned)
+                if (Time.time - touchTime <= shootTime * 2 && mg.GameOn && !stunned && !strategyScript.isInteracting())
                 {
 
                     if (ball != null)
@@ -371,7 +384,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void GetBall()
     {
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null || !mg.GameOn)
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != null)
         {
             return;
         }
@@ -380,6 +393,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         ball.transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         ball.GetComponent<Ball>().photonView.TransferOwnership(photonView.Owner);
         transform.gameObject.layer = 2;
+        if (formationPos == IA_manager.formationPositions.GOALKEEPER && goalKeeperRef + 5.0f < Time.time) goalKeeperRef = Time.time;
     }
 
     [PunRPC]
@@ -454,7 +468,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         rivals = mg.myIA_Players;
         foreach (GameObject rival in rivals)
         {
-            if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist + 0.1 && !rival.GetComponent<MyPlayer>().stunned)
+            if (Vector2.Distance(rival.transform.position, transform.position) < detectionDist && !rival.GetComponent<MyPlayer>().stunned)
             {
                 if (ball != null && rival.GetComponent<MyPlayer>().ball == null)
                 {

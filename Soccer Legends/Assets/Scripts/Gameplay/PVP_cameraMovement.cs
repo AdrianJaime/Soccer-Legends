@@ -13,7 +13,6 @@ public class PVP_cameraMovement : MonoBehaviour
     public int fingerIdx;
 
     GameObject canvas;
-    PVP_strategyUI guiInteractions;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +22,6 @@ public class PVP_cameraMovement : MonoBehaviour
         fingerIdx = -1;
 
         canvas = GameObject.Find("Canvas");
-        guiInteractions = canvas.transform.GetChild(5).GetComponent <PVP_strategyUI>();
         canvas.GetComponent<Canvas>().worldCamera = GetComponent<Camera>();
     }
 
@@ -73,7 +71,7 @@ public class PVP_cameraMovement : MonoBehaviour
                 //if(startTouchWorld.x < transform.position.x) startTouchWorld = new Vector3 ()
             }
 
-            else if (swipe.phase == TouchPhase.Moved && !guiInteractions.isInteracting())
+            else if (swipe.phase == TouchPhase.Moved)
             {
                 Vector3 camPos = offset + startTouchWorld;//transform.parent.position + lastCamPosition - startTouchWorld;
                 float dist = Vector3.Distance(actualTouch, startTouch) / Screen.width*5;

@@ -51,7 +51,7 @@ public class PVP_strategyUI : MonoBehaviour
     public void setStrategy(int _strat)
     {
         interacting = true;
-        mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
+        mg.myPlayers[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
         button.interactable = false;
         cooldown = 60 * 2 + 1;
         estrategias.SetActive(false);

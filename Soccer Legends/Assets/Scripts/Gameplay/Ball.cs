@@ -40,13 +40,9 @@ public class Ball : MonoBehaviourPun, IPunObservable
             {
                 smoothMovement();
             }
-            if (transform.parent != null)
+            else if (transform.parent != null)
             {
                 transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
-            }
-            else if (GameObject.Find("Manager").GetComponent<Manager>() != null && GameObject.Find("Manager").GetComponent<Manager>().GameStarted && GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall() != null)
-            {
-                transform.parent = GameObject.Find("Manager").GetComponent<Manager>().FindWhoHasTheBall().transform;
             }
         }
         if (area1.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area1.transform.position.z)) ||
@@ -59,10 +55,24 @@ public class Ball : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            if(transform.parent != null)
+            {
+                stream.SendNext(true);
+                stream.SendNext(transform.parent.GetComponent<MyPlayer>().photonView.ViewID);
+            }
+            else
+            {
+                stream.SendNext(false);
+                stream.SendNext(0);
+            }
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
+            bool parent = (bool)stream.ReceiveNext();
+            int id = (int)stream.ReceiveNext();
+            if (parent) transform.parent = PhotonView.Find(id).transform;
+            else transform.parent = null;
         }
     }
     private void smoothMovement()

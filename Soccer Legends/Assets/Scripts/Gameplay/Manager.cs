@@ -83,7 +83,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if(goalRefFrame + 60 == Time.frameCount) photonView.RPC("Goal", RpcTarget.AllViaServer);
 
-        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
+        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5)
+        {
+            SceneManager.LoadScene("MainMenuScene");
+            PhotonNetwork.Disconnect();
+        }
         else
         {
             if (!GameOn) timeStart += Time.deltaTime;
@@ -94,8 +98,17 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             if ((Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
             {
+                Touch swipe;
                 if (fingerIdx != 0) fingerIdx = getTouchIdx();
-                Touch swipe = Input.GetTouch(fingerIdx);
+                try
+                {
+                    swipe = Input.GetTouch(fingerIdx);
+                }catch (ArgumentException e)
+                {
+                    releaseTouchIdx(fingerIdx);
+                    fingerIdx = -1;
+                    return;
+                }
                 if (swipe.phase == TouchPhase.Began)
                 {
                     swipes[0] = swipe.position;
@@ -123,6 +136,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         }
                         else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                     }
+
+                    if (!PhotonNetwork.IsMasterClient) photonView.RPC("setFightDir", RpcTarget.MasterClient, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+
                     Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
                     " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                     Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
@@ -340,6 +356,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
+    public void setFightDir(string _fightDir) { PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir = _fightDir; }
+
+    [PunRPC]
     public void Goal()
     {
         bool isLocal;
@@ -469,7 +488,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
                 }
                 else { fightResult = fightType = "Elude"; }
-                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult);
+                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
                 break;
             case fightState.SHOOT:
                 //Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
@@ -538,7 +557,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
                     }
-                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult);
+                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
                 break;
             case fightState.NONE:
                 return;
@@ -549,12 +568,18 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void setAnims(string fightType, string fightResult)
+    public void setAnims(string fightType, string fightResult, string fightDirLocal, string fightDirRival)
     {
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            string aux = fightDirLocal;
+            fightDirLocal = fightDirRival;
+            fightDirRival = aux;
+        }
         //Set booleans
         animator.SetBool("PlayerHasBall", PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null ? true : false);
-        animator.SetBool("PlayerSpecial", PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special");
-        animator.SetBool("EnemySpecial", PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special");
+        animator.SetBool("PlayerSpecial", fightDirLocal == "Special");
+        animator.SetBool("EnemySpecial", fightDirRival == "Special");
 
         //Set triggers
         animator.SetTrigger(fightType);
@@ -570,7 +595,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void fightResult(string anim)
     {
-        StartCoroutine(disableConfrontationAnim());
         switch (anim)
         {
             case "PlayerWinBattle":
@@ -681,6 +705,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     IEnumerator enableConfrontationAnim()
     {
+        while (confontationAnimSprites.Count > 0) { yield return new WaitForSeconds(Time.deltaTime); }
         confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
         for (int i = 0; i < myPlayers.Length; i++)
         {
@@ -688,7 +713,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (myIA_Players[i] != PhotonView.Find(fightingIA).gameObject) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));
         }
 
-        while (!GameOn && confontationAnimSprites[0].color.r > 0.4f)
+        while (!GameOn && confontationAnimSprites[0].color.r > 0.3f)
         {
             yield return new WaitForSeconds(Time.deltaTime);
             foreach (SpriteRenderer rend in confontationAnimSprites)
@@ -701,10 +726,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
         }
 
-    }
+        while (!GameOn) { yield return new WaitForSeconds(Time.deltaTime); }
 
-    IEnumerator disableConfrontationAnim()
-    {
         while (confontationAnimSprites[0].color.r < 1.0f)
         {
             yield return new WaitForSeconds(Time.deltaTime);

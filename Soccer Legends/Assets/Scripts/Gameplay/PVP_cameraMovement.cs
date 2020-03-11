@@ -37,8 +37,8 @@ public class PVP_cameraMovement : MonoBehaviour
                 mg.releaseTouchIdx(fingerIdx);
                 fingerIdx = -1;
             }
-            if (cameraBallOffset.y == -3) transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 1.0f, transform.position.z), Time.deltaTime);
-            else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 4.0f, transform.position.z), Time.deltaTime);
+            if (cameraBallOffset.y == -3) transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 1.5f, transform.position.z), Time.deltaTime);
+            else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 3.5f, transform.position.z), Time.deltaTime);
             lastCamPosition = transform.position;
         }
     }

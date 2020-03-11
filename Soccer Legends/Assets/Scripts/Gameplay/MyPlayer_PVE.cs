@@ -144,7 +144,7 @@ public class MyPlayer_PVE : MonoBehaviour
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
             {
                 MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
-                if (!iaPlayer && ball && goalKeeperRef + 5.0f < Time.time)
+                if (!iaPlayer && ball != null && goalKeeperRef + 5.0f < Time.time)
                 {
                     Vector2 randShoot = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(1.0f, 5.0f));
                     ShootBall(new float[] { randShoot.x, randShoot.y, transform.position.x, transform.position.y });

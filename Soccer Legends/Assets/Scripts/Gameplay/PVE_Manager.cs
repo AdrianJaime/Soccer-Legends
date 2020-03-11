@@ -481,7 +481,6 @@ public class PVE_Manager : MonoBehaviour
 
     public void fightResult(string anim)
     {
-        StartCoroutine(disableConfrontationAnim());
         switch (anim)
         {
             case "PlayerWinBattle":
@@ -577,6 +576,7 @@ public class PVE_Manager : MonoBehaviour
 
     IEnumerator enableConfrontationAnim()
         {
+        while (confontationAnimSprites.Count > 0) { yield return new WaitForSeconds(Time.deltaTime); }
         confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
         for(int i = 0; i < myPlayers.Length; i++)
         {
@@ -584,7 +584,7 @@ public class PVE_Manager : MonoBehaviour
             if (i != fightingIA) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));
         }
 
-        while (!GameOn && confontationAnimSprites[0].color.r > 0.4f) 
+        while (!GameOn && confontationAnimSprites[0].color.r > 0.3f) 
         {
             yield return new WaitForSeconds(Time.deltaTime);
             foreach (SpriteRenderer rend in confontationAnimSprites)
@@ -596,11 +596,9 @@ public class PVE_Manager : MonoBehaviour
                 rend.color = c;
             }
         }
-            
-        }
 
-    IEnumerator disableConfrontationAnim()
-    {
+        while (!GameOn) { yield return new WaitForSeconds(Time.deltaTime); }
+
         while (confontationAnimSprites[0].color.r < 1.0f)
         {
             yield return new WaitForSeconds(Time.deltaTime);

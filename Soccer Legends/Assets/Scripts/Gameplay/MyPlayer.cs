@@ -152,7 +152,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     if (formationPos == IA_manager.formationPositions.GOALKEEPER)
                     {
                         MoveTo(new float[] { GameObject.FindGameObjectWithTag("Ball").transform.position.x, transform.position.y, 0.0f });
-                        if (ball && goalKeeperRef + 5.0f < Time.time)
+                        if (ball != null && goalKeeperRef + 5.0f < Time.time)
                         {
                             Vector2 randShoot = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(1.0f, 5.0f));
                             photonView.RPC("ShootBall", RpcTarget.AllViaServer, new float[] { randShoot.x, randShoot.y, transform.position.x, transform.position.y });
@@ -182,6 +182,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 checkCollisionDetection();
                 //rePositionBall(); //To be implemented
             }
+            else if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == transform) ball = PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).gameObject;
+            else if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != transform) ball = null;
+
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
@@ -209,11 +212,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void ProcessInputs()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            float[] dir = { 0, 0, ball.transform.position.x, ball.transform.position.y };
-            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
-        }
         //Movement
         if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
         {
@@ -278,14 +276,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
-            stream.SendNext(fightDir);
             stream.SendNext(stunned);
             //stream.SendNext(photonView.ViewID);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
-            fightDir = (string)stream.ReceiveNext();
             stunned = (bool)stream.ReceiveNext();
             //photonView.ViewID = (int)stream.ReceiveNext();
         }
@@ -530,39 +526,46 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         yield return new WaitForSeconds(0.25f);
 
-        Vector2 direction = Vector3.zero;
-        if (photonView.IsMine)
+        try
         {
-            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-            else direction = (playerObjective - transform.position).normalized;
+            Vector2 direction = Vector3.zero;
+            if (photonView.IsMine)
+            {
+                if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+                else direction = (playerObjective - transform.position).normalized;
+            }
+            else
+            {
+                if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+                else direction = (smoothMove - transform.position).normalized;
+            }
+
+            if (formationPos == IA_manager.formationPositions.GOALKEEPER)
+            {
+                float inverseFactor;
+                if (velocity0 >= 0.01) inverseFactor = -1.0f;
+                else inverseFactor = 1.0f;
+                direction = new Vector2(direction.x, Mathf.Abs(direction.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+
+            }
+
+            if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
+            else if (ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);
+
+            animator.SetFloat("DirectionX", direction.x);
+            animator.SetFloat("DirectionY", direction.y);
+            if (velocity0 < 0.01)
+                animator.SetBool("Moving", false);
+            else
+                animator.SetBool("Moving", true);
+
+            if (mg.GameOn != animator.enabled)
+                animator.enabled = mg.GameOn;
+            StartCoroutine(SetAnimatorValues());
         }
-        else
+        catch(NullReferenceException e)
         {
-            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-            else direction = (smoothMove - transform.position).normalized;
+            StartCoroutine(SetAnimatorValues());
         }
-
-        if (formationPos == IA_manager.formationPositions.GOALKEEPER)
-        {
-            float inverseFactor;
-            if (velocity0 >= 0.01) inverseFactor = -1.0f;
-            else inverseFactor = 1.0f;
-            direction = new Vector2(direction.x, Mathf.Abs(direction.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
-
-        }
-
-        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
-        else if (ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);
-
-        animator.SetFloat("DirectionX", direction.x);
-        animator.SetFloat("DirectionY", direction.y);
-        if (velocity0 < 0.01)
-            animator.SetBool("Moving", false);
-        else
-            animator.SetBool("Moving", true);
-
-        if (mg.GameOn != animator.enabled)
-            animator.enabled = mg.GameOn;
-        StartCoroutine(SetAnimatorValues());
     }
 }

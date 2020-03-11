@@ -119,13 +119,21 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     swipes[1] = swipe.position;
                     if(state == fightState.FIGHT)
                     {
-                        if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
+                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
+                        {
+                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
+                            float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                            energyBar.GetComponent<Slider>().value = energySegments = 0;
+                            energy -= 1.0f;
+                            while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                            energyBar.GetComponent<Slider>().value = energy;
+                        }
+                        else if (swipes[0].x > swipes[1].x) PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Left";
                         else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Right";
                     }
                     else if(state == fightState.SHOOT)
                     {
-                        if (swipes[0].y > swipes[1].y && energyBar.GetComponent<Slider>().value + energySegments > 1.0f &&
-                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
+                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
@@ -288,13 +296,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 player1.ball = GameObject.FindGameObjectWithTag("Ball");
                 player1.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-                IA_Player.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                IA_Player.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
             }
             else if (IA_Player.formationPos == IA_manager.formationPositions.GOALKEEPER)
             {
                 IA_Player.ball = GameObject.FindGameObjectWithTag("Ball");
                 IA_Player.ball.transform.localPosition = new Vector3(0, -0.5f, 0);
-                player1.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                player1.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
             }
             else if (!directionSlide.activeSelf)
             {
@@ -307,6 +315,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 GameOn = false;
                 directionSlide.SetActive(true);
+                if (energyBar.GetComponent<Slider>().value + energySegments > 1.0f) specialSlide.SetActive(true);
                 state = fightState.FIGHT;
                 //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
                 //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
@@ -452,12 +461,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
         switch (state)
         {
             case fightState.FIGHT:
-                //Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
-                //    " chose direction " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
-                //Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
-                //    " chose direction " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot *= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense *= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique *= 2;
+                }
+                if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.shoot *= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.defense *= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.technique *= 2;
+                }
 
-             
+
                 GameObject playerWithBall, playerWithoutBall;
                 if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
                 {
@@ -469,9 +486,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     playerWithoutBall = PhotonView.Find(fightingPlayer).gameObject;
                     playerWithBall = PhotonView.Find(fightingIA).gameObject;
                 }
-                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir)
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir &&
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != "Special" && PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != "Special")
                 {
-                    fightType = "Battle";
+                    fightResult = fightType = "Elude";
+                }
+                else {
+                    if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special" ||
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special") fightType = "SpecialAttack";
+                    else fightType = "Battle";
                     int randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.technique + playerWithoutBall.GetComponent<MyPlayer>().stats.defense + 1);
                     Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() +
                     " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString());
@@ -485,19 +508,40 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         fightResult = playerWithoutBall == PhotonView.Find(fightingPlayer).gameObject ? "Win" : "Lose";
                     }
                     else fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Win" : "Lose";
-
                 }
-                else { fightResult = fightType = "Elude"; }
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot /= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense /= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique /= 2;
+                }
+                if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.shoot /= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.defense /= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.technique /= 2;
+                }
                 photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
                 break;
             case fightState.SHOOT:
-                //Debug.Log(myPlayers[fightingPlayer].name + " from " + myPlayers[fightingPlayer].transform.parent.name +
-                //    " chose shooting " + myPlayers[fightingPlayer].GetComponent<MyPlayer>().fightDir);
-                //Debug.Log(myIA_Players[fightingIA].name + " from " + myIA_Players[fightingIA].transform.parent.name +
-                //    " chose " + myIA_Players[fightingIA].GetComponent<MyPlayer>().fightDir);
 
                 if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special" ||
-                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special") fightType = "SpecialAttack";
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    fightType = "SpecialAttack";
+                    if(PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special")
+                    {
+                        PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot *= 2;
+                        PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense *= 2;
+                        PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique *= 2;
+                    }
+                    if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special")
+                    {
+                        PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.shoot *= 2;
+                        PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.defense *= 2;
+                        PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.technique *= 2;
+                    }
+                }
                 else fightType = "Battle";
 
                 GameObject goalkeeper;
@@ -511,7 +555,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         goalkeeper = PhotonView.Find(fightingPlayer).gameObject;
                     playerWithBall = PhotonView.Find(fightingIA).gameObject;
                     }
-                    if (playerWithBall.GetComponent<MyPlayer>().fightDir == goalkeeper.GetComponent<MyPlayer>().fightDir)
                     {
                         int randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.shoot + goalkeeper.GetComponent<MyPlayer>().stats.defense + 1);
                         Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString() +
@@ -524,39 +567,24 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         if (randomValue <= playerWithBall.GetComponent<MyPlayer>().stats.shoot)
                         {
                         fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Win" : "Lose";
-                        //float[] dir = { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
-                        //if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
-                        //{
-                        //    dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
-                        //}
-                        //goalRefFrame = Time.frameCount;
-                        //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                         else
                         {
                         fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Lose" : "Win";
-                        //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
                     }
                     }
-                    else
-                    {
-                    if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Special")
-                    {
-                        fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Win" : "Lose";
-                        //float[] dir = { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer>().ball.transform.position.y };
-                        //if (!playerWithBall.GetComponent<MyPlayer>().photonView.Owner.IsMasterClient)
-                        //{
-                        //    dir[0] *= -1; dir[1] *= -1; dir[2] *= -1; dir[3] *= -1;
-                        //}
-                        //goalRefFrame = Time.frameCount;
-                        //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
-                    }
-                    else
-                    {
-                        fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Lose" : "Win";
-                        //playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                    }
-                    }
+                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot /= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense /= 2;
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique /= 2;
+                }
+                if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special")
+                {
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.shoot /= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.defense /= 2;
+                    PhotonView.Find(fightingIA).GetComponent<MyPlayer>().stats.technique /= 2;
+                }
                 photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
                 break;
             case fightState.NONE:
@@ -618,10 +646,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     {
                         goalkeeper = PhotonView.Find(fightingPlayer).gameObject;
                         playerWithBall = PhotonView.Find(fightingIA).gameObject;
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, true);
                     }
                 }
-                else PhotonView.Find(fightingIA).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                else PhotonView.Find(fightingIA).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
                 break;
             case "EnemyWinConfrontation":
                 if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos == IA_manager.formationPositions.GOALKEEPER ||
@@ -632,7 +660,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     {
                         playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
                         goalkeeper = PhotonView.Find(fightingIA).gameObject;
-                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                        playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, true);
                     }
                     else
                     {
@@ -647,12 +675,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                     }
                 }
-                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
                 break;
             case "PlayerDodge":
             case "EnemyDodge":
-                if (animator.GetBool("PlayerHasBall")) PhotonView.Find(fightingIA).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
-                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer);
+                if (animator.GetBool("PlayerHasBall")) PhotonView.Find(fightingIA).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
+                else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, false);
                 break;
         }
     }

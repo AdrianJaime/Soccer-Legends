@@ -351,11 +351,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void Lose()
+    public void Lose(bool toGoal = false)
     {
         Debug.Log(gameObject.name + " from " + gameObject.transform.parent.name + " lost the Fight");
         stunned = true;
-        if(fightDir == "Special" || fightDir == "Normal")
+        if(toGoal)
         {
             float[] dir = { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
             photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);

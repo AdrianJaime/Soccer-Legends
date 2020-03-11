@@ -128,7 +128,7 @@ public class PVE_Manager : MonoBehaviour
         myIA_Players = new GameObject[4];
         for (int i = 0; i < 4; i++)
         {
-            IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1;
+            IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1 + new Vector3(0, 1.0f, 0);
             myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
         }
         StartGame();

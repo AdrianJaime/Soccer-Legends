@@ -426,7 +426,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     public void stablishNewShootCheck()
     {
-        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(1.0f, 2.0f)));
+        StartCoroutine(checkIA_Shoot_After_Time(Random.Range(0.5f, 1.5f)));
     }
 
     

@@ -195,7 +195,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (Vector2.Distance(smoothMove, transform.position) < 0.75f)
         {
             //Vector3 nextPos;
-            Vector3 newPos = Vector3.MoveTowards(transform.position, smoothMove, Time.deltaTime * speed);
+            Vector3 newPos = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 5.0f);
             velocity0 = (newPos - transform.position).magnitude;
             transform.position = newPos;
             //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
@@ -275,7 +275,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(new Vector3(-transform.position.x, -transform.position.y, transform.position.z)); //Solo se envía si se está moviendo.
+            float y_offset = 1.0f;
+            stream.SendNext(new Vector3(-transform.position.x, -transform.position.y + y_offset, transform.position.z)); //Solo se envía si se está moviendo.
             stream.SendNext(stunned);
             //stream.SendNext(photonView.ViewID);
         }

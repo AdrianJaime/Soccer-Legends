@@ -389,6 +389,10 @@ public class MyPlayer_PVE : MonoBehaviour
             objective[0] = (objective[0] / Mathf.Abs(objective[0])) * 1.25f;
         else if (formationPos != IA_manager.formationPositions.GOALKEEPER && ball)
             objective[1] = goal.transform.position.y;
+
+        objective[2] = transform.position.y / 100.0f;
+        transform.position = new Vector3(transform.position.x, transform.position.y, objective[2]);
+
         playerObjective = new Vector3(objective[0], objective[1], objective[2]);
     }
 
@@ -533,8 +537,8 @@ public class MyPlayer_PVE : MonoBehaviour
             
         }
 
-        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.05f);
-        else if(ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.05f);
+        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.0005f);
+        else if(ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.0005f);
 
         animator.SetFloat("DirectionX", direction.x);
         animator.SetFloat("DirectionY", direction.y);

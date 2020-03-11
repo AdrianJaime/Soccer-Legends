@@ -55,6 +55,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
     Image iaSpecialAtqImage;
     List<SpriteRenderer> confontationAnimSprites;
 
+    [SerializeField]
+    GameObject introObj;
+    [SerializeField]
+    Animator outroObj;
+    [SerializeField]
+    Text playerOutroPoints;
+    [SerializeField]
+    Text enemyOutroPoints;
+
     //Hardcoded bug fixes
     int frameCount = 0;
     int goalRefFrame;
@@ -85,8 +94,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5)
         {
-            SceneManager.LoadScene("MainMenuScene");
-            PhotonNetwork.Disconnect();
+            StartCoroutine(outro());
         }
         else
         {
@@ -197,7 +205,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
             }
         }
-        StartCoroutine(StartGame());
+        StartCoroutine(intro());
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -228,13 +236,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
     }
 
-    IEnumerator StartGame() {
-
-        while (GameObject.Find("Team 1(Clone)") == null || GameObject.Find("Team 2(Clone)") == null)
-        {
-            yield return new WaitForSeconds(0.2f);
-        }
-
+    void StartGame() {
         timeStart = Time.time;
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
@@ -770,6 +772,35 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
         }
         confontationAnimSprites.Clear();
+    }
+
+    IEnumerator intro()
+    {
+        while (GameObject.Find("Team 1(Clone)") == null || GameObject.Find("Team 2(Clone)") == null)
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        introObj.SetActive(true);
+
+        yield return new WaitForSeconds(4.0f);
+        StartGame();
+        yield return new WaitForSeconds(2.0f);
+        Destroy(introObj);
+    }
+
+    IEnumerator outro()
+    {
+        GameStarted = false;
+        GameOn = false;
+        outroObj.gameObject.SetActive(true);
+        outroObj.SetTrigger("CallOutro");
+        outroObj.SetBool("WIN", score[0] > score[1] ? true : false);
+        playerOutroPoints.transform.GetChild(0).GetComponent<Text>().text = playerOutroPoints.text = score[0].ToString();
+        enemyOutroPoints.transform.GetChild(0).GetComponent<Text>().text = enemyOutroPoints.text = score[1].ToString();
+
+        yield return new WaitForSeconds(4.0f);
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     public int getTouchIdx()

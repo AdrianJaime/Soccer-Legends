@@ -54,6 +54,15 @@ public class PVE_Manager : MonoBehaviour
     Image iaSpecialAtqImage;
     List<SpriteRenderer> confontationAnimSprites;
 
+    [SerializeField]
+    GameObject introObj;
+    [SerializeField]
+    Animator outroObj;
+    [SerializeField]
+    Text playerOutroPoints;
+    [SerializeField]
+    Text enemyOutroPoints;
+
     //Hardcoded bug fixes
     int goalRefFrame;
     int frameCount = 0;
@@ -86,7 +95,8 @@ public class PVE_Manager : MonoBehaviour
             else Goal(false);
         }
 
-        if (timeStart + 180 < Time.time || score.x == 5 || score.y == 5) SceneManager.LoadScene("MainMenuScene");
+        //Match end/start manager
+        if (GameStarted && timeStart + 180 < Time.time || score.x == 5 || score.y == 5) StartCoroutine(outro());
         else
         {
             if (!GameOn) timeStart += Time.deltaTime;
@@ -131,7 +141,7 @@ public class PVE_Manager : MonoBehaviour
             IA_Rival.transform.GetChild(i).transform.position = localPlayer.transform.GetChild(i).transform.position * -1 + new Vector3(0, 1.0f, 0);
             myIA_Players[i] = IA_Rival.transform.GetChild(i).gameObject;
         }
-        StartGame();
+        StartCoroutine(intro());
     }
 
     //public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -149,12 +159,12 @@ public class PVE_Manager : MonoBehaviour
     public void StartButton()
     {
         // if (PhotonNetwork.CurrentRoom.PlayerCount == 2) photonView.RPC("StartGame", RpcTarget.AllViaServer);
-        StartGame();
+        
         releaseTouchIdx(fingerIdx);
         fingerIdx = -1;
     }
 
-    public void StartGame() { GameStarted = true; GameOn = true; scoreBoard.SetActive(true); }
+    public void StartGame() { GameStarted = true;  scoreBoard.SetActive(true); GameOn = true; }
 
     public void resumeGame()
     {
@@ -656,6 +666,29 @@ public class PVE_Manager : MonoBehaviour
             }
         }
         confontationAnimSprites.Clear();
+    }
+
+    IEnumerator intro()
+    {
+        introObj.SetActive(true);
+        yield return new WaitForSeconds(4.0f);
+        StartGame();
+        yield return new WaitForSeconds(2.0f);
+        Destroy(introObj);
+    }
+
+    IEnumerator outro()
+    {
+        GameStarted = false;
+        GameOn = false;
+        outroObj.gameObject.SetActive(true);
+        outroObj.SetTrigger("CallOutro");
+        outroObj.SetBool("WIN", score[0] > score[1] ? true : false);
+        playerOutroPoints.transform.GetChild(0).GetComponent<Text>().text = playerOutroPoints.text = score[0].ToString();
+        enemyOutroPoints.transform.GetChild(0).GetComponent<Text>().text = enemyOutroPoints.text = score[1].ToString();
+
+        yield return new WaitForSeconds(4.0f);
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     public int getTouchIdx()

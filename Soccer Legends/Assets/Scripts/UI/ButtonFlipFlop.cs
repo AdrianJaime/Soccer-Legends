@@ -11,6 +11,8 @@ public class ButtonFlipFlop : MonoBehaviour
 
     public void OnButtonClick()
     {
+
+        Debug.Log("Pene");
         if (first)
         {
             A.Invoke();

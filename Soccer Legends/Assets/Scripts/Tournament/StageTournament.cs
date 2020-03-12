@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class StageTournament : MonoBehaviour
 {
-    public Text description, stageName;
+    public Text description, stageName,stageNameShadow;
     public Image stageArt,artReward, clearPanel;
     public StageInfo basicInfo;//Información básica sobre ésta stage, variables que no varían
     public RewardLogic reward;
@@ -42,6 +42,7 @@ public class StageTournament : MonoBehaviour
 
         description.text = basicInfo.description;
         stageName.text = basicInfo.stageName;
+        stageNameShadow.text = basicInfo.stageName;
         stageArt.sprite = basicInfo.stageArtwork;
         artReward.sprite = basicInfo.imageReward;
     }

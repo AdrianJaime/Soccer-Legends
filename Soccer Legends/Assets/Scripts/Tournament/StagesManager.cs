@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class StagesManager : MonoBehaviour
 {
     public Image teamImage;
-    public Text teamName;
+    public Text teamName,teamNameShadow;
 
     public TeamTournamentInfo info; //publico para poner por defecto alguno en el testing
     public Transform placeToSpawn;
@@ -46,5 +46,6 @@ public class StagesManager : MonoBehaviour
     {
         teamImage.sprite = info.teamArtwork;
         teamName.text = info.teamName;
+        teamNameShadow.text = info.teamName;
     }
 }

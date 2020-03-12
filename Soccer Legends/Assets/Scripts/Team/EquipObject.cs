@@ -16,6 +16,13 @@ public class EquipObject : MonoBehaviour
     public string[] arrayID = new string[8];//DESCARGAMOS UNA LISTA DE INTS con la info del ID de cada personaje equipado en el team desde BD A traves del identifierEquip
 
     // public bool preferent;
+
+    private void Start()
+    {
+        Debug.Log(identifierEquip);
+        //PlayerPrefs.DeleteAll();
+
+    }
     public int isUsed(CharacterBasic _aux)
     {
         for (int i = 0; i < 8; i++)
@@ -37,6 +44,11 @@ public class EquipObject : MonoBehaviour
     public void LoadEquipBD(InventoryManager inventory)
     {
         int aux = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            arrayID[i] = PlayerPrefs.GetString("team" + identifierEquip + "slot" + i);
+            Debug.Log("In " + "team" + identifierEquip + "slot" + i + " There is: " + PlayerPrefs.GetString("team" + identifierEquip + "slot" + i));
+        }
         foreach (string value in arrayID)
         {
             if (value != null)
@@ -48,7 +60,7 @@ public class EquipObject : MonoBehaviour
                     Debug.Log("LO ENCONTRÉ");
                     listOfCharacters[aux] = auxCharacter;
                     arrayEquiped[aux] = true;
-
+                    Debug.Log(PlayerPrefs.GetString("team" + identifierEquip + "slot" + value));
 
                 }
                 else

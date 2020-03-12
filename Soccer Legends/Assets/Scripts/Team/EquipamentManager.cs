@@ -22,6 +22,7 @@ public class EquipamentManager : MonoBehaviour
         actualEquip.LoadEquipBD(inventoryManager);
         //CARGAMOS EN LOS SLOTS
         LoadEquipInSlots();
+        Debug.Log("team" + actualEquip.identifierEquip + "slot" + 1);
     }
 
 
@@ -50,8 +51,8 @@ public class EquipamentManager : MonoBehaviour
                 actualEquip.arrayEquiped[identifierCurrentSlotEquipament] = true;
                 actualEquip.listOfCharacters[identifierCurrentSlotEquipament] = _character;
                 actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
-
-
+                PlayerPrefs.SetString("team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament, _character.basicInfo.ID);
+                Debug.Log("In " + "team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament + " There is: "+ PlayerPrefs.GetString("team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament));
             }
             else
             {
@@ -80,7 +81,7 @@ public class EquipamentManager : MonoBehaviour
             actualEquip.arrayEquiped[characterUsed] = false;
             actualEquip.listOfCharacters[characterUsed] = null;
             actualEquip.arraySlots[characterUsed].Set(null);
-
+           // PlayerPrefs.DeleteKey("team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament);
             identifierCurrentSlotEquipament = -1;
 
         }
@@ -88,10 +89,8 @@ public class EquipamentManager : MonoBehaviour
 
     public void ChangeEquipSlide()
     {
-
         actualEquip = equips[SimpleScrollSnap.TargetPanel];
         LoadEquipInSlots();
-
     }
 
     

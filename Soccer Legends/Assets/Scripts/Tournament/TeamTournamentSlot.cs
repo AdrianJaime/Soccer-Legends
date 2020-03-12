@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TeamTournamentSlot : MonoBehaviour
 {
-    public Text description, nameTeam;
+    public Text description, nameTeam,nameShadow;
     public Image artTeam;
 
     public TeamTournamentInfo basicInfo;
@@ -24,6 +24,7 @@ public class TeamTournamentSlot : MonoBehaviour
     {
         description.text = basicInfo.description;
         nameTeam.text = basicInfo.teamName;
+        nameShadow.text = basicInfo.teamName;
         artTeam.sprite = basicInfo.teamArtwork;
     }
 

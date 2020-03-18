@@ -96,11 +96,11 @@ public class PVE_Manager : MonoBehaviour
         }
 
         //Match end/start manager
-        if (GameStarted && timeStart + 180 < Time.time || score.x == 5 || score.y == 5) StartCoroutine(outro());
+        if (GameStarted && timeStart + 80 < Time.time || score.x == 3 || score.y == 3) StartCoroutine(outro());
         else
         {
             if (!GameOn) timeStart += Time.deltaTime;
-            timmer.GetComponent<TextMeshProUGUI>().SetText(((int)(timeStart + 180 - Time.time)).ToString());
+            timmer.GetComponent<TextMeshProUGUI>().SetText(((int)(timeStart + 80 - Time.time)).ToString());
         }
         if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
         {

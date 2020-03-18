@@ -20,6 +20,10 @@ public class IA_manager : MonoBehaviour
     [SerializeField]
     float separationDist;
 
+    [SerializeField]
+    float separationForce;
+
+
     PVE_Manager mg;
 
     private void Start()
@@ -37,7 +41,10 @@ public class IA_manager : MonoBehaviour
 
     private void LateUpdate()
     {
-        processSeparation();
+        GameObject[] rivalTeam;
+        if (playerTeam) rivalTeam = mg.myIA_Players;
+        else rivalTeam = mg.myPlayers;
+        processSeparation(rivalTeam);
     }
 
     void checkIA_State()
@@ -138,19 +145,24 @@ public class IA_manager : MonoBehaviour
         }
     }
 
-    void processSeparation()
+    void processSeparation(GameObject[] _rivalPlayers)
     {
-        if (!mg.GameOn) return;
+        if (!mg.GameOn || ia_State == IA_State.FREE_BALL) return;
         for (int i = 0; i < ia_players.Length; i++)
         {
-            Vector2 iaSparationForce, playerSeparationForce;
-            iaSparationForce = playerSeparationForce = Vector2.zero;
             for (int j = 0; j < ia_players.Length; j++)
             {
                 if (ia_players[j] != ia_players[i] && Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position) < separationDist)
                 {
                     ia_players[i].GetComponent<Rigidbody2D>().AddForce((ia_players[j].transform.position - ia_players[i].transform.position).normalized *
-                        (separationDist - Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position)) * -20, ForceMode2D.Force);
+                        (separationDist - Vector2.Distance(ia_players[j].transform.position, ia_players[i].transform.position)) * -separationForce, ForceMode2D.Force);
+                }
+                else ia_players[i].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                if ((ia_State == IA_State.IA_HAS_BALL && playerTeam) || (ia_State == IA_State.PLAYER_HAS_BALL && !playerTeam) && !ia_players[i].GetComponent<MyPlayer_PVE>().stunned && mg.fightRef + 2.0f >= Time.time && _rivalPlayers[j].GetComponent<MyPlayer_PVE>().ball != null && Vector2.Distance(ia_players[i].transform.position, _rivalPlayers[j].transform.position) < separationDist *2)
+                {
+                   ia_players[i].GetComponent<Rigidbody2D>().AddForce((-_rivalPlayers[j].transform.position + ia_players[i].transform.position).normalized *
+                        (separationDist *2 - Vector2.Distance(_rivalPlayers[j].transform.position, ia_players[i].transform.position)) * separationForce, ForceMode2D.Force);
+                    break;
                 }
                 else ia_players[i].GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             }

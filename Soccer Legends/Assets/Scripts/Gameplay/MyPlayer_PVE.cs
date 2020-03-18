@@ -37,7 +37,6 @@ public class MyPlayer_PVE : MonoBehaviour
     private List<Vector3> points;
     public Collider2D goal, rival_goal;
     private float touchTime;
-    private int shootFramesRef;
     private int passFrames = 0;
     public int fingerIdx = -1;
 
@@ -80,7 +79,6 @@ public class MyPlayer_PVE : MonoBehaviour
         }
         //}
         points = new List<Vector3>();
-        shootFramesRef = Time.frameCount - 5;
         animator.SetBool("Moving", true);
         StartCoroutine(SetAnimatorValues());
     }
@@ -158,6 +156,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 //Vector3 nextPos;
                 Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                 velocity0 = (newPos - transform.position).magnitude;
+                GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
                 transform.position = newPos;
                 //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                 //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
@@ -293,7 +292,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 ball.GetComponent<Ball>().shoot = true;
                 ball.GetComponent<Ball>().shooterIsMaster = false;
                 ball.GetComponent<Ball>().ShootBall(_dir);
-                shootFramesRef = Time.frameCount;
+                ball.GetComponent<Ball>().shootTimeRef = Time.time;
             }
             //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null)) {
             //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
@@ -388,7 +387,10 @@ public class MyPlayer_PVE : MonoBehaviour
         if (formationPos == IA_manager.formationPositions.GOALKEEPER && Mathf.Abs(objective[0]) > 1.25f)
             objective[0] = (objective[0] / Mathf.Abs(objective[0])) * 1.25f;
         else if (formationPos != IA_manager.formationPositions.GOALKEEPER && ball)
+        {
             objective[1] = goal.transform.position.y;
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
 
         objective[2] = transform.position.y / 100.0f;
         transform.position = new Vector3(transform.position.x, transform.position.y, objective[2]);
@@ -418,6 +420,7 @@ public class MyPlayer_PVE : MonoBehaviour
         StartCoroutine(Blink(2.0f));
         GameObject.Destroy(actualLine);
         onMove = false;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
     IEnumerator checkIA_Shoot_After_Time(float time)
@@ -477,7 +480,7 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (!foundCovered) covered = false;
         }
 
-        if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && shootFramesRef + 5 < Time.frameCount)
+        if (GameObject.FindGameObjectWithTag("Ball").transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().shootTimeRef + 0.15f < Time.time)
         {
             GetBall();
             //photonView.RPC("GetBall", RpcTarget.AllViaServer);

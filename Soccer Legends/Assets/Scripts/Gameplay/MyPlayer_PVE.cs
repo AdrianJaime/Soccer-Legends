@@ -48,6 +48,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     float goalKeeperRef;
 
+    Vector2 animDir;
     float velocity0 = 0;
 
     //IA
@@ -155,8 +156,8 @@ public class MyPlayer_PVE : MonoBehaviour
             {
                 //Vector3 nextPos;
                 Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
-                velocity0 = (newPos - transform.position).magnitude;
                 GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
+                velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
                 transform.position = newPos;
                 //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                 //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
@@ -391,7 +392,12 @@ public class MyPlayer_PVE : MonoBehaviour
             objective[1] = goal.transform.position.y;
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
-
+        else if (mg.fightRef + 2.0f >= Time.time && formationPos != IA_manager.formationPositions.GOALKEEPER && ((iaPlayer && mg.HasTheBall() == 1) || (!iaPlayer && mg.HasTheBall() == 2)) && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position) < 2.4f)
+        {
+            Vector2 retreatPos = GameObject.FindGameObjectWithTag("Ball").transform.position + (transform.position - GameObject.FindGameObjectWithTag("Ball").transform.position).normalized * 2.5f;
+            objective[0] = retreatPos.x;
+            objective[1] = retreatPos.y;
+        }
         objective[2] = transform.position.y / 100.0f;
         transform.position = new Vector3(transform.position.x, transform.position.y, objective[2]);
 
@@ -518,17 +524,16 @@ public class MyPlayer_PVE : MonoBehaviour
     IEnumerator SetAnimatorValues()
     {
         yield return new WaitForSeconds(0.25f);
-        Vector2 direction;
 
         if (!iaPlayer)
         {
-            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-            else direction = (playerObjective - transform.position).normalized;
+            if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) animDir = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else animDir = (playerObjective - transform.position).normalized;
         }
         else
         {
-            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-            else direction = (playerObjective - transform.position).normalized;
+            if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) animDir = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+            else animDir = (playerObjective - transform.position).normalized;
         }
 
         if (formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -536,15 +541,15 @@ public class MyPlayer_PVE : MonoBehaviour
             float inverseFactor;
             if (velocity0 >= 0.01) inverseFactor =  -1.0f;
             else inverseFactor = 1.0f;
-            direction = new Vector2(direction.x, Mathf.Abs(direction.y) * ( inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+            animDir = new Vector2(animDir.x, Mathf.Abs(animDir.y) * ( inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
             
         }
 
-        if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.0005f);
+        if (animDir.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.0005f);
         else if(ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.0005f);
 
-        animator.SetFloat("DirectionX", direction.x);
-        animator.SetFloat("DirectionY", direction.y);
+        animator.SetFloat("DirectionX", animDir.x);
+        animator.SetFloat("DirectionY", animDir.y);
         if(velocity0<0.01)
             animator.SetBool("Moving", false);
         else

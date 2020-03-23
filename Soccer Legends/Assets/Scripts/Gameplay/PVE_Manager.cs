@@ -102,9 +102,10 @@ public class PVE_Manager : MonoBehaviour
             if (!GameOn) timeStart += Time.deltaTime;
             timmer.GetComponent<TextMeshProUGUI>().SetText(((int)(timeStart + 80 - Time.time)).ToString());
         }
-        if (!GameOn && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
+        if (!GameOn)
         {
-            Fight();
+           if(Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1) Fight();
+            updateUI_Stats();
         }
         else if (GameStarted && GameOn)
         {
@@ -170,6 +171,10 @@ public class PVE_Manager : MonoBehaviour
     {
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
+        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir != null &&
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special") specialDowngrade();
+        if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir != null &&
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") specialDowngrade(true);
         for (int i = 0; i < myIA_Players.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
@@ -345,18 +350,20 @@ public class PVE_Manager : MonoBehaviour
                     swipes[1] = swipe.position;
                     if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
                     {
+                        float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                        energyBar.GetComponent<Slider>().value = energySegments = 0;
+                        energy -= 1.0f;
+                        while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                        energyBar.GetComponent<Slider>().value = energy;
                         myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot *= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense *= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique *= 2;
+                        specialUpgrade();
                     }
                     else if (swipes[0].x > swipes[1].x) myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Left";
                     else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Right";
                     if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special")
                     {
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot *= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense *= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique *= 2;
+                        enemySpecialBar -= 1 / 5.0f;
+                        specialUpgrade(true);
                     }
 
                     directionSlide.SetActive(false); specialSlide.SetActive(false);
@@ -405,24 +412,6 @@ public class PVE_Manager : MonoBehaviour
                         }
 
                     }
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special")
-                    {
-                        enemySpecialBar -= 1 / 5.0f;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot /= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense /= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique /= 2;
-                    }
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special")
-                    {
-                        float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                        energyBar.GetComponent<Slider>().value = energySegments = 0;
-                        energy -= 1.0f;
-                        while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                        energyBar.GetComponent<Slider>().value = energy;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot /= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense /= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique /= 2;
-                    }
                     setAnims(fightType, fightResult);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
@@ -441,16 +430,18 @@ public class PVE_Manager : MonoBehaviour
                     swipes[1] = swipe.position;
                     if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
                     {
+                        float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                        energyBar.GetComponent<Slider>().value = energySegments = 0;
+                        energy -= 1.0f;
+                        while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                        energyBar.GetComponent<Slider>().value = energy;
                         myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot *= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense *= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique *= 2;
+                        specialUpgrade();
                     }
                     else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                     if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special"){
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot *= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense *= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique *= 2;
+                        enemySpecialBar -= 1 / 5.0f;
+                        specialUpgrade(true);
                     }
 
                     directionSlide.SetActive(false); specialSlide.SetActive(false);
@@ -490,24 +481,6 @@ public class PVE_Manager : MonoBehaviour
                         {
                             fightResult = playerWithBall == myPlayers[fightingPlayer] ? "Lose" : "Win";
                         }
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special")
-                    {
-                        enemySpecialBar -= 1 / 5.0f;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot /= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense /= 2;
-                        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique /= 2;
-                    }
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special")
-                    {
-                        float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                        energyBar.GetComponent<Slider>().value = energySegments = 0;
-                        energy -= 1.0f;
-                        while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                        energyBar.GetComponent<Slider>().value = energy;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot /= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense /= 2;
-                        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique /= 2;
-                    }
                     setAnims(fightType, fightResult);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
@@ -517,6 +490,72 @@ public class PVE_Manager : MonoBehaviour
             case fightState.NONE:
                 break;
 
+        }
+    }
+
+    void updateUI_Stats()
+    {
+        string[] uiStats = new string[2];
+        int[] uiNumStat = new int [2];
+        MyPlayer_PVE[] fightingPlayers = new MyPlayer_PVE[2];
+        fightingPlayers[0] = myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>();
+        fightingPlayers[1] = myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>();
+        uiStats[0] = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text.Substring(0, 3);
+        uiStats[1] = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text
+            .Substring(statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text.Length - 3, 3);
+        for(int i = 0; i < uiStats.Length; i++)
+        {
+            switch(uiStats[i])
+            {
+                case "DEF":
+                    uiNumStat[i] = fightingPlayers[i].stats.defense;
+                    break;
+                case "TEQ":
+                    uiNumStat[i] = fightingPlayers[i].stats.technique;
+                    break;
+                case "ATQ":
+                    uiNumStat[i] = fightingPlayers[i].stats.shoot;
+                    break;
+            }
+        }
+
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = uiStats[0] + " "
+                        + uiNumStat[0].ToString();
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text =
+            uiNumStat[1].ToString() + " " + uiStats[1];
+    }
+
+    void specialUpgrade(bool _ia = false)
+    {
+        if (_ia)
+        {
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense *= 3;
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique *= 3;
+        }
+        else
+        {
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense *= 3;
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique *= 3;
+        }
+    }
+
+    void specialDowngrade(bool _ia = false)
+    {
+        if (_ia)
+        {
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot /= 3;
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense /= 3;
+            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique /= 3;
+        }
+        else
+        {
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot /= 3;
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense /= 3;
+            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique /= 3;
         }
     }
 

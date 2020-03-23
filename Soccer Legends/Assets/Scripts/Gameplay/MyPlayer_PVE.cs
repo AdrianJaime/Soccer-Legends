@@ -61,12 +61,8 @@ public class MyPlayer_PVE : MonoBehaviour
         if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
         else iaPlayer = false;
         setPlayer();
-        if(iaPlayer)stats = new Stats(5, 3,3);
-        else stats = new Stats(7, 5, 5);
-        int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
+        stats = new Stats(7, 5, 5);
         fightDir = null;
-        //if (photonView.IsMine)
-        //{
             
         if (iaPlayer)
         {

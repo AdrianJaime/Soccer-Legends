@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class CharacterAwaken : MonoBehaviour
 {
-    public Image artworkLocation;
+    [SerializeField] Image artworkLocation;
 
-    public Text levelMax;
+    [SerializeField] Text levelMax,characterName;
 
     CharacterBasic character;
     CharacterBasic newCharacter;
@@ -16,7 +16,9 @@ public class CharacterAwaken : MonoBehaviour
         character = new CharacterBasic(StaticInfo.characterToAcces);
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
-        artworkLocation.sprite = character.basicInfo.artworkIcon;
+        artworkLocation.sprite = character.basicInfo.completeArtwork;
+        characterName.text = character.basicInfo.nameCharacter;
+
 
         UpdateUI();
     }

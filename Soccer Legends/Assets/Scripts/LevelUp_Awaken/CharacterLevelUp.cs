@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class CharacterLevelUp : MonoBehaviour
 {
 
-    public Image artworkLocation;
-    public Text oldAtkTextLocation, oldTeqTextLocation, oldDefTextLocation;
-    public Text newAtkTextLocation, newTeqTextLocation, newDefTextLocation;
-    public Text level;
+    [SerializeField] Image artworkLocation;
+    [SerializeField] Text oldAtkTextLocation, oldTeqTextLocation, oldDefTextLocation;
+    [SerializeField] Text newAtkTextLocation, newTeqTextLocation, newDefTextLocation;
+    [SerializeField] Text level, characterName;
 
     CharacterBasic character;
     CharacterBasic newCharacter;
@@ -19,6 +19,7 @@ public class CharacterLevelUp : MonoBehaviour
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
         artworkLocation.sprite = character.basicInfo.completeArtwork;
+        characterName.text = character.basicInfo.nameCharacter;
 
         UpdateUI();
     }

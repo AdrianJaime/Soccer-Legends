@@ -26,11 +26,11 @@ public class CharacterAwaken : MonoBehaviour
         if (character.levelMAX != newCharacter.levelMAX)
         {
 
-            levelMax.text = "Nv." + character.info.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            levelMax.text = character.info.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
         else
         {
-            levelMax.text = "Nv." + character.info.level + "/" + character.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            levelMax.text =  character.info.level + "/" + character.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
 
         }
     }
@@ -51,7 +51,7 @@ public class CharacterAwaken : MonoBehaviour
 
     public void AddExpAwakening(int _exp)
     {
-        if (newCharacter.currentExpAwakening + _exp > (newCharacter.currentExpAwakening + 2))
+        if (newCharacter.currentExpAwakening + _exp > (newCharacter.currentExpAwakening + 2))//añadir la experiencia necesaria para subir de nivel del pj
         {
             LevelUpAwakening();
             UpdateUI();

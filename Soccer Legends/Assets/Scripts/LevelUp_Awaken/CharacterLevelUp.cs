@@ -31,7 +31,7 @@ public class CharacterLevelUp : MonoBehaviour
             newTeqTextLocation.text = "TEQ: " + newCharacter.info.teq.ToString();
             newDefTextLocation.text = "DEF: " + newCharacter.info.def.ToString();
 
-            level.text = newCharacter.info.level + "/50";//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            level.text = newCharacter.info.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
         else
         {
@@ -41,7 +41,7 @@ public class CharacterLevelUp : MonoBehaviour
             newAtkTextLocation.text = "ATK: -";
             newTeqTextLocation.text = "TEQ: -";
             newDefTextLocation.text = "DEF: -";
-            level.text = + character.info.level + "/50";
+            level.text = + character.info.level + "/"+newCharacter.levelMAX;
         }
     }
 

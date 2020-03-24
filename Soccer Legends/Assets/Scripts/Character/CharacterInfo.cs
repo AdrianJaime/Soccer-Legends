@@ -24,7 +24,7 @@ public class CharacterInfo : ScriptableObject
     public Type type;
 
     //info drawable
-    public Sprite artworkIcon,artworkSpecialAttack,artworkConforntation;
+    public Sprite artworkIcon,completeArtwork,artworkConforntation;
 
     //info special attack
     public SpecialAttackInfo specialAttackInfo;

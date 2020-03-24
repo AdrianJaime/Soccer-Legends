@@ -103,7 +103,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 stats = new Stats(teamInfo[2].info.atk, teamInfo[1].info.teq,
                     teamInfo[2].info.def);
                 confrontationSprite = teamInfo[2].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[2].basicInfo.artworkSpecialAttack;
+                specialSprite = teamInfo[2].basicInfo.completeArtwork;
                 animator.runtimeAnimatorController = teamInfo[2].basicInfo.animator_character;
                 break;
             case 1:
@@ -112,7 +112,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 stats = new Stats(teamInfo[0].info.atk, teamInfo[3].info.teq,
                     teamInfo[0].info.def);
                 confrontationSprite = teamInfo[0].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[0].basicInfo.artworkSpecialAttack;
+                specialSprite = teamInfo[0].basicInfo.completeArtwork;
                 animator.runtimeAnimatorController = teamInfo[0].basicInfo.animator_character;
                 break;
             case 2:
@@ -121,7 +121,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 stats = new Stats(teamInfo[1].info.atk, teamInfo[2].info.teq,
                     teamInfo[1].info.def);
                 confrontationSprite = teamInfo[1].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[1].basicInfo.artworkSpecialAttack;
+                specialSprite = teamInfo[1].basicInfo.completeArtwork;
                 animator.runtimeAnimatorController = teamInfo[1].basicInfo.animator_character;
 
                 break;
@@ -131,7 +131,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 stats = new Stats(teamInfo[3].info.atk, teamInfo[0].info.teq,
                     teamInfo[3].info.def);
                 confrontationSprite = teamInfo[3].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[3].basicInfo.artworkSpecialAttack;
+                specialSprite = teamInfo[3].basicInfo.completeArtwork;
                 animator.runtimeAnimatorController = teamInfo[3].basicInfo.animator_character;
                 break;
             default:

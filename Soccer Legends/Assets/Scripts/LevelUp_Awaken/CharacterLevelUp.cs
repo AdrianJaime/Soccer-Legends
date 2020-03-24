@@ -18,7 +18,7 @@ public class CharacterLevelUp : MonoBehaviour
         character = new CharacterBasic(StaticInfo.characterToAcces);
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
-        artworkLocation.sprite = character.basicInfo.artworkIcon;
+        artworkLocation.sprite = character.basicInfo.completeArtwork;
 
         UpdateUI();
     }
@@ -31,7 +31,7 @@ public class CharacterLevelUp : MonoBehaviour
             newTeqTextLocation.text = "TEQ: " + newCharacter.info.teq.ToString();
             newDefTextLocation.text = "DEF: " + newCharacter.info.def.ToString();
 
-            level.text = "Nv." + newCharacter.info.level + "/100";//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
+            level.text = newCharacter.info.level + "/50";//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
         else
         {
@@ -41,7 +41,7 @@ public class CharacterLevelUp : MonoBehaviour
             newAtkTextLocation.text = "ATK: -";
             newTeqTextLocation.text = "TEQ: -";
             newDefTextLocation.text = "DEF: -";
-            level.text = "Nv." + character.info.level + "/100";
+            level.text = + character.info.level + "/50";
         }
     }
 

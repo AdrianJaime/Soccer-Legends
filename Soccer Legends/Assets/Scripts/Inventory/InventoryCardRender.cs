@@ -8,14 +8,19 @@ public class InventoryCardRender : MonoBehaviour
     public CharacterBasic characterInfo;
 
     //display objects from de prefab
-    public Text nameText;
-    public Image artworkImage;
+    [SerializeField] Image artworkImage;
+    [SerializeField] Text powerText;
+    [SerializeField] Image borderColor;
+    [SerializeField] Image elementColor;
 
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
-    public Image[] starSprites;
+    [SerializeField] Image[] starSprites;
+    [SerializeField] Sprite[] borderColors;
+    [SerializeField] Color[] elementColors;
+
     EquipamentManager manager;
 
     private void Start()
@@ -65,8 +70,10 @@ public class InventoryCardRender : MonoBehaviour
     {
         if (characterInfo != null)
         {
-            nameText.text = characterInfo.basicInfo.nameCharacter;
             artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
+
+            borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
+            elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
 
             if (!characterInfo.info.owned)
             {

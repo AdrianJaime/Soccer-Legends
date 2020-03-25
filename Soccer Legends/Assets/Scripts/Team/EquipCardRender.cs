@@ -7,19 +7,23 @@ public class EquipCardRender : MonoBehaviour
     //public CharacterBasic characterInfo;
 
     //display objects from de prefab
-    public Text nameText;
-    public Image artworkImage;
-    public Text powerText;
+    [SerializeField] Text nameText;
+    [SerializeField] Image artworkImage;
+    [SerializeField] Text powerText;
     public CharacterBasic characterInfo;
+    [SerializeField] Image borderColor;
+    [SerializeField] Image elementColor;
 
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
-    public Image[] starSprites;
+    [SerializeField] Sprite[] borderColors;
+    [SerializeField] Color[] elementColors;
 
     private void Start()
     {
+
         UpdateRender();
     }
 
@@ -36,6 +40,9 @@ public class EquipCardRender : MonoBehaviour
                 nameText.text = characterInfo.basicInfo.nameCharacter;
                 artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
                 powerText.text = characterInfo.power.ToString();
+
+                borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
+                elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
             }
             else
             {

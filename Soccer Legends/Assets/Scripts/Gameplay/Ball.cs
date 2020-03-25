@@ -16,6 +16,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public bool shooterIsMaster;
     public int kick;
     private bool newBall;
+    public float shootTimeRef;
 
     Collider2D area1, area2;
 
@@ -26,6 +27,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        shootTimeRef = Time.time - 0.05f;
         if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null) transform.GetChild(0).gameObject.AddComponent<PVP_cameraMovement>();
         else transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
         area1 = GameObject.Find("Area 1").GetComponent<Collider2D>();

@@ -61,7 +61,6 @@ public class MyPlayer_PVE : MonoBehaviour
         if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
         else iaPlayer = false;
         setPlayer();
-        stats = new Stats(7, 5, 5);
         fightDir = null;
             
         if (iaPlayer)
@@ -125,6 +124,19 @@ public class MyPlayer_PVE : MonoBehaviour
             default:
 
                 break;
+        }
+        //HARDCODED STATS
+        stats = new Stats(7, 5, 5);
+
+        if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
+        {
+            stats.shoot = stats.shoot + stats.shoot / 2;
+            stats.technique = stats.technique + stats.technique / 4;
+        }
+        else if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.DEFFENSIVE)
+        {
+            stats.defense = stats.defense + stats.defense / 2;
+            stats.technique = stats.technique + stats.technique / 4;
         }
         SetName(gameObject.name);
     }

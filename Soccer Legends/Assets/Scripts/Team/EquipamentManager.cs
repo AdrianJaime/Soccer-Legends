@@ -58,7 +58,8 @@ public class EquipamentManager : MonoBehaviour
             {
                 actualEquip.arrayEquiped[characterUsed] = false;
                 actualEquip.listOfCharacters[characterUsed] = null;
-                actualEquip.arraySlots[characterUsed].Set(null);
+                actualEquip.arraySlots[characterUsed].Set(null);//el set ya actualiza
+                //actualEquip.arraySlots[characterUsed].render.UpdateRender();
 
 
                 actualEquip.arrayEquiped[identifierCurrentSlotEquipament] = true;

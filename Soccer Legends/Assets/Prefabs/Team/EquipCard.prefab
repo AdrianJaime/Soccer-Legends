@@ -79,7 +79,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 4713189240103176452}
+  m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -213,6 +213,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7544458898506440326, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: starSprites.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6173655972637851342, guid: cae8c409dc3177744887696b07e0bdb5,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -232,6 +237,41 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 20.410004
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.11000061
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -44.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -74.42
       objectReference: {fileID: 0}
     - target: {fileID: 6173655972637851345, guid: cae8c409dc3177744887696b07e0bdb5,
         type: 3}
@@ -283,21 +323,6 @@ PrefabInstance:
       propertyPath: m_Color.b
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6673427632051132102, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1496786902220617810, guid: cae8c409dc3177744887696b07e0bdb5,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -338,31 +363,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 20.410004
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.11000061
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -44.42
-      objectReference: {fileID: 0}
-    - target: {fileID: 6173655972488501436, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: -74.42
-      objectReference: {fileID: 0}
-    - target: {fileID: 7544458898506440326, guid: cae8c409dc3177744887696b07e0bdb5,
-        type: 3}
-      propertyPath: starSprites.Array.size
-      value: 3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cae8c409dc3177744887696b07e0bdb5, type: 3}
 --- !u!1 &4713189239428999316 stripped
@@ -389,15 +389,3 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1496786901242689493}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4713189240103176452 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6173655972637851345, guid: cae8c409dc3177744887696b07e0bdb5,
-    type: 3}
-  m_PrefabInstance: {fileID: 1496786901242689493}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4713189240103176474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

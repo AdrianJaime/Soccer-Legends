@@ -12,12 +12,13 @@ public class InventoryCardRender : MonoBehaviour
     [SerializeField] Text powerText;
     [SerializeField] Image borderColor;
     [SerializeField] Image elementColor;
+    [SerializeField] Image spriteStars;
 
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
-    [SerializeField] Image[] starSprites;
+    [SerializeField] Sprite[] starSprites;
     [SerializeField] Sprite[] borderColors;
     [SerializeField] Color[] elementColors;
 
@@ -74,6 +75,7 @@ public class InventoryCardRender : MonoBehaviour
 
             borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
             elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
+            spriteStars.sprite = starSprites[(int)characterInfo.basicInfo.rarity];
 
             if (!characterInfo.info.owned)
             {

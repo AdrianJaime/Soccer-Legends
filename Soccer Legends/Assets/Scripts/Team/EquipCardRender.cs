@@ -12,6 +12,7 @@ public class EquipCardRender : MonoBehaviour
     [SerializeField] Text powerText;
     public CharacterBasic characterInfo;
     [SerializeField] Image borderColor;
+    [SerializeField] Image spriteStars;
     [SerializeField] Image elementColor;
 
 
@@ -19,13 +20,15 @@ public class EquipCardRender : MonoBehaviour
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
     [SerializeField] Sprite[] borderColors;
+    [SerializeField] Sprite[] starSprites;
     [SerializeField] Color[] elementColors;
 
-    private void Start()
-    {
 
-        UpdateRender();
-    }
+    //Es mejor esperar a que indique un script por encima que haga update el render
+    //private void Start()
+    //{
+    //    UpdateRender();
+    //}
 
     public void UpdateRender()
     {
@@ -42,6 +45,7 @@ public class EquipCardRender : MonoBehaviour
                 powerText.text = characterInfo.power.ToString();
 
                 borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
+                spriteStars.sprite = starSprites[(int)characterInfo.basicInfo.rarity];
                 elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
             }
             else
@@ -53,10 +57,19 @@ public class EquipCardRender : MonoBehaviour
 
                 nameText.text = "None";
                 powerText.text = "0";
-                    
+
+
+
+                borderColor.sprite = borderColors[3];
+                spriteStars.sprite = null;
+
+                borderColor.sprite = borderColors[3];
+                spriteStars.sprite = starSprites[0];
+                elementColor.color = elementColors[6];
+
             }
         }
-        else
+        else 
         {
             artworkImage.sprite = null;
             Color transparent = artworkImage.color;
@@ -65,6 +78,10 @@ public class EquipCardRender : MonoBehaviour
 
             nameText.text = "None";
             powerText.text = "0";
+
+            borderColor.sprite = borderColors[3];
+            spriteStars.sprite = starSprites[0];
+            elementColor.color = elementColors[5];
 
         }
     }

@@ -1,5 +1,79 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1455493156991002349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2590768706281309560}
+  - component: {fileID: 8265038218803384909}
+  - component: {fileID: 5704784160429508911}
+  m_Layer: 5
+  m_Name: Star
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2590768706281309560
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455493156991002349}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4124033722548413911}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8265038218803384909
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455493156991002349}
+  m_CullTransparentMesh: 0
+--- !u!114 &5704784160429508911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455493156991002349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: 4fa208d9469cea44d9ab65f399092377, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
 --- !u!1 &2199385917126007453
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,7 +104,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4124033722548413911}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -108,6 +182,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 2590768706281309560}
   - {fileID: 4811900951922920748}
   m_Father: {fileID: 6173655972637851342}
   m_RootOrder: 2
@@ -403,14 +478,21 @@ MonoBehaviour:
   powerText: {fileID: 6673427632051132102}
   characterInfo: {fileID: 0}
   borderColor: {fileID: 4625175220167028180}
+  spriteStars: {fileID: 5704784160429508911}
   elementColor: {fileID: 2291907854773670301}
   borderColors:
   - {fileID: 21300000, guid: 7e84066ebcd6bc64591aa61d2293098b, type: 3}
   - {fileID: 21300000, guid: 84cd819326f1ad048a2d04fdf4b9bf58, type: 3}
   - {fileID: 21300000, guid: 56299ab36b9015f488326ca84d46aaf9, type: 3}
+  - {fileID: 21300000, guid: 7134fa13e086df84db4635989edd7f44, type: 3}
+  starSprites:
+  - {fileID: 21300000, guid: 4fa208d9469cea44d9ab65f399092377, type: 3}
+  - {fileID: 21300000, guid: 3bc4b8c60b2623e4f95966cde30700ce, type: 3}
+  - {fileID: 21300000, guid: e07e43a56c1335743a779d26def0c9b4, type: 3}
   elementColors:
   - {r: 0.8396226, g: 0, b: 0, a: 1}
   - {r: 0.09792915, g: 0.6509434, b: 0, a: 1}
   - {r: 0.9056604, g: 0.8897016, b: 0, a: 1}
   - {r: 0.8413968, g: 0, b: 1, a: 1}
   - {r: 0, g: 0.571179, b: 0.9716981, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}

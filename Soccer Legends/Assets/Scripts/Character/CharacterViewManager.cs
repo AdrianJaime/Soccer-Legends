@@ -25,9 +25,9 @@ public class CharacterViewManager : MonoBehaviour
             pivotStat.text = actualCharacter.info.atk.ToString();
             defenseStat.text = actualCharacter.info.def.ToString();
             technicalStat.text = actualCharacter.info.teq.ToString();
+            imageCharacter.sprite = actualCharacter.basicInfo.completeArtwork;
             nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
-            levelCharacter.text = actualCharacter.info.level.ToString();
-            imageCharacter.sprite = actualCharacter.basicInfo.artworkIcon;
+            levelCharacter.text = "Lvl "+actualCharacter.info.level.ToString();
     }
 
     public void LoadPreviousScene()

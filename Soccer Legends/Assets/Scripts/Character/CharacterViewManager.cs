@@ -8,9 +8,10 @@ public class CharacterViewManager : MonoBehaviour
 {
     private CharacterBasic actualCharacter;
 
-    public Text pivotStat, defenseStat, technicalStat, nameCharacter, levelCharacter;
-    public Image imageCharacter;
+    [SerializeField] Text pivotStat, defenseStat, technicalStat, nameCharacter, levelCharacter;
+    [SerializeField] Image imageCharacter, imageFillNameRarity;
 
+    [SerializeField] Color[] colorsRarity;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,8 @@ public class CharacterViewManager : MonoBehaviour
             imageCharacter.sprite = actualCharacter.basicInfo.completeArtwork;
             nameCharacter.text = actualCharacter.basicInfo.nameCharacter;
             levelCharacter.text = "Lvl "+actualCharacter.info.level.ToString();
+
+        imageFillNameRarity.color = colorsRarity[(int)StaticInfo.characterToAcces.basicInfo.rarity];
     }
 
     public void LoadPreviousScene()

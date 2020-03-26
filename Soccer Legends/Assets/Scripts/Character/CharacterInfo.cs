@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 
-public enum Rarity {BRONZE,SILVER,GOLD }
+public enum Rarity {SILVER, BRONZE, GOLD }
 public enum Type {RED,GREEN,YELLOW,PURPLE,BLUE }
 public enum Rol { PIVOT, TECHNICAL, DEFENSIVE }
 

@@ -15,6 +15,8 @@ public class EquipCardRender : MonoBehaviour
     [SerializeField] Image spriteStars;
     [SerializeField] Image elementColor;
 
+    [SerializeField] bool UtdateAtInit;
+
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
@@ -25,10 +27,11 @@ public class EquipCardRender : MonoBehaviour
 
 
     //Es mejor esperar a que indique un script por encima que haga update el render
-    //private void Start()
-    //{
-    //    UpdateRender();
-    //}
+    private void Start()
+    {
+        if (UtdateAtInit)
+            UpdateRender();
+    }
 
     public void UpdateRender()
     {
@@ -65,7 +68,7 @@ public class EquipCardRender : MonoBehaviour
 
                 borderColor.sprite = borderColors[3];
                 spriteStars.sprite = starSprites[0];
-                elementColor.color = elementColors[6];
+                elementColor.color = elementColors[5];
 
             }
         }

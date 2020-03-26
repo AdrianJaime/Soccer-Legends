@@ -31,7 +31,7 @@ public class EquipCardFormationLogic : MonoBehaviour
 
     public void Set(CharacterBasic _character)
     {
-        if (_character == null) return;
+        
         render.characterInfo = _character;
         render.UpdateRender();
     }

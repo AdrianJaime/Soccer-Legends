@@ -15,7 +15,8 @@ public class Formation : MonoBehaviour
         int a = 0;
         foreach(CharacterBasic character in arrayCharactersTeam)
         {
-            character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
+            if(StaticInfo.teamSelectedToPlay[a].basicInfo!=null)
+                character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
             a++;
         }
     }

@@ -109,7 +109,6 @@ public class PlayerSelector_CardRender : MonoBehaviour
     public void DiselectedRender()
     {
         Color diselectedColor = Color.white;
-        diselectedColor.a = 0.5f;
         cardImage.color = diselectedColor;
     }
 }

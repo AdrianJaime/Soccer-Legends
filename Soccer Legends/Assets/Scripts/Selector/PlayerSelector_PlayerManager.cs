@@ -10,6 +10,9 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
     public List<CharacterBasic> characterSelected;
     public Button confirmationButton;
 
+    [SerializeField] Image []ImagesSelectedSlots;
+    [SerializeField] Animator []animatorsSlotsSelectors;
+
     private void Start()
     {
         confirmationButton.interactable = false;
@@ -17,19 +20,44 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
 
     public bool AddPlayerSelected(CharacterBasic player)
     {
+        int aux = 0;
         if (characterSelected.Count < 4)
         {
-            characterSelected.Add(player);
-            if(characterSelected.Count == 4)
-                confirmationButton.interactable = true;
-            return true;
+            foreach (Image image in ImagesSelectedSlots)
+            {
+                if (image.sprite == null)
+                {
+                    image.sprite = player.basicInfo.artworkSelectorIcon;
+                    characterSelected.Add(player);
+                    animatorsSlotsSelectors[aux].SetTrigger("Show");
+                    if (characterSelected.Count == 4)
+                        confirmationButton.interactable = true;
+                    return true;
+                }
+                aux++;
+            }
+
+
 
         }
         return false;
     }
     public void ErasePlayerSelected(CharacterBasic player)
     {
-        characterSelected.Remove(player);
+        int aux = 0;
+        foreach(Image image in ImagesSelectedSlots)
+        {
+            if (image.sprite == player.basicInfo.artworkSelectorIcon)
+            {
+                animatorsSlotsSelectors[aux].SetTrigger("Hide");
+                characterSelected.Remove(player);
+
+                break;
+            }
+            aux++;
+
+        }
+
         if (confirmationButton.IsInteractable()==true)
             confirmationButton.interactable = false;      
     }

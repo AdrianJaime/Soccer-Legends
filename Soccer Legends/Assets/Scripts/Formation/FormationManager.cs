@@ -8,25 +8,26 @@ public class FormationManager : MonoBehaviour
 
     public int identifierCurrentSlotEquipament = -1;
 
-
-    private void Start()
-    {
-        //CARGAMOS EN LOS SLOTS
-        LoadEquipInSlots();
-    }
-
-
+    /// <summary>
+    /// Actualiza el indice del slot de la formación seleccionado para luego equipar un personaje
+    /// </summary>
+    /// <param name="_identifier"></param>
     public void SetCurrentSlot(int _identifier)
     {
         if (identifierCurrentSlotEquipament == -1)//no hay slot identificado
             identifierCurrentSlotEquipament = _identifier;
         else
         {
-            actualForm.arraySlots[identifierCurrentSlotEquipament].DiselectedRender();
+            actualForm.slotsFormation[identifierCurrentSlotEquipament].DiselectedRender();
             identifierCurrentSlotEquipament = _identifier;
         }
     }
 
+
+    /// <summary>
+    /// Comprueba donde debe ir el personaje dependiendo de si ha sido seleccionado previamernte o no
+    /// </summary>
+    /// <param name="_character"></param>
     public void EquipCharacter(CharacterBasic _character)
     {
 
@@ -39,23 +40,25 @@ public class FormationManager : MonoBehaviour
             if (characterUsed == -1)
             {
                 actualForm.arrayEquiped[identifierCurrentSlotEquipament] = true;
-                actualForm.listOfCharacters[identifierCurrentSlotEquipament] = _character;
-                actualForm.arraySlots[identifierCurrentSlotEquipament].Set(_character);
+                actualForm.listOfCharactersInFormation[identifierCurrentSlotEquipament] = _character;
+                actualForm.slotsFormation[identifierCurrentSlotEquipament].Set(_character);
 
 
             }
             else
             {
                 actualForm.arrayEquiped[characterUsed] = false;
-                actualForm.listOfCharacters[characterUsed] = null;
-                actualForm.arraySlots[characterUsed].Set(null);
+                actualForm.listOfCharactersInFormation[characterUsed] = null;
+                actualForm.slotsFormation[characterUsed].Set(null);
 
 
                 actualForm.arrayEquiped[identifierCurrentSlotEquipament] = true;
-                actualForm.listOfCharacters[identifierCurrentSlotEquipament] = _character;
-                actualForm.arraySlots[identifierCurrentSlotEquipament].Set(_character);
+                actualForm.listOfCharactersInFormation[identifierCurrentSlotEquipament] = _character;
+                actualForm.slotsFormation[identifierCurrentSlotEquipament].Set(_character);
             }
             identifierCurrentSlotEquipament = -1;
+
+            actualForm.CheckButtonInteractable();
         }
 
 
@@ -69,8 +72,8 @@ public class FormationManager : MonoBehaviour
         if (characterUsed != -1)//usado
         {
             actualForm.arrayEquiped[characterUsed] = false;
-            actualForm.listOfCharacters[characterUsed] = null;
-            actualForm.arraySlots[characterUsed].Set(null);
+            actualForm.listOfCharactersInFormation[characterUsed] = null;
+            actualForm.slotsFormation[characterUsed].Set(null);
 
             identifierCurrentSlotEquipament = -1;
 
@@ -78,14 +81,5 @@ public class FormationManager : MonoBehaviour
     }
 
 
-    public void LoadEquipInSlots()
-    {
-        //esta funcion carga cada InfoPersonaje en cada slot
-        int aux = 0;
-        foreach (EquipCardFormationLogic card in actualForm.arraySlots)
-        {
-            card.Set(actualForm.listOfCharacters[aux]);
-            aux++;
-        }
-    }
+
 }

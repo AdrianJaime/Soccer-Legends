@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FormationSelectorCard : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class FormationSelectorCard : MonoBehaviour
     private void Start()
     {
         characterInfo = gameObject.GetComponent<CharacterBasic>();
+        gameObject.GetComponent<Image>().sprite= characterInfo.basicInfo.artworkSelectorIcon;
         manager = FindObjectOfType<FormationManager>();
 
     }

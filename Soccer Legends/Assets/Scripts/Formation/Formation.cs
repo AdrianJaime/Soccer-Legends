@@ -4,33 +4,43 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Formation : MonoBehaviour
 {
-    public EquipCardFormationLogic[] arraySlots = new EquipCardFormationLogic[4];
-    public List<CharacterBasic> arrayCharactersTeam;
-    public CharacterBasic[] listOfCharacters = new CharacterBasic[4];
+    public EquipCardFormationLogic[] slotsFormation = new EquipCardFormationLogic[4];
+    public List<CharacterBasic> charactersAvailable;
+
+    [HideInInspector]
+    public CharacterBasic[] listOfCharactersInFormation = new CharacterBasic[4];
+    [HideInInspector]
     public bool[] arrayEquiped = new bool[4];
+
     [SerializeField] Button confirmButton;
 
     private void Awake()
     {
         int a = 0;
-        foreach(CharacterBasic character in arrayCharactersTeam)
+        if (StaticInfo.teamSelectedToPlay != null)
         {
-            if(StaticInfo.teamSelectedToPlay[a].basicInfo!=null)
-                character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
-            a++;
+            foreach (CharacterBasic character in charactersAvailable)
+            {
+                if (StaticInfo.teamSelectedToPlay[a].basicInfo != null)
+                    character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
+                a++;
+            }
         }
     }
 
-    private void Update()
+    public void CheckButtonInteractable()
     {
-        confirmButton.interactable = (listOfCharacters[0] != null && listOfCharacters[1] != null && listOfCharacters[2] != null && listOfCharacters[3] != null);
+        confirmButton.interactable = (listOfCharactersInFormation[0] != null && 
+                                      listOfCharactersInFormation[1] != null && 
+                                      listOfCharactersInFormation[2] != null && 
+                                      listOfCharactersInFormation[3] != null);
     }
 
     // public bool preferent;
     public int isUsed(CharacterBasic _aux)
     {
         int i = 0;
-        foreach(CharacterBasic character in listOfCharacters)
+        foreach(CharacterBasic character in listOfCharactersInFormation)
         {
             if (character != null)
             {
@@ -45,6 +55,6 @@ public class Formation : MonoBehaviour
      public void reorderTeam()
     {
         StaticInfo.teamSelectedToPlay.Clear();
-        StaticInfo.teamSelectedToPlay.AddRange(listOfCharacters);
+        StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
     }
 }

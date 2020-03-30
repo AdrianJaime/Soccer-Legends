@@ -20,11 +20,11 @@ public class FSOnlineManager : MonoBehaviourPun
         {
             Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
             StaticInfo.teamSelectedToPlay.Clear();
-            StaticInfo.teamSelectedToPlay.AddRange(formationScr.listOfCharacters);
+            StaticInfo.teamSelectedToPlay.AddRange(formationScr.listOfCharactersInFormation);
             confirmTeam = true;
-            string[] charactersName = new string[formationScr.listOfCharacters.Length];
-            for (int i = 0; i < formationScr.listOfCharacters.Length; i++)
-                charactersName[i] = formationScr.listOfCharacters[i].basicInfo.nameCharacter;
+            string[] charactersName = new string[formationScr.listOfCharactersInFormation.Length];
+            for (int i = 0; i < formationScr.listOfCharactersInFormation.Length; i++)
+                charactersName[i] = formationScr.listOfCharactersInFormation[i].basicInfo.nameCharacter;
             photonView.RPC("getRivalConfirmation", RpcTarget.Others, charactersName);
             Destroy(GameObject.Find("Canvas"));
         }

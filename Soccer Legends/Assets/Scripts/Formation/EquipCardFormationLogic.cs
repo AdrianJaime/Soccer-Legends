@@ -5,12 +5,16 @@ using UnityEngine;
 public class EquipCardFormationLogic : MonoBehaviour
 {
     public int identifier = -1;
+
+    [HideInInspector]
     public EquipCardRender render;
+
     FormationManager manager;
 
     private void Start()
     {
         manager = FindObjectOfType<FormationManager>();
+        render = gameObject.GetComponent<EquipCardRender>();
         render = gameObject.GetComponent<EquipCardRender>();
     }
 

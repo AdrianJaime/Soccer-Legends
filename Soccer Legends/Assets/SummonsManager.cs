@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class SummonsManager : MonoBehaviour
 {
     public List<BannerInfo> banners;
-    public GameObject prefabSmallBanner, prefabBigBanner;
-    public Transform transformSmallBanner, transformBigBanner;
+    public GameObject prefabSmallBanner, prefabBigBanner, paginationTogglePrefab;
+    public Transform transformSmallBanner, transformBigBanner,paginationToggleLocation;
     public DanielLochner.Assets.SimpleScrollSnap.SimpleScrollSnap smallBannerScroll,bigBannerScroll;
     public float endSpacing = 0.05f;
 
@@ -20,8 +20,7 @@ public class SummonsManager : MonoBehaviour
     {
 
         // LEER BANNERS DE BASE DE DATOS Y ACTUALIZAR LISTA BANNERS.
-
-        foreach(BannerInfo banner in banners)
+        foreach (BannerInfo banner in banners)
         {
             if (banner != null)
             {
@@ -33,6 +32,7 @@ public class SummonsManager : MonoBehaviour
 
                 Color aux = new Color(Random.Range(0,255),Random.Range(0,255),Random.Range(0,255));
 
+                Instantiate(paginationTogglePrefab, paginationToggleLocation);
 
             }
 

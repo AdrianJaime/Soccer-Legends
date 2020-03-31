@@ -6,8 +6,7 @@ using UnityEngine.UI;
 public class bannerRender : MonoBehaviour
 {
     public Image imageBanner;
-    public BannerBASE banner;
-
+    public BannerInfo basicInfo;
     public bool isSmallBanner;
 
     private void Start()
@@ -18,8 +17,8 @@ public class bannerRender : MonoBehaviour
     private void UpdateUI()
     {
         if (isSmallBanner)
-            imageBanner.sprite = banner.basicInfo.spriteSmallBanner;
+            imageBanner.sprite = basicInfo.spriteSmallBanner;
         else
-            imageBanner.sprite = banner.basicInfo.spriteBigBanner;
+            imageBanner.sprite = basicInfo.spriteBigBanner;
     }
 }

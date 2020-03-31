@@ -618,6 +618,47 @@ public class PVE_Manager : MonoBehaviour
         }
     }
 
+    public void setStrategyBonus(IA_manager.strategy lastStrat)
+    {
+        foreach (GameObject player in myPlayers)
+        {
+            MyPlayer_PVE playerScript = player.GetComponent<MyPlayer_PVE>();
+            switch (player.transform.parent.GetComponent<IA_manager>().teamStrategy)
+            {
+                case IA_manager.strategy.DEFFENSIVE:
+                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
+                    {
+                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
+                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
+                    break;
+                case IA_manager.strategy.EQUILIBRATED:
+                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
+                    {
+                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    else if (lastStrat == IA_manager.strategy.DEFFENSIVE)
+                    {
+                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    break;
+                case IA_manager.strategy.OFFENSIVE:
+                    if (lastStrat == IA_manager.strategy.DEFFENSIVE)
+                    {
+                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    playerScript.stats.shoot = playerScript.stats.shoot + playerScript.stats.shoot / 2;
+                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
+                    break;
+            }
+        }
+    }
+
     void setAnims(string fightType, string fightResult)
     {
         //Set booleans

@@ -173,7 +173,7 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             checkCollisionDetection();
-            if (iaPlayer && ball && Time.frameCount % 120 == 0) stablishNewShootCheck();
+            if (iaPlayer && ball && Time.frameCount % 60 == 0) stablishNewShootCheck();
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}

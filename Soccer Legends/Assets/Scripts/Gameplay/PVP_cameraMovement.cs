@@ -19,6 +19,7 @@ public class PVP_cameraMovement : MonoBehaviour
     void Start()
     {
         localCamPos = transform.localPosition;
+        transform.localPosition = new Vector3(0, 0, -0.5f);
         mg = GameObject.Find("Manager").GetComponent<Manager>();
         fingerIdx = -1;
 
@@ -29,6 +30,7 @@ public class PVP_cameraMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!mg.GameStarted) { lastCamPosition = transform.position; return; }
         if (mg.GameOn) ProcessInputs();
         else
         {

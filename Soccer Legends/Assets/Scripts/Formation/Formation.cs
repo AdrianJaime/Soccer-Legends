@@ -6,6 +6,7 @@ public class Formation : MonoBehaviour
 {
     public EquipCardFormationLogic[] slotsFormation = new EquipCardFormationLogic[4];
     public List<CharacterBasic> charactersAvailable;
+    public CharacterInventory fullInventory;
 
     [HideInInspector]
     public CharacterBasic[] listOfCharactersInFormation = new CharacterBasic[4];
@@ -16,16 +17,17 @@ public class Formation : MonoBehaviour
 
     private void Awake()
     {
-        int a = 0;
-        if (StaticInfo.teamSelectedToPlay != null)
-        {
-            foreach (CharacterBasic character in charactersAvailable)
-            {
-                if (StaticInfo.teamSelectedToPlay[a].basicInfo != null)
-                    character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
-                a++;
-            }
-        }
+        //int a = 0;
+        //if (StaticInfo.teamSelectedToPlay != null)
+        //{
+        //    foreach (CharacterBasic character in charactersAvailable)
+        //    {
+        //        if (StaticInfo.teamSelectedToPlay[a].basicInfo != null)
+        //            character.basicInfo = StaticInfo.teamSelectedToPlay[a].basicInfo;
+        //        a++;
+        //    }
+        //}
+        charactersAvailable = StaticInfo.teamSelectedToPlay;
     }
 
     public void CheckButtonInteractable()

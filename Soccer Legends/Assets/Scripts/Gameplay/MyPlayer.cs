@@ -64,7 +64,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         mg = GameObject.Find("Manager").GetComponent<Manager>();
         strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
         setPlayer();
-        stats = new Stats(7, 5, 5);
 
         //int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         //photonView.RPC("SetStats", RpcTarget.AllViaServer, starr);
@@ -134,6 +133,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
                 break;
         }
+        //HARDCODED STATS 
+        stats = new Stats(7, 5, 5);
+
         SetName(gameObject.name);
     }
 
@@ -497,17 +499,17 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     int ia_Idx = 0;
                     int playerIdx = 0;
                     fightDir = null;
-                    for (int i = 0; i < mg.myPlayers.Length; i++)
+                    for (int i = 0; i < mg._team.Length; i++)
                     {
                         if (!photonView.IsMine)
                         {
                             if (gameObject == mg.myIA_Players[i]) ia_Idx = i;
-                            if (rival.gameObject == mg.myPlayers[i]) playerIdx = i;
+                            if (rival.gameObject == mg._team[i]) playerIdx = i;
                         }
                         else
                         {
                             if (rival.gameObject == mg.myIA_Players[i]) ia_Idx = i;
-                            if (gameObject == mg.myPlayers[i]) playerIdx = i;
+                            if (gameObject == mg._team[i]) playerIdx = i;
                         }
                     }
                     //mg.chooseDirection(playerIdx, ia_Idx); // LLAMAR COMO RPC
@@ -521,7 +523,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.15f < Time.time)
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && ((PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && mg.lastPlayer != gameObject) || PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }

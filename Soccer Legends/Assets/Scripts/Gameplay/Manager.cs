@@ -765,6 +765,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
             rivalS.value = currentVal - localS.maxValue;
         }
 
+        currentVal = randomValue;
+        localS.value = currentVal;
+        rivalS.value = currentVal - localS.maxValue;
+
         //Set Results 
         animator.SetTrigger(fightType);
         if (PhotonNetwork.IsMasterClient || fightType == "Elude")
@@ -1022,7 +1026,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
         enemyOutroPoints.transform.GetChild(0).GetComponent<Text>().text = enemyOutroPoints.text = score[1].ToString();
 
         yield return new WaitForSeconds(4.0f);
-        SceneManager.LoadScene("MainMenuScene");
+
+        PhotonNetwork.Disconnect();
+        while (PhotonNetwork.IsConnected)
+        {
+            yield return null;
+            Debug.Log("Disconnecting. . .");
+        }
+        Debug.Log("DISCONNECTED!");
+    SceneManager.LoadScene("MainMenuScene");
     }
 
     public int getTouchIdx()

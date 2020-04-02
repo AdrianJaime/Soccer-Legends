@@ -54,7 +54,7 @@ public class PVP_cameraMovement : MonoBehaviour
             {
                 if (t.phase == TouchPhase.Moved)
                 {
-                    foreach (GameObject p in mg._team)
+                    foreach (GameObject p in mg.myPlayers)
                     {
                         if (p.GetComponent<MyPlayer>().fingerIdx != t.fingerId) found = true;
                         else

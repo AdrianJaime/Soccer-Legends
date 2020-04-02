@@ -50,9 +50,7 @@ public class strategyUI : MonoBehaviour
     {
         if (!mg.GameOn) return;
         interacting = true;
-        IA_manager.strategy lastStrat = mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy;
-        mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
-        mg.setStrategyBonus(lastStrat);
+        mg.setStrategyBonus(_strat);
         button.interactable = false;
         cooldown = 60 * 2 + 1;
         estrategias.SetActive(false);

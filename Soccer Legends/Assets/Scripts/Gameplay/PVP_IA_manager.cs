@@ -60,17 +60,17 @@ public class PVP_IA_manager : MonoBehaviour
         {
             case IA_State.FREE_BALL:
                 if (playerTeam) catchingBallAlgorithm(mg.myIA_Players, ballPosition);
-                else catchingBallAlgorithm(mg._team, ballPosition);
+                else catchingBallAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.PLAYER_HAS_BALL:
                 if (playerTeam) atackAlgorithm(mg.myIA_Players, ballPosition);
-                else deffendAlgorithm(mg._team, ballPosition);
+                else deffendAlgorithm(mg.myPlayers, ballPosition);
                 break;
             case IA_State.IA_HAS_BALL:
                 if (playerTeam) deffendAlgorithm(mg.myIA_Players, ballPosition);
                 else
                 {
-                    atackAlgorithm(mg._team, ballPosition);
+                    atackAlgorithm(mg.myPlayers, ballPosition);
                     //check_IA_Shoot();//if (Time.frameCount % (60 * Random.Range(1, 4)) == 0) 
                 }
                 break;
@@ -611,8 +611,8 @@ public class PVP_IA_manager : MonoBehaviour
                 break;
             }
         }
-        if (!mg.GameOn || playerWithBall == null || (mg._team[0].transform.position.y > playerWithBall.transform.position.y
-            && mg._team[1].transform.position.y > playerWithBall.transform.position.y && mg._team[2].transform.position.y > playerWithBall.transform.position.y
+        if (!mg.GameOn || playerWithBall == null || (mg.myPlayers[0].transform.position.y > playerWithBall.transform.position.y
+            && mg.myPlayers[1].transform.position.y > playerWithBall.transform.position.y && mg.myPlayers[2].transform.position.y > playerWithBall.transform.position.y
             && playerWithBall.transform.position.y > -4))
         {
             playerWithBall.GetComponent<MyPlayer>().stablishNewShootCheck();

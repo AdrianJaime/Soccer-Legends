@@ -20,7 +20,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [SerializeField]
     GameObject statsUI;
     public bool GameStarted = false, GameOn = true;
-    public GameObject[] _team;
+    public GameObject[] myPlayers;
     public GameObject[] myIA_Players;
     public float eneregyFill;
     public GameObject lastPlayer;
@@ -209,20 +209,20 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (!PhotonNetwork.IsMasterClient)
         {
             GameObject localPlayer = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
-            _team = new GameObject[4];
+            myPlayers = new GameObject[4];
             PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
             for (int i = 0; i < 4; i++)
             {
-                _team[i] = localPlayer.transform.GetChild(i).gameObject;
+                myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
             }
         }
         else
         {
             GameObject localPlayer = PhotonNetwork.Instantiate(player2Prefab.name, player2Prefab.transform.position - new Vector3(0, 5, 0), player2Prefab.transform.rotation);
-            _team = new GameObject[4];
+            myPlayers = new GameObject[4];
             for (int i = 0; i < 4; i++)
             {
-                _team[i] = localPlayer.transform.GetChild(i).gameObject;
+                myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;
             }
         }
         StartCoroutine(intro());
@@ -263,7 +263,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         GameObject T2 = GameObject.Find("Team 2(Clone)");
         GameObject T1 = GameObject.Find("Team 1(Clone)");
         myIA_Players = new GameObject[T1.transform.childCount];
-        if (_team[0].transform.parent.gameObject != T1)
+        if (myPlayers[0].transform.parent.gameObject != T1)
         {
             for (int i = 0; i < T1.transform.childCount; i++)
             {
@@ -291,7 +291,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         for (int i = 0; i < myIA_Players.Length; i++)
         {
-            _team[i].GetComponent<MyPlayer>().fightDir = null;
+            myPlayers[i].GetComponent<MyPlayer>().fightDir = null;
             myIA_Players[i].GetComponent<MyPlayer>().fightDir = null;
         }
         animator.ResetTrigger("Confrontation");
@@ -307,7 +307,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void chooseDirection(int _player1, int _player2)
     {
         if (!GameOn || PhotonView.Find(_player1).GetComponent<MyPlayer>().stunned || PhotonView.Find(_player2).GetComponent<MyPlayer>().stunned) return;
-        if (_team[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
             _player1 = _player2;
@@ -398,7 +398,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void Goal()
     {
         bool isLocal;
-        if (_team[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
             isLocal = false;
         else isLocal = true;
             if (isLocal) score[0]++;
@@ -417,7 +417,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void ChooseShoot(int _player1, int _player2)
     {
         if (!GameOn) return;
-        if (_team[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
+        if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
         {
             int aux = _player1;
             _player1 = _player2;
@@ -650,10 +650,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void setStrategyBonus(IA_manager.strategy lastStrat, int _id)
+    public void setStrategyBonus(int _strat, int _id)
     {
         GameObject[] _team = new GameObject[PhotonView.Find(_id).transform.parent.childCount];
         for (int i = 0; i < _team.Length; i++) _team[i] = PhotonView.Find(_id).transform.parent.GetChild(i).gameObject;
+        IA_manager.strategy lastStrat =_team[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy;
+        _team[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
         foreach (GameObject player in _team)
         {
             MyPlayer playerScript = player.GetComponent<MyPlayer>();
@@ -916,9 +918,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public int HasTheBall()
     {
         if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null) return 0;
-        for (int i = 0; i < _team.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
-            MyPlayer player1 = _team[i].GetComponent<MyPlayer>();
+            MyPlayer player1 = myPlayers[i].GetComponent<MyPlayer>();
             MyPlayer IA_Player = myIA_Players[i].GetComponent<MyPlayer>();
             if (player1.ball != null) return 1;
             else if (IA_Player.ball != null) return 2;
@@ -929,9 +931,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public GameObject FindWhoHasTheBall()
     {
-        for (int i = 0; i < _team.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
-            MyPlayer player1 = _team[i].GetComponent<MyPlayer>();
+            MyPlayer player1 = myPlayers[i].GetComponent<MyPlayer>();
             MyPlayer IA_Player = myIA_Players[i].GetComponent<MyPlayer>();
             if (player1.ball != null) return player1.gameObject;
             else if (IA_Player.ball != null) return IA_Player.gameObject;
@@ -951,9 +953,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void Reposition()
     {
         GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().RepositionBall();
-        for (int i = 0; i < _team.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
-            _team[i].GetComponent<MyPlayer>().RepositionPlayer();
+            myPlayers[i].GetComponent<MyPlayer>().RepositionPlayer();
             myIA_Players[i].GetComponent<MyPlayer>().RepositionPlayer();
         }
         //GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.RPC("RepositionBall", RpcTarget.AllViaServer);
@@ -963,9 +965,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         while (confontationAnimSprites.Count > 0) { yield return new WaitForSeconds(Time.deltaTime); }
         confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
-        for (int i = 0; i < _team.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
-            if (_team[i] != PhotonView.Find(fightingPlayer).gameObject) confontationAnimSprites.AddRange(_team[i].GetComponentsInChildren<SpriteRenderer>(true));
+            if (myPlayers[i] != PhotonView.Find(fightingPlayer).gameObject) confontationAnimSprites.AddRange(myPlayers[i].GetComponentsInChildren<SpriteRenderer>(true));
             if (myIA_Players[i] != PhotonView.Find(fightingIA).gameObject) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));
         }
 
@@ -1068,9 +1070,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (fingerIdx > idx) fingerIdx--;
 
         //Players
-        if (_team[0].GetComponent<MyPlayer>().fingerIdx > idx) _team[0].GetComponent<MyPlayer>().fingerIdx--;
-        if (_team[1].GetComponent<MyPlayer>().fingerIdx > idx) _team[1].GetComponent<MyPlayer>().fingerIdx--;
-        if (_team[2].GetComponent<MyPlayer>().fingerIdx > idx) _team[2].GetComponent<MyPlayer>().fingerIdx--;
+        if (myPlayers[0].GetComponent<MyPlayer>().fingerIdx > idx) myPlayers[0].GetComponent<MyPlayer>().fingerIdx--;
+        if (myPlayers[1].GetComponent<MyPlayer>().fingerIdx > idx) myPlayers[1].GetComponent<MyPlayer>().fingerIdx--;
+        if (myPlayers[2].GetComponent<MyPlayer>().fingerIdx > idx) myPlayers[2].GetComponent<MyPlayer>().fingerIdx--;
     }
 
     public int getTotalTouches() { return touchesIdx.Count; }

@@ -618,8 +618,10 @@ public class PVE_Manager : MonoBehaviour
         }
     }
 
-    public void setStrategyBonus(IA_manager.strategy lastStrat)
+    public void setStrategyBonus(int _strat)
     {
+        IA_manager.strategy lastStrat = myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy;
+        myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
         foreach (GameObject player in myPlayers)
         {
             MyPlayer_PVE playerScript = player.GetComponent<MyPlayer_PVE>();

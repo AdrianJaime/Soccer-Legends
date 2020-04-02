@@ -499,17 +499,17 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     int ia_Idx = 0;
                     int playerIdx = 0;
                     fightDir = null;
-                    for (int i = 0; i < mg._team.Length; i++)
+                    for (int i = 0; i < mg.myPlayers.Length; i++)
                     {
                         if (!photonView.IsMine)
                         {
                             if (gameObject == mg.myIA_Players[i]) ia_Idx = i;
-                            if (rival.gameObject == mg._team[i]) playerIdx = i;
+                            if (rival.gameObject == mg.myPlayers[i]) playerIdx = i;
                         }
                         else
                         {
                             if (rival.gameObject == mg.myIA_Players[i]) ia_Idx = i;
-                            if (gameObject == mg._team[i]) playerIdx = i;
+                            if (gameObject == mg.myPlayers[i]) playerIdx = i;
                         }
                     }
                     //mg.chooseDirection(playerIdx, ia_Idx); // LLAMAR COMO RPC

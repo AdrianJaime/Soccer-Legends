@@ -722,6 +722,10 @@ public class PVE_Manager : MonoBehaviour
             rivalS.value = currentVal - localS.maxValue;
         }
 
+        currentVal = randomValue;
+        localS.value = currentVal;
+        rivalS.value = currentVal - localS.maxValue;
+
         //Set Results
         animator.SetTrigger(fightType);
         animator.SetTrigger(fightResult);

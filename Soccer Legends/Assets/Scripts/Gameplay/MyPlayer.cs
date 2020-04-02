@@ -523,7 +523,15 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && ((PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && mg.lastPlayer != gameObject) || PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
+            .transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, 
+            transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && 
+            ((mg.lastPlayer != null && mg.lastPlayer != gameObject &&
+            mg.lastPlayer.transform.parent.gameObject == transform.parent.gameObject) ||
+            (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
+            .GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && mg.lastPlayer != gameObject) || 
+            PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
+            .GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }

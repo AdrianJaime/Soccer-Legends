@@ -89,7 +89,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -749,21 +749,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.x
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 0.18039216
-      objectReference: {fileID: 0}
-    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7624986240874417759, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_Text
@@ -783,13 +768,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Color.b
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3052353997050764881, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_Text
-      value: '999 ATK
-
-'
       objectReference: {fileID: 0}
     - target: {fileID: 6939980464358470540, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
@@ -821,16 +799,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: -960.4
       objectReference: {fileID: 0}
-    - target: {fileID: 8812166645069048783, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -99.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 8628462534408821681, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -2.2
-      objectReference: {fileID: 0}
     - target: {fileID: 8884114884737457605, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_Value
@@ -855,6 +823,38 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMin.x
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.18039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391623711636831450, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3052353997050764881, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_Text
+      value: '999 ATK
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8812166645069048783, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -99.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8628462534408821681, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -2.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62, type: 3}
@@ -3654,7 +3654,7 @@ MonoBehaviour:
   _team: []
   myIA_Players: []
   eneregyFill: 0.06
-  lastPlayer: {fileID: 0}
+  lastPlayer: {fileID: 1349886834}
   animator: {fileID: 1204495094}
   fightRef: 0
   field: {fileID: 2091783943}

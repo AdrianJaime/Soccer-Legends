@@ -2090,7 +2090,7 @@ namespace Photon.Realtime
             }
             else if (level == DebugLevel.ALL)
             {
-                Debug.Log(message);
+                //Debug.Log(message);
             }
             #endif
         }

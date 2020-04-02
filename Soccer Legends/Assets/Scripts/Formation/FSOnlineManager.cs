@@ -22,23 +22,33 @@ public class FSOnlineManager : MonoBehaviourPun
             StaticInfo.teamSelectedToPlay.Clear();
             StaticInfo.teamSelectedToPlay.AddRange(formationScr.listOfCharactersInFormation);
             confirmTeam = true;
-            string[] charactersName = new string[formationScr.listOfCharactersInFormation.Length];
+            string[] characterID = new string[formationScr.listOfCharactersInFormation.Length];
+            int[] atq = new int[formationScr.listOfCharactersInFormation.Length];
+            int[] teq = new int[formationScr.listOfCharactersInFormation.Length];
+            int[] def = new int[formationScr.listOfCharactersInFormation.Length];
             for (int i = 0; i < formationScr.listOfCharactersInFormation.Length; i++)
-                charactersName[i] = formationScr.listOfCharactersInFormation[i].basicInfo.nameCharacter;
-            photonView.RPC("getRivalConfirmation", RpcTarget.Others, charactersName);
+            {
+                characterID[i] = formationScr.listOfCharactersInFormation[i].basicInfo.ID;
+                atq[i] = formationScr.listOfCharactersInFormation[i].info.atk;
+                teq[i] = formationScr.listOfCharactersInFormation[i].info.teq;
+                def[i] = formationScr.listOfCharactersInFormation[i].info.def;
+            }
+            photonView.RPC("getRivalConfirmation", RpcTarget.Others, characterID, atq, teq, def);
             Destroy(GameObject.Find("Canvas"));
         }
     }
 
     [PunRPC]
-    public void getRivalConfirmation(string[] _rivalTeam)
+    public void getRivalConfirmation(string[] _ID, int[] _atq, int[] _teq, int[] _def)
     {
         StaticInfo.rivalTeam = new List<CharacterBasic>();
-        for(int i = 0; i < _rivalTeam.Length; i++)
+        for(int i = 0; i < _ID.Length; i++)
         {
-            foreach (CharacterBasic characterInfo in StaticInfo.teamSelectedToPlay)
+            foreach (CharacterInfo characterInfo in formationScr.fullInventory.characters)
             {
-                if (characterInfo.basicInfo.nameCharacter == _rivalTeam[i]) StaticInfo.rivalTeam.Add(characterInfo);
+                if (characterInfo.ID == _ID[i])
+                   StaticInfo.rivalTeam.Add(new CharacterBasic(characterInfo, 
+                       new CharacterBasic.data(_atq[i], _def[i], _teq[i])));
             }
         }
         rivalConfirmTeam = true;

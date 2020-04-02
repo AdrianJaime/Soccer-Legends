@@ -50,8 +50,9 @@ public class PVP_strategyUI : MonoBehaviour
 
     public void setStrategy(int _strat)
     {
+        if (!mg.GameOn) return;
         interacting = true;
-        mg.myPlayers[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
+        mg.photonView.RPC("setStrategyBonus", Photon.Pun.RpcTarget.AllViaServer, _strat, mg.myPlayers[0].GetComponent<MyPlayer>().photonView.ViewID);
         button.interactable = false;
         cooldown = 60 * 2 + 1;
         estrategias.SetActive(false);

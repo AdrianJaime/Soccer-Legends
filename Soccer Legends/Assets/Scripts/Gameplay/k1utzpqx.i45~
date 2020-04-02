@@ -52,7 +52,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     float goalKeeperRef;
 
-    Vector2 animDir;
     float velocity0 = 0;
 
 
@@ -64,6 +63,10 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         mg = GameObject.Find("Manager").GetComponent<Manager>();
         strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
         setPlayer();
+        
+        {
+            stats = new Stats(7, 5, 5);
+        }
 
         //int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };
         //photonView.RPC("SetStats", RpcTarget.AllViaServer, starr);
@@ -133,9 +136,6 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
                 break;
         }
-        //HARDCODED STATS 
-        stats = new Stats(7, 5, 5);
-
         SetName(gameObject.name);
     }
 
@@ -162,8 +162,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     {
                         //Vector3 nextPos;
                         Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                        velocity0 = (newPos - transform.position).magnitude;
                         GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
-                        velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
                         transform.position = newPos;
                         //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
                         //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
@@ -199,7 +199,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             //Vector3 nextPos;
             Vector3 newPos = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 5.0f);
-            velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
+            velocity0 = (newPos - transform.position).magnitude;
             transform.position = newPos;
             //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
             //GetComponent<Rigidbody2D>().velocity = (nextPos - transform.position).normalized;
@@ -281,14 +281,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             float y_offset = 1.0f;
             stream.SendNext(new Vector3(-transform.position.x, -transform.position.y + y_offset, -transform.position.z)); //Solo se envía si se está moviendo.
             stream.SendNext(stunned);
-            stream.SendNext(new Vector2(-GetComponent<Rigidbody2D>().velocity.x, -GetComponent<Rigidbody2D>().velocity.y));
             //stream.SendNext(photonView.ViewID);
         }
         else if (stream.IsReading)
         {
             smoothMove = (Vector3)stream.ReceiveNext();
             stunned = (bool)stream.ReceiveNext();
-            GetComponent<Rigidbody2D>().velocity = (Vector2)stream.ReceiveNext();
             //photonView.ViewID = (int)stream.ReceiveNext();
         }
     }
@@ -523,15 +521,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             else if (!foundCovered) covered = false;
         }
 
-        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
-            .transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, 
-            transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && 
-            ((mg.lastPlayer != null && mg.lastPlayer != gameObject &&
-            mg.lastPlayer.transform.parent.gameObject == transform.parent.gameObject) ||
-            (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
-            .GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && mg.lastPlayer != gameObject) || 
-            PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
-            .GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
+        if (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent == null && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).GetComponent<Ball>().shootTimeRef + 0.15f < Time.time)
         {
             photonView.RPC("GetBall", RpcTarget.AllViaServer);
         }
@@ -556,15 +546,16 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
         try
         {
+            Vector2 direction = Vector3.zero;
             if (photonView.IsMine)
             {
-                if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) animDir = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-                else animDir = (playerObjective - transform.position).normalized;
+                if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+                else direction = (playerObjective - transform.position).normalized;
             }
             else
             {
-                if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) animDir = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
-                else animDir = (smoothMove - transform.position).normalized;
+                if (mg.HasTheBall() == 1 || mg.HasTheBall() == 0) direction = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
+                else direction = (smoothMove - transform.position).normalized;
             }
 
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -572,15 +563,15 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 float inverseFactor;
                 if (velocity0 >= 0.01) inverseFactor = -1.0f;
                 else inverseFactor = 1.0f;
-                animDir = new Vector2(animDir.x, Mathf.Abs(animDir.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
+                direction = new Vector2(direction.x, Mathf.Abs(direction.y) * (inverseFactor * (transform.position.y / Mathf.Abs(transform.position.y))));
 
             }
 
-            if (animDir.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.0005f);
+            if (direction.y > 0 && ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, 0.0005f);
             else if (ball != null) ball.transform.localPosition = new Vector3(ball.transform.localPosition.x, ball.transform.localPosition.y, -0.0005f);
 
-            animator.SetFloat("DirectionX", animDir.x);
-            animator.SetFloat("DirectionY", animDir.y);
+            animator.SetFloat("DirectionX", direction.x);
+            animator.SetFloat("DirectionY", direction.y);
             if (velocity0 < 0.01)
                 animator.SetBool("Moving", false);
             else

@@ -89,7 +89,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -538,7 +538,7 @@ PrefabInstance:
     - target: {fileID: 7256065559174304508, guid: e4f1c1cd03d1c4a4bb93fe5913d9c3df,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061035156
+      value: -0.00024414062
       objectReference: {fileID: 0}
     - target: {fileID: 7256065559174304508, guid: e4f1c1cd03d1c4a4bb93fe5913d9c3df,
         type: 3}
@@ -645,7 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73834c4d3da97a54bb21ce36216dc37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mg: {fileID: 0}
+  mg: {fileID: 413176862}
 --- !u!114 &308256158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3035,7 +3035,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000061035156}
+  m_AnchoredPosition: {x: 0, y: -0.00024414062}
   m_SizeDelta: {x: 0, y: -1363.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1267340061
@@ -3674,16 +3674,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6083316493504244159, guid: 9cb05bbcb49b8574d86ac407672acf05,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerSelectorCard
-      objectReference: {fileID: 0}
-    - target: {fileID: 1514569272290283180, guid: 9cb05bbcb49b8574d86ac407672acf05,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 706995763464471072, guid: 9cb05bbcb49b8574d86ac407672acf05,
         type: 3}
       propertyPath: m_RootOrder
@@ -3733,6 +3723,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6083316493504244159, guid: 9cb05bbcb49b8574d86ac407672acf05,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerSelectorCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 1514569272290283180, guid: 9cb05bbcb49b8574d86ac407672acf05,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1514569273630420747, guid: 9cb05bbcb49b8574d86ac407672acf05, type: 3}
@@ -4224,7 +4224,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.000061035156}
+  m_AnchoredPosition: {x: 0, y: -0.00024414062}
   m_SizeDelta: {x: 33.6, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1765219046

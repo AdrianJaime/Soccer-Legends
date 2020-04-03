@@ -98,7 +98,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if (timeStart + 60 < Time.time || score.x == 3 || score.y == 3)
         {
-            StartCoroutine(outro());
+            photonView.RPC("FinishGame", RpcTarget.AllViaServer);
         }
         else
         {
@@ -301,6 +301,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
         animator.ResetTrigger("Win");
         animator.ResetTrigger("SpecialAttack");
         fightRef = Time.time;
+    }
+
+
+    [PunRPC]
+    public void FinishGame()
+    {
+        if(GameStarted)StartCoroutine(outro());
     }
 
     [PunRPC]

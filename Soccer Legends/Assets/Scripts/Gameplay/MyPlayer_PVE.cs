@@ -499,7 +499,7 @@ public class MyPlayer_PVE : MonoBehaviour
             transform.position - new Vector3(0, 0.5f, 0)) < detectionDist && !stunned && mg.GameStarted && 
             ((mg.lastPlayer != null && mg.lastPlayer != gameObject &&
             mg.lastPlayer.transform.parent.gameObject == transform.parent.gameObject) ||
-            (GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && 
+            (GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().shootTimeRef + 0.2f < Time.time && 
             mg.lastPlayer != gameObject) || 
             GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
         {

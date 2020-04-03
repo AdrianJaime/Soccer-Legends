@@ -250,7 +250,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                         {
                             //Pass
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
-                            photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
+                            photonView.RPC("ShootBall", RpcTarget.All, dir);
                         }
                     }
                 }
@@ -513,7 +513,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                         }
                     }
                     //mg.chooseDirection(playerIdx, ia_Idx); // LLAMAR COMO RPC
-                    mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, rival.GetComponent<MyPlayer>().photonView.ViewID);
+                    mg.photonView.RPC("chooseDirection", RpcTarget.All, gameObject.GetComponent<MyPlayer>().photonView.ViewID, rival.GetComponent<MyPlayer>().photonView.ViewID);
                     //else photonView.RPC("chooseDirection", RpcTarget.AllViaServer, rival.GetComponent<MyPlayer>().photonView.ViewID, gameObject.GetComponent<MyPlayer>().photonView.ViewID);
                     return;
                     //mg.chooseDirection(gameObject.GetComponent<MyPlayer>(), other.GetComponent<MyPlayer>());
@@ -529,11 +529,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ((mg.lastPlayer != null && mg.lastPlayer != gameObject &&
             mg.lastPlayer.transform.parent.gameObject == transform.parent.gameObject) ||
             (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
-            .GetComponent<Ball>().shootTimeRef + 0.25f < Time.time && mg.lastPlayer != gameObject) || 
+            .GetComponent<Ball>().shootTimeRef + 0.2f < Time.time && mg.lastPlayer != gameObject) || 
             PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
             .GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
         {
-            photonView.RPC("GetBall", RpcTarget.AllViaServer);
+            photonView.RPC("GetBall", RpcTarget.All);
         }
         else if(PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).transform.parent != transform) ball = null;
 
@@ -546,7 +546,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 if (ball.transform.position.y / Mathf.Abs(ball.transform.position.y)
                     != mg.myIA_Players[ia_Idx].transform.position.y / Mathf.Abs(mg.myIA_Players[ia_Idx].transform.position.y)) return;
         
-        mg.photonView.RPC("ChooseShoot", RpcTarget.AllViaServer, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
+        mg.photonView.RPC("ChooseShoot", RpcTarget.All, gameObject.GetComponent<MyPlayer>().photonView.ViewID, mg.myIA_Players[ia_Idx].GetComponent<MyPlayer>().photonView.ViewID);
       
     }
 

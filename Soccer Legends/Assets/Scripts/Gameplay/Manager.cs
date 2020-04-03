@@ -1010,6 +1010,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
 
         introObj.SetActive(true);
+        introObj.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
+            introObj.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = PhotonNetwork.PlayerListOthers[0].NickName;
+        introObj.transform.GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text =
+            introObj.transform.GetChild(1).GetChild(1).GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
+
 
         yield return new WaitForSeconds(4.0f);
         StartGame();

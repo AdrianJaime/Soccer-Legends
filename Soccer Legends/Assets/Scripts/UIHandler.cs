@@ -11,25 +11,21 @@ public class UIHandler : MonoBehaviourPunCallbacks
 
     public void OnClick_JoinRoom()
     {
-        PhotonNetwork.JoinRoom(joinRoomTF.text, null);
-    }
-    public void OnClick_CreateRoom()
-    {
-        PhotonNetwork.CreateRoom(createRoomTF.text, new Photon.Realtime.RoomOptions { MaxPlayers = 2 }, null);
+        PhotonNetwork.JoinRandomRoom();
     }
 
-    public void setName()
-    {
-        PhotonNetwork.LocalPlayer.NickName = setNameTF.text;
-    }
     public override void OnJoinedRoom()
     {
-        print("Room Joined succesfully");
-        PhotonNetwork.LoadLevel(1);
+        if (!PlayerPrefs.HasKey("username"))
+            PlayerPrefs.SetString("username", "Unlogged");
+        PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("username");
+        print("Room Joined succesfully wuth name " + PhotonNetwork.LocalPlayer.NickName);
+        PhotonNetwork.LoadLevel("PlayersSelector_PvP");
     }
 
-    public override void OnJoinRoomFailed(short returnCode, string message)
+    public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        print("Room Failed"+returnCode+" Message " +message);
+        print("Random Room Failed" + returnCode + " Message " + message);
+        PhotonNetwork.CreateRoom(null, new Photon.Realtime.RoomOptions { MaxPlayers = 2 }, null);
     }
 } 

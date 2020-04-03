@@ -940,6 +940,9 @@ public class PVE_Manager : MonoBehaviour
     IEnumerator intro()
     {
         introObj.SetActive(true);
+        introObj.transform.GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text =
+            introObj.transform.GetChild(1).GetChild(1).GetComponent<Text>().text = PlayerPrefs.GetString("username");
+
         yield return new WaitForSeconds(4.0f);
         StartGame();
         yield return new WaitForSeconds(2.0f);

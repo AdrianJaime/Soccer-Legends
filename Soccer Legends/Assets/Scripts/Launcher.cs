@@ -11,6 +11,11 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+        if(connectedScreen.activeSelf)
+        {
+            connectedScreen.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>()
+                .text = PlayerPrefs.GetString("username");
+        }
     }
     public void OnClick_ConnectBtn()
     {

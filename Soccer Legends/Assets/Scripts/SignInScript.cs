@@ -70,7 +70,7 @@ public class SignInScript : MonoBehaviour
 
                 Firebase.Auth.FirebaseUser newUser = task.Result;
                 Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
-                //txt.text = newUser.UserId;
+                PlayerPrefs.SetString("username", newUser.DisplayName);
                 SceneManager.LoadScene("MainMenuScene");
             });
         });

@@ -96,7 +96,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if(goalRefFrame + 60 == Time.frameCount) photonView.RPC("Goal", RpcTarget.AllViaServer);
 
-        if (timeStart + 60 < Time.time || score.x == 3 || score.y == 3)
+        if (timeStart + 60 < Time.time || score.x == 3 || score.y == 3 || PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
             photonView.RPC("FinishGame", RpcTarget.AllViaServer);
         }
@@ -1035,7 +1035,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         GameOn = false;
         outroObj.gameObject.SetActive(true);
         outroObj.SetTrigger("CallOutro");
-        outroObj.SetBool("WIN", score[0] > score[1] ? true : false);
+        outroObj.SetBool("WIN", score[0] > score[1] || PhotonNetwork.CurrentRoom.PlayerCount == 1 ? true : false);
         playerOutroPoints.transform.GetChild(0).GetComponent<Text>().text = playerOutroPoints.text = score[0].ToString();
         enemyOutroPoints.transform.GetChild(0).GetComponent<Text>().text = enemyOutroPoints.text = score[1].ToString();
 
@@ -1050,6 +1050,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
         Debug.Log("DISCONNECTED!");
     SceneManager.LoadScene("MainMenuScene");
     }
+
+    
 
     public int getTouchIdx()
     {

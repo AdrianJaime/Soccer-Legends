@@ -19,7 +19,7 @@ public class UIHandler : MonoBehaviourPunCallbacks
         if (!PlayerPrefs.HasKey("username"))
             PlayerPrefs.SetString("username", "Unlogged");
         PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("username");
-        print("Room Joined succesfully wuth name " + PhotonNetwork.LocalPlayer.NickName);
+        print("Room Joined succesfully with name " + PhotonNetwork.LocalPlayer.NickName);
         PhotonNetwork.LoadLevel("PlayersSelector_PvP");
     }
 

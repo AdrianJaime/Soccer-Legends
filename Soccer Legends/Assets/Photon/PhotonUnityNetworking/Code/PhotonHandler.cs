@@ -236,6 +236,9 @@ namespace Photon.Pun
 
         public void OnPlayerEnteredRoom(Player newPlayer){}
 
-        public void OnPlayerLeftRoom(Player otherPlayer){}
+        public void OnPlayerLeftRoom(Player otherPlayer){
+            if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Match")
+                PhotonNetwork.LoadLevel("PlayersSelector_PvP");
+        }
     }
 }

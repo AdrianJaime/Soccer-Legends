@@ -57,6 +57,7 @@ public class ResultRewardManager : MonoBehaviour
                     if (itemBase != null)
                     {
                         GameObject rewardItem=Instantiate(rewardItemPrefab, commonObjects);
+                       // rewardItem.transform.localScale = new Vector3(0,0,1);
                         RewardObject iteamInfo= rewardItem.GetComponent<RewardObject>();
                         iteamInfo.baseInfo = itemBase;
                         iteamInfo.number = reward.number;
@@ -76,6 +77,7 @@ public class ResultRewardManager : MonoBehaviour
                     if (itemBase != null)
                     {
                         GameObject rewardItem = Instantiate(rewardItemPrefab, eventObjects);
+                       // rewardItem.transform.localScale = new Vector3(0, 0, 1);
                         RewardObject iteamInfo = rewardItem.GetComponent<RewardObject>();
                         iteamInfo.baseInfo = itemBase;
                         iteamInfo.number = reward.number;
@@ -95,6 +97,7 @@ public class ResultRewardManager : MonoBehaviour
                     if (itemBase != null)
                     {
                         GameObject rewardItem = Instantiate(rewardItemPrefab, extraObjects);
+                        //rewardItem.transform.localScale = new Vector3(0, 0, 1);
                         RewardObject iteamInfo = rewardItem.GetComponent<RewardObject>();
                         iteamInfo.baseInfo = itemBase;
                         iteamInfo.number = reward.number;
@@ -114,7 +117,8 @@ public class ResultRewardManager : MonoBehaviour
                     if (itemBase != null)
                     {
                         GameObject rewardItem=Instantiate(rewardItemPrefab, uniqueObjects);
-                        RewardObject iteamInfo= rewardItem.GetComponent<RewardObject>();
+                       // rewardItem.transform.localScale = new Vector3(0, 0, 1);
+                        RewardObject iteamInfo = rewardItem.GetComponent<RewardObject>();
                         iteamInfo.baseInfo = itemBase;
                         iteamInfo.number = reward.number;
                         iteamInfo.type = reward.type;

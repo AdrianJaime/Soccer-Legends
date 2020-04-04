@@ -158,7 +158,7 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 1
+  m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
@@ -236,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5150295919552478731
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4979,7 +4979,7 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
 --- !u!1 &3219942439795014721
 GameObject:
   m_ObjectHideFlags: 0
@@ -5135,7 +5135,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 075b4795c1d3cf84c97380bcfb2dcc87, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -5330,7 +5330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9056895958156721898
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10001,7 +10001,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 50
+  m_SortingOrder: 680
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -10032,11 +10032,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5940273512448871304}
     m_Modifications:
-    - target: {fileID: 4942712553023704109, guid: 314be944baf4cd94bbd4c2d37ad944b1,
-        type: 3}
-      propertyPath: m_Name
-      value: RewardItem
-      objectReference: {fileID: 0}
     - target: {fileID: 4942712553023704106, guid: 314be944baf4cd94bbd4c2d37ad944b1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10142,10 +10137,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 3198714708667366594, guid: 314be944baf4cd94bbd4c2d37ad944b1,
+    - target: {fileID: 4942712553023704109, guid: 314be944baf4cd94bbd4c2d37ad944b1,
         type: 3}
-      propertyPath: m_RootOrder
-      value: 1
+      propertyPath: m_Name
+      value: RewardItem
       objectReference: {fileID: 0}
     - target: {fileID: 3419752165138051483, guid: 314be944baf4cd94bbd4c2d37ad944b1,
         type: 3}
@@ -10156,6 +10151,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3198714708667366594, guid: 314be944baf4cd94bbd4c2d37ad944b1,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2403503262395625277, guid: 314be944baf4cd94bbd4c2d37ad944b1,
         type: 3}

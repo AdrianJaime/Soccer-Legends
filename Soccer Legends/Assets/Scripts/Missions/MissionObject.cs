@@ -18,6 +18,7 @@ public class MissionObject : MonoBehaviour
     [SerializeField] Image []rewardImage;
     [SerializeField] Slider progressBar;
     [SerializeField] Button claimButton;
+    [SerializeField] Image sello;
 
     MissionDetail popUpMission;
 
@@ -67,6 +68,8 @@ public class MissionObject : MonoBehaviour
                 claimButton.interactable = false;
                 claimButtonText.text = "In progress";
             }
+
+            sello.enabled = false;
         }
         
     }

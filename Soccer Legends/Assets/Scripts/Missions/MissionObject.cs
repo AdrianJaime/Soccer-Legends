@@ -19,15 +19,17 @@ public class MissionObject : MonoBehaviour
     [SerializeField] Slider progressBar;
     [SerializeField] Button claimButton;
 
+    MissionDetail popUpMission;
+
 
     string title, description,ID; //el ID es por si reclamas una recompensa, saber donde acceder en la BD para modificar variables
     int maxProgress, actualProgress;
     List<OBJECT_DATA> rewards;
     bool claim;
 
-    public void SetUpVariables(string _id, bool _claim, string _title, string _description, int _actualProgress, int _maxProgress, List<OBJECT_DATA> _rewards)
+    public void SetUpVariables(string _id, bool _claim, string _title, string _description, int _actualProgress, int _maxProgress, List<OBJECT_DATA> _rewards, MissionDetail _popUpMissionScript)
     {
-        ID = _id; claim = _claim; title = _title; description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; rewards = _rewards;
+        ID = _id; claim = _claim; title = _title; description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; rewards = _rewards; popUpMission = _popUpMissionScript;
 
         UpdateRender();
     }
@@ -45,8 +47,8 @@ public class MissionObject : MonoBehaviour
             //tambien hago una comprobacion en el array de imagenes, por si acaso, aunque siempre va a ser constante 3.
             if (i < rewards.Count&&i<rewardImage.Length)
             {
-                rewardImage[i].color = Color.white;
                 rewardImage[i].sprite = rewards[i].baseInfo.image;
+                rewardImage[i].gameObject.SetActive(true);
             }
         }
         //barra de progreso
@@ -67,6 +69,11 @@ public class MissionObject : MonoBehaviour
             }
         }
         
+    }
+
+    public void OpenPopUp()
+    {
+        popUpMission.SetUpVariables(description, actualProgress, maxProgress, rewards);
     }
 
 }

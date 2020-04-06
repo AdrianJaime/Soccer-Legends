@@ -21,6 +21,7 @@ public class MissionsGenerator : MonoBehaviour
     [SerializeField] List<BD_MISSION_DATA> missions;
     [SerializeField]GameObject missionPrefab;
     [SerializeField]Transform placeToSpawnMissions;
+    [SerializeField]MissionDetail popUpMissionScript;
 
 
     bool missionsSpawned = false;
@@ -49,7 +50,7 @@ public class MissionsGenerator : MonoBehaviour
         {
             GameObject spawnedMission = Instantiate(missionPrefab, placeToSpawnMissions);
             MissionObject missionLogic=spawnedMission.GetComponent<MissionObject>();
-            missionLogic.SetUpVariables(mission.id,mission.claim,mission.title, mission.description, mission.actualProgress, mission.maxProgress, mission.rewards);
+            missionLogic.SetUpVariables(mission.id,mission.claim,mission.title, mission.description, mission.actualProgress, mission.maxProgress, mission.rewards,popUpMissionScript);
         }
 
         missionsSpawned = true;

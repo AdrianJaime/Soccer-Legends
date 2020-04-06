@@ -89,7 +89,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -347,7 +347,7 @@ RectTransform:
   - {fileID: 1341181475}
   - {fileID: 167523545}
   - {fileID: 712498264}
-  - {fileID: 2120601446}
+  - {fileID: 2064348458}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3718,7 +3718,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1998510716}
   m_CullTransparentMesh: 0
---- !u!1001 &2062393664
+--- !u!1001 &2064348457
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -3728,7 +3728,7 @@ PrefabInstance:
     - target: {fileID: 2859703130798393947, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_Name
-      value: Return (1)
+      value: Return
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
@@ -3788,22 +3788,22 @@ PrefabInstance:
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 164.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 110.09985
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 69.1
+      value: 43.4
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 46.3
+      value: 39.7
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
@@ -3828,22 +3828,27 @@ PrefabInstance:
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_Pivot.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2859703130798393941, guid: 966d596eeb54d194ba26707199ebfb79,
+    - target: {fileID: 2859703130798393942, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1567265379}
-    - target: {fileID: 2859703130798393941, guid: 966d596eeb54d194ba26707199ebfb79,
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859703130798393942, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ChangeScene
+      propertyPath: m_Color.g
+      value: 0.4901961
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859703130798393942, guid: 966d596eeb54d194ba26707199ebfb79,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2859703130798393941, guid: 966d596eeb54d194ba26707199ebfb79,
         type: 3}
@@ -3852,6 +3857,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 966d596eeb54d194ba26707199ebfb79, type: 3}
+--- !u!224 &2064348458 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
+    type: 3}
+  m_PrefabInstance: {fileID: 2064348457}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2080953308
 GameObject:
   m_ObjectHideFlags: 0
@@ -3931,12 +3942,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080953308}
   m_CullTransparentMesh: 0
---- !u!224 &2120601446 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2859703130798393940, guid: 966d596eeb54d194ba26707199ebfb79,
-    type: 3}
-  m_PrefabInstance: {fileID: 2062393664}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2141656156
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ public class Formation : MonoBehaviour
 {
     public EquipCardFormationLogic[] slotsFormation = new EquipCardFormationLogic[4];
     public List<CharacterBasic> charactersAvailable;
-    public CharacterInventory fullInventory;
+    public CharactersCompendium fullInventory;
 
     [HideInInspector]
     public CharacterBasic[] listOfCharactersInFormation = new CharacterBasic[4];

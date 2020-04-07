@@ -46,7 +46,7 @@ public class FSOnlineManager : MonoBehaviourPun
         StaticInfo.rivalTeam = new List<CharacterBasic>();
         for(int i = 0; i < _ID.Length; i++)
         {
-            foreach (CharacterInfo characterInfo in formationScr.fullInventory.characters)
+            foreach (CharacterInfo characterInfo in formationScr.fullInventory.compendiumOfCharacters)
             {
                 if (characterInfo.ID == _ID[i])
                    StaticInfo.rivalTeam.Add(new CharacterBasic(characterInfo, 

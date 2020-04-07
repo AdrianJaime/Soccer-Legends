@@ -5,13 +5,13 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
 
-    public Transform locationCharacterSpawn;
-    public GameObject inventoryPrefabUnit;
+    [SerializeField] Transform locationCharacterSpawn;
+    [SerializeField] GameObject inventoryPrefabUnit;
 
     public List<GameObject> listOfSlots = new List<GameObject>();//list of slots with the info of player
 
     public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();
-    public List<CharacterInfo> listOfCharacters = new List<CharacterInfo>();
+    [SerializeField] CharactersCompendium listOfCharacters;
 
 
     private void Awake()
@@ -25,14 +25,14 @@ public class InventoryManager : MonoBehaviour
         int counterIdentifier = 0;
 
         //por cada jgador en la lista de jugadores (CharacterInfo)
-        foreach (CharacterInfo characterUnit in listOfCharacters)
+        foreach (CharacterInfo characterUnit in listOfCharacters.compendiumOfCharacters)
         {
             if (characterUnit != null)
             {
                 //vamos a crear un objeto "Carta" que contiene la info completa de un cvharacter (characterBasic)
                 GameObject actualCard = Instantiate(inventoryPrefabUnit, locationCharacterSpawn);
                 //Le asignamos una informacion basica de jugador
-                actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters[counterIdentifier];
+                actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters.compendiumOfCharacters[counterIdentifier];
                 //con la infromación basica cargamos los datos de BD con el ID del personaje.
                 actualCard.GetComponent<CharacterBasic>().LoadCharacterStats(actualCard.GetComponent<CharacterBasic>().basicInfo.ID);
                 

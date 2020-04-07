@@ -9,6 +9,11 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public GameObject connectedScreen, disconnectedScreen;
 
+    private void Start()
+    {
+        PhotonNetwork.ConnectUsingSettings(); //If succesfull OnConnectedToMaster is called.
+    }
+
     private void Update()
     {
         if(connectedScreen.activeSelf)
@@ -20,6 +25,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     public void OnClick_ConnectBtn()
     {
         PhotonNetwork.ConnectUsingSettings(); //If succesfull OnConnectedToMaster is called.
+        if (disconnectedScreen.activeSelf)
+            disconnectedScreen.SetActive(false);
     }
 
     public override void OnConnectedToMaster()
@@ -29,6 +36,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
+        if (connectedScreen.activeSelf)
+            connectedScreen.SetActive(false);
         disconnectedScreen.SetActive(true); //Is called when disconneted, DisconnectCause tells us the reason it disconnected.
     }
 

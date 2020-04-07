@@ -232,13 +232,24 @@ namespace Photon.Pun
 
         public void OnJoinRandomFailed(short returnCode, string message){}
 
-        public void OnLeftRoom(){}
+        public void OnLeftRoom(){
+            PhotonNetwork.LoadLevel("MatchMaking");
+        }
 
         public void OnPlayerEnteredRoom(Player newPlayer){}
 
         public void OnPlayerLeftRoom(Player otherPlayer){
             if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Match")
                 PhotonNetwork.LoadLevel("PlayersSelector_PvP");
+        }
+        public void OnDisconnectedFromPhoton()
+        {
+            PhotonNetwork.LoadLevel("MatchMaking");
+        }
+
+        public void OnDisconnected(DisconnectCause cause)
+        {
+            PhotonNetwork.LoadLevel("MatchMaking");
         }
     }
 }

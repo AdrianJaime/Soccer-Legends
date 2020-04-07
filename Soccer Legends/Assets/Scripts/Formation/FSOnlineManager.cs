@@ -34,7 +34,9 @@ public class FSOnlineManager : MonoBehaviourPun
                 def[i] = formationScr.listOfCharactersInFormation[i].info.def;
             }
             photonView.RPC("getRivalConfirmation", RpcTarget.Others, characterID, atq, teq, def);
-            Destroy(GameObject.Find("Canvas"));
+            Destroy(GameObject.Find("Confirm"));
+            UnityEngine.UI.Button[] allBtn = GameObject.Find("Canvas").GetComponentsInChildren<UnityEngine.UI.Button>(true);
+            foreach (UnityEngine.UI.Button _btn in allBtn) _btn.interactable = false;
         }
     }
 

@@ -233,7 +233,7 @@ namespace Photon.Pun
         public void OnJoinRandomFailed(short returnCode, string message){}
 
         public void OnLeftRoom(){
-            PhotonNetwork.LoadLevel("MatchMaking");
+            PhotonNetwork.LoadLevel("LegueMenuScene");
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer){}
@@ -244,12 +244,12 @@ namespace Photon.Pun
         }
         public void OnDisconnectedFromPhoton()
         {
-            PhotonNetwork.LoadLevel("MatchMaking");
+            PhotonNetwork.LoadLevel("LegueMenuScene");
         }
 
         public void OnDisconnected(DisconnectCause cause)
         {
-            PhotonNetwork.LoadLevel("MatchMaking");
+            PhotonNetwork.LoadLevel("LegueMenuScene");
         }
     }
 }

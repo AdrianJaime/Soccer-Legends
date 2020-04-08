@@ -610,12 +610,14 @@ public class Manager : MonoBehaviourPun, IPunObservable
         float xScale_1 = -0.65f;
         float diff;
         diff = (float)(uiNumStat[0] - uiNumStat[1]) / 50.0f;
-        if (diff > 0.30f) diff = 0.30f;
-        else if (diff < -0.30f) diff = -0.30f;
+        if (diff > 0.20f) diff = 0.20f;
+        else if (diff < -0.32f) diff = -0.20f;
         xScale_0 += diff;
         xScale_1 += diff;
         statsUI.transform.GetChild(0).localScale = new Vector3(xScale_0, 1, 1);
         statsUI.transform.GetChild(1).localScale = new Vector3(xScale_1, 1, 1);
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().handleRect.localScale = new Vector3(1 - diff, 1, 1);
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().handleRect.localScale = new Vector3(-1 - diff, 1, 1);
 
         //Set Values
         statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().maxValue = uiNumStat[0];
@@ -738,7 +740,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         Slider rivalS = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
 
         float sumMaxVal = localS.maxValue + rivalS.maxValue;
-        float currentVal = 0.0f;
+        float currentVal = localS.maxValue;
         float sumValue = Time.deltaTime * 3 * sumMaxVal;
 
         while (currentVal <= sumMaxVal)
@@ -748,6 +750,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = sumMaxVal;
@@ -759,6 +763,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             currentVal -= sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = 0;
@@ -772,6 +778,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = randomValue;
@@ -788,6 +796,32 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             animator.SetTrigger(fightResult == "Win" ? "Lose" : "Win");
         }
+
+        //Slider ending 
+        Image losingPlayer = localS.handleRect.GetComponent<Image>().enabled == false ?
+            localS.transform.GetChild(0).GetComponent<Image>() : rivalS.transform.GetChild(0).GetComponent<Image>();
+        Color c;
+        while (losingPlayer.color.r > 0.3f)
+        {
+            yield return new WaitForSeconds(Time.deltaTime);
+
+            c = losingPlayer.color;
+            c.r -= 0.085f;
+            c.g -= 0.085f;
+            c.b -= 0.085f;
+            losingPlayer.color = c;
+        }
+
+        while (!GameOn) { yield return new WaitForSeconds(Time.deltaTime); }
+
+        c = losingPlayer.color;
+        c.r = 1;
+        c.g = 1;
+        c.b = 1;
+        losingPlayer.color = c;
+
+        localS.handleRect.GetComponent<Image>().enabled = false;
+        rivalS.handleRect.GetComponent<Image>().enabled = false;
     }
 
     public void fightResult(string anim)

@@ -8,8 +8,15 @@ public class PSOnlineManager : MonoBehaviourPun
 {
     [SerializeField]
     PlayerSelector_PlayerManager mg;
+    [SerializeField]
+    GameObject connectScreen;
     bool confirmTeam = false;
     bool rivalConfirmTeam = false;
+
+    private void Update()
+    {
+        connectScreen.SetActive(PhotonNetwork.CurrentRoom.PlayerCount != 2);
+    }
 
     public void OnConfirmationClick()
     {

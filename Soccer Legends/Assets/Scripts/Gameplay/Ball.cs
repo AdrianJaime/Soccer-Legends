@@ -16,6 +16,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     public bool shooterIsMaster;
     public int kick;
     private bool newBall;
+    private bool firstBall;
     public float shootTimeRef;
 
     Collider2D area1, area2;
@@ -32,6 +33,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         else transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
         area1 = GameObject.Find("Area 1").GetComponent<Collider2D>();
         area2 = GameObject.Find("Area 2").GetComponent<Collider2D>();
+        firstBall = true;
         RepositionBall();
     }
     private void Update()
@@ -119,11 +121,16 @@ public class Ball : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void RepositionBall()
     {
+        float _y_dir = (transform.position.y / Mathf.Abs(transform.position.y)) * 7.5f;
         transform.parent = null;
-        transform.position = Vector3.zero;
+        if(firstBall) shootPosition = transform.position = Vector2.zero;
+        else shootPosition = transform.position = new Vector2(0, _y_dir);
         rb.velocity = Vector2.zero;
-        ShootBall(new float[] { Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), transform.position.x, transform.position.y });
+        ShootBall(new float[] { 0, _y_dir, transform.position.x, transform.position.y });
+        if (firstBall) rb.velocity /= 2.2f;
+        else rb.velocity = Vector2.zero;
         newBall = true;
+        firstBall = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

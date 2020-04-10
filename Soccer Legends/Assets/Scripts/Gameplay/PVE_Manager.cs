@@ -129,7 +129,7 @@ public class PVE_Manager : MonoBehaviour
     {
         GameObject localPlayer = Instantiate(player1Prefab.gameObject, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
         myPlayers = new GameObject[4];
-        Instantiate(ballPrefab.gameObject, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+        Instantiate(ballPrefab.gameObject, new Vector3(0, localPlayer.transform.position.y, 0), ballPrefab.transform.rotation);
         for (int i = 0; i < 4; i++)
         {
             myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;

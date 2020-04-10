@@ -529,7 +529,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ((mg.lastPlayer != null && mg.lastPlayer != gameObject &&
             mg.lastPlayer.transform.parent.gameObject == transform.parent.gameObject) ||
             (PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
-            .GetComponent<Ball>().shootTimeRef + 0.2f < Time.time && mg.lastPlayer != gameObject) || 
+            .GetComponent<Ball>().shootTimeRef + 0.15f < Time.time && mg.lastPlayer != gameObject) || 
             PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID)
             .GetComponent<Ball>().shootTimeRef + 0.5f < Time.time))
         {

@@ -210,7 +210,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             GameObject localPlayer = PhotonNetwork.Instantiate(player1Prefab.name, player1Prefab.transform.position - new Vector3(0, 5, 0), player1Prefab.transform.rotation);
             myPlayers = new GameObject[4];
-            PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, 0, 0), ballPrefab.transform.rotation);
+            PhotonNetwork.Instantiate(ballPrefab.name, new Vector3(0, localPlayer.transform.position.y, 0), ballPrefab.transform.rotation);
             for (int i = 0; i < 4; i++)
             {
                 myPlayers[i] = localPlayer.transform.GetChild(i).gameObject;

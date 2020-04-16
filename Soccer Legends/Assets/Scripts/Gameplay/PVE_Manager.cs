@@ -28,7 +28,8 @@ public class PVE_Manager : MonoBehaviour
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
-    private int energySegments = 0;
+    private float energySegments = 0;
+    public float energy;
 
     private float timeStart = 0;
     public float fightRef = 0;
@@ -121,6 +122,7 @@ public class PVE_Manager : MonoBehaviour
             else if (energySegments < 5) { energySegments++; energyBar.GetComponent<Slider>().value = 0; }
             energyNumbers.GetComponent<Text>().text = energyNumbers.transform.GetChild(0).GetComponent<Text>().text = energySegments.ToString();
             if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / 5.0f;
+            energy = energyBar.GetComponent<Slider>().value + energySegments;
         }
     }
 
@@ -172,10 +174,6 @@ public class PVE_Manager : MonoBehaviour
     {
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
-        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir != null &&
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special") specialDowngrade();
-        if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir != null &&
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") specialDowngrade(true);
         statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>(). value = 0;
         for (int i = 0; i < myIA_Players.Length; i++)
@@ -588,35 +586,15 @@ public class PVE_Manager : MonoBehaviour
 
     void specialUpgrade(bool _ia = false)
     {
-        //En el futuro mirar lo que hace el especial
         if (_ia)
         {
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense *= 3;
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique *= 3;
+            StartCoroutine(myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo
+            .specialAttackInfo.specialAtack.callSpecial(this, myIA_Players[fightingIA]));
         }
         else
         {
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense *= 3;
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique *= 3;
-        }
-    }
-
-    void specialDowngrade(bool _ia = false)
-    {
-        //En el futuro mirar lo que hace el especial
-        if (_ia)
-        {
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot /= 3;
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense /= 3;
-            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique /= 3;
-        }
-        else
-        {
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot /= 3;
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense /= 3;
-            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique /= 3;
+            StartCoroutine(myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo
+             .specialAttackInfo.specialAtack.callSpecial(this, myPlayers[fightingPlayer]));
         }
     }
 

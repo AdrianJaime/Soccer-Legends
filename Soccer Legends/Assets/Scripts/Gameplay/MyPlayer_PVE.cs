@@ -30,6 +30,7 @@ public class MyPlayer_PVE : MonoBehaviour
     public Vector2 startPosition = Vector2.zero;
 
     public IA_manager.formationPositions formationPos;
+    public CharacterBasic characterBasic;
 
     private Vector3 smoothMove, aux;
     private GameObject actualLine;
@@ -87,44 +88,35 @@ public class MyPlayer_PVE : MonoBehaviour
             case 0:
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
-                stats = new Stats(teamInfo[2].info.atk, teamInfo[1].info.teq,
-                    teamInfo[2].info.def);
-                confrontationSprite = teamInfo[2].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[2].basicInfo.completeArtwork;
-                animator.runtimeAnimatorController = teamInfo[2].basicInfo.animator_character;
+                characterBasic = teamInfo[2];
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
-                stats = new Stats(teamInfo[0].info.atk, teamInfo[3].info.teq,
-                    teamInfo[0].info.def);
-                confrontationSprite = teamInfo[0].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[0].basicInfo.completeArtwork;
-                animator.runtimeAnimatorController = teamInfo[0].basicInfo.animator_character;
+                characterBasic = teamInfo[0];
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
-                stats = new Stats(teamInfo[1].info.atk, teamInfo[2].info.teq,
-                    teamInfo[1].info.def);
-                confrontationSprite = teamInfo[1].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[1].basicInfo.completeArtwork;
-                animator.runtimeAnimatorController = teamInfo[1].basicInfo.animator_character;
-
+                characterBasic = teamInfo[1];
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
+                characterBasic = teamInfo[3];
                 speed *= 3;
-                stats = new Stats(teamInfo[3].info.atk, teamInfo[0].info.teq,
-                    teamInfo[3].info.def);
-                confrontationSprite = teamInfo[3].basicInfo.artworkConforntation;
-                specialSprite = teamInfo[3].basicInfo.completeArtwork;
-                animator.runtimeAnimatorController = teamInfo[3].basicInfo.animator_character;
                 break;
             default:
 
                 break;
         }
+
+        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
+                    characterBasic.info.def);
+        confrontationSprite = characterBasic.basicInfo.artworkConforntation;
+        specialSprite = characterBasic.basicInfo.completeArtwork;
+        characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack(); ;
+        animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
+
         //HARDCODED STATS
         stats = new Stats(7, 5, 5);
 

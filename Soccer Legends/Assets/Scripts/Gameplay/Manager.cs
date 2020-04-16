@@ -29,7 +29,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
-    private int energySegments = 0;
+    public int energySegments = 0;
+    public float energy;
 
     private float timeStart = 0;
     public float fightRef = 0;
@@ -199,6 +200,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (energyBar.GetComponent<Slider>().value != 1) energyBar.GetComponent<Slider>().value += (eneregyFill * Time.deltaTime);
             else if (energySegments < 5) { energySegments++; energyBar.GetComponent<Slider>().value = 0; }
             energyNumbers.GetComponent<Text>().text = energyNumbers.transform.GetChild(0).GetComponent<Text>().text = energySegments.ToString();
+            energy = energyBar.GetComponent<Slider>().value + energySegments;
         }
     }
 
@@ -284,9 +286,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
-        if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null &&
-            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special")
-            photonView.RPC("specialDowngrade", RpcTarget.AllViaServer, fightingPlayer);
         statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         for (int i = 0; i < myIA_Players.Length; i++)
@@ -644,18 +643,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public void specialUpgrade(int _id)
     {
         //En el futuro mirar lo que hace el especial
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.shoot *= 3;
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.defense *= 3;
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.technique *= 3; 
-    }
-
-    [PunRPC]
-    public void specialDowngrade(int _id)
-    {
-        //En el futuro mirar lo que hace el especial
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.shoot /= 3;
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.defense /= 3;
-        PhotonView.Find(_id).GetComponent<MyPlayer>().stats.technique /= 3;
+        StartCoroutine(PhotonView.Find(_id).GetComponent<MyPlayer>().characterBasic.basicInfo
+            .specialAttackInfo.specialAtack.callSpecial(this, PhotonView.Find(_id).GetComponent<MyPlayer>().gameObject));
     }
 
     [PunRPC]

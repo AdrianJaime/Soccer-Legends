@@ -34,5 +34,4 @@ public class CharacterInfo : ScriptableObject
     public SpecialAttackInfo specialAttackInfo;
 
     public RuntimeAnimatorController animator_character;
-
 }

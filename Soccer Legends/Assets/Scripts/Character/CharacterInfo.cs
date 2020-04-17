@@ -7,7 +7,7 @@ using UnityEngine;
 
 public enum Rarity {SILVER, BRONZE, GOLD }
 public enum Type {RED,GREEN,YELLOW,PURPLE,BLUE }
-public enum Rol { PIVOT, TECHNICAL, DEFENSIVE }
+public enum Rol { PIVOT, WINGER, FIXO, GOALKEEPER } //PIVOT, ALA, CIERRE, PORTERO
 
 
 [System.Serializable]
@@ -22,6 +22,7 @@ public class CharacterInfo : ScriptableObject
 
     public Rarity rarity;
     public Type type;
+    public Rol rol;
 
     //info drawable
     public Sprite artworkIcon, 

@@ -89,7 +89,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3071,12 +3071,15 @@ MonoBehaviour:
   eneregyFill: 0.06
   lastPlayer: {fileID: 1349886834}
   animator: {fileID: 2086483703}
+  energy: 0
   fightRef: 0
   field: {fileID: 2091783943}
   myConfrontationImage: {fileID: 2145777233}
   iaConfrontationImage: {fileID: 1734751552}
   mySpecialAtqImage: {fileID: 1806740676}
   iaSpecialAtqImage: {fileID: 327154949}
+  mySpecialName: {fileID: 5892991284079936402}
+  iaSpecialName: {fileID: 5892991284079936401}
   introObj: {fileID: 6336544113619288404}
   outroObj: {fileID: 1485178602044881108}
   playerOutroPoints: {fileID: 1485178602044881107}
@@ -3975,6 +3978,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b353b608938889469cdc9091c71f219, type: 3}
+--- !u!114 &5892991284079936401 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4515600502900524824, guid: 3b353b608938889469cdc9091c71f219,
+    type: 3}
+  m_PrefabInstance: {fileID: 5892991284079936400}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5892991284079936402 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4515600504069261132, guid: 3b353b608938889469cdc9091c71f219,
+    type: 3}
+  m_PrefabInstance: {fileID: 5892991284079936400}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6283791711533559212
 PrefabInstance:
   m_ObjectHideFlags: 0

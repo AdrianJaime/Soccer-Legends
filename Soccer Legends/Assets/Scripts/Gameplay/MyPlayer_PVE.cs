@@ -114,7 +114,7 @@ public class MyPlayer_PVE : MonoBehaviour
                     characterBasic.info.def);
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
-        characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack(); ;
+        characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
 
         //HARDCODED STATS

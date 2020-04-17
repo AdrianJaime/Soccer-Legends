@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StatBuff : SpecialAtack
+public class StatBuff : SpecialAttack
 {
-    public override bool canUseSpecial(PVE_Manager mg, GameObject specialOwner)
+    SpecialAttackInfo specialAttackInfo;
+
+    public StatBuff() { }
+    public StatBuff(SpecialAttackInfo _specialAttackInfo) { specialAttackInfo = _specialAttackInfo; }
+
+    public override bool canUseSpecial(PVE_Manager mg, GameObject specialOwner, float energy)
     {
-        return mg.energy >= energyRequired;
+        return energy >= specialAttackInfo.requiredEnergy;
     }
 
-    public override bool canUseSpecial(Manager mg, GameObject specialOwner)
+    public override bool canUseSpecial(Manager mg, GameObject specialOwner, float energy)
     {
-        return mg.energy >= energyRequired;
+        return energy >= specialAttackInfo.requiredEnergy;
     }
 
-    public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner)
+    public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner, GameObject rival)
     {
         specialOwner.GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
         specialOwner.GetComponent<MyPlayer_PVE>().stats.defense *= 3;
@@ -27,7 +32,7 @@ public class StatBuff : SpecialAtack
         specialOwner.GetComponent<MyPlayer_PVE>().stats.technique /= 3;
     }
 
-    public override IEnumerator callSpecial(Manager mg, GameObject specialOwner)
+    public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
     {
         specialOwner.GetComponent<MyPlayer>().stats.shoot *= 3;
         specialOwner.GetComponent<MyPlayer>().stats.defense *= 3;

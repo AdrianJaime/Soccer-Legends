@@ -56,6 +56,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [SerializeField]
     Image iaSpecialAtqImage;
     List<SpriteRenderer> confontationAnimSprites;
+    [SerializeField]
+    Text mySpecialName;
+    [SerializeField]
+    Text iaSpecialName;
 
     [SerializeField]
     GameObject introObj;
@@ -132,7 +136,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     swipes[1] = swipe.position;
                     if(state == fightState.FIGHT)
                     {
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
+                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
@@ -153,7 +157,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                     else if(state == fightState.SHOOT)
                     {
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && energyBar.GetComponent<Slider>().value + energySegments > 1.0f)
+                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
@@ -348,7 +352,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 GameOn = false;
                 directionSlide.SetActive(true);
-                if (energyBar.GetComponent<Slider>().value + energySegments > 1.0f) specialSlide.SetActive(true);
+                if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
+                    .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
+                    specialSlide.SetActive(true);
                 state = fightState.FIGHT;
                 //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
                 //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
@@ -439,7 +445,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 GameOn = false;
                 directionSlide.SetActive(true);
-                if (energyBar.GetComponent<Slider>().value + energySegments > 1.0f) specialSlide.SetActive(true);
+                if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
+                    .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
+                    specialSlide.SetActive(true);
                 state = fightState.SHOOT;
                 //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
                 //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
@@ -642,9 +650,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void specialUpgrade(int _id)
     {
-        //En el futuro mirar lo que hace el especial
-        StartCoroutine(PhotonView.Find(_id).GetComponent<MyPlayer>().characterBasic.basicInfo
-            .specialAttackInfo.specialAtack.callSpecial(this, PhotonView.Find(_id).GetComponent<MyPlayer>().gameObject));
+        GameObject local = PhotonView.Find(_id).gameObject, rival;
+        SpecialAttackInfo specialInfo = local.GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo;
+        if (_id == fightingIA)
+        {
+            rival = PhotonView.Find(fightingPlayer).gameObject;
+            iaSpecialName.text = specialInfo.name;
+        }
+        else
+        {
+            rival = PhotonView.Find(fightingIA).gameObject;
+            mySpecialName.text = specialInfo.name;
+        }
+        StartCoroutine(specialInfo.specialAtack.callSpecial(this, local, rival));
     }
 
     [PunRPC]

@@ -11,9 +11,10 @@ public class SpecialAttackInfo : ScriptableObject
     [SerializeField]
     protected string description;
     [SerializeField]
-    protected int energyRequired;
+    int energyRequired;
+    public float requiredEnergy { get { return energyRequired; } }
     [System.NonSerialized]
-    public SpecialAtack specialAtack;
+    public SpecialAttack specialAtack;
     [SerializeField]
     Object specialScript;
 
@@ -22,7 +23,7 @@ public class SpecialAttackInfo : ScriptableObject
         switch(specialScript.name)
         {
             case "StatBuff":
-                specialAtack = new StatBuff();
+                specialAtack = new StatBuff(this);
                 break;
         }
     }

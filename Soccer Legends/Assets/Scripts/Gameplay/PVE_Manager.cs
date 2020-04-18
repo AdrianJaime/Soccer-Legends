@@ -686,48 +686,50 @@ public class PVE_Manager : MonoBehaviour
         float currentVal = localS.maxValue;
         float sumValue = Time.deltaTime * 3 * sumMaxVal;
 
-        while(currentVal <= sumMaxVal)
+        while(currentVal < sumMaxVal)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = sumMaxVal;
 
-        while (currentVal > 0)
+        while (currentVal > localS.minValue)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal -= sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
-        currentVal = 0;
+        currentVal = localS.minValue;
 
         if (!animator.GetBool("PlayerHasBall")) randomValue = (int)sumMaxVal - randomValue;
 
-        while (currentVal <= randomValue)
+        while (currentVal < randomValue)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = randomValue;
         localS.value = currentVal;
         rivalS.value = currentVal - localS.maxValue;
+        localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
+        rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
 
         //Set Results
         animator.SetTrigger(fightType);

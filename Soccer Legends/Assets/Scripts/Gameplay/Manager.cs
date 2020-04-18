@@ -113,6 +113,14 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         if (!GameOn && GameStarted)
         {
+            if (fightRef + 7.5f < Time.time)
+            {
+                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
+                if (!PhotonNetwork.IsMasterClient)
+                    photonView.RPC("setFightDir", RpcTarget.MasterClient, 
+                        PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+                directionSlide.SetActive(false); specialSlide.SetActive(false);
+            }
             if ((Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
             {
                 Touch swipe;
@@ -132,7 +140,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 else if (swipe.phase == TouchPhase.Ended && PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
                 {
-                    directionSlide.SetActive(false); specialSlide.SetActive(false);
                     swipes[1] = swipe.position;
                     if(state == fightState.FIGHT)
                     {
@@ -183,6 +190,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                     Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
                         " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
+                    directionSlide.SetActive(false); specialSlide.SetActive(false);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -266,23 +274,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
         timeStart = Time.time;
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
-        GameObject T2 = GameObject.Find("Team 2(Clone)");
-        GameObject T1 = GameObject.Find("Team 1(Clone)");
-        myIA_Players = new GameObject[T1.transform.childCount];
-        if (myPlayers[0].transform.parent.gameObject != T1)
-        {
-            for (int i = 0; i < T1.transform.childCount; i++)
-            {
-                myIA_Players[i] = T1.transform.GetChild(i).gameObject;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < T2.transform.childCount; i++)
-            {
-                myIA_Players[i] = T2.transform.GetChild(i).gameObject;
-            }
-        }
     }
 
     [PunRPC]
@@ -350,6 +341,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     player1.GetComponent<MyPlayer>().photonView.RPC("MoveTo", RpcTarget.AllViaServer, arr);
                     //IA_Player.GetComponent<MyPlayer>().mg.photonView.RPC("chooseDirection", RpcTarget.AllViaServer, _player2, _player1);
                 }
+                fightRef = Time.time;
                 GameOn = false;
                 directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
@@ -443,6 +435,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         {
             if (!directionSlide.activeSelf)
             {
+                fightRef = Time.time;
                 GameOn = false;
                 directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
@@ -585,7 +578,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     }
 
-    [PunRPC]
     void updateUI_Stats()
     {
         string[] uiStats = new string[2];
@@ -750,48 +742,50 @@ public class Manager : MonoBehaviourPun, IPunObservable
         float currentVal = localS.maxValue;
         float sumValue = Time.deltaTime * 3 * sumMaxVal;
 
-        while (currentVal <= sumMaxVal)
+        while (currentVal < sumMaxVal)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = sumMaxVal;
 
-        while (currentVal > 0)
+        while (currentVal > localS.minValue)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal -= sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
-        currentVal = 0;
+        currentVal = localS.minValue;
 
         if (!animator.GetBool("PlayerHasBall")) randomValue = (int)sumMaxVal - randomValue;
 
-        while (currentVal <= randomValue)
+        while (currentVal < randomValue)
         {
             yield return new WaitForSeconds(Time.deltaTime);
 
             currentVal += sumValue;
             localS.value = currentVal;
             rivalS.value = currentVal - localS.maxValue;
-            localS.handleRect.GetComponent<Image>().enabled = currentVal < localS.maxValue;
+            localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
             rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
         }
 
         currentVal = randomValue;
         localS.value = currentVal;
         rivalS.value = currentVal - localS.maxValue;
+        localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
+        rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
 
         //Set Results 
         animator.SetTrigger(fightType);
@@ -1055,6 +1049,17 @@ public class Manager : MonoBehaviourPun, IPunObservable
         while (GameObject.Find("Team 1(Clone)") == null || GameObject.Find("Team 2(Clone)") == null)
         {
             yield return new WaitForSeconds(Time.deltaTime);
+        }
+
+        Transform rivalTeam = PhotonNetwork.IsMasterClient ? 
+            GameObject.Find("Team 1(Clone)").transform : GameObject.Find("Team 2(Clone)").transform;
+
+        myIA_Players = new GameObject[rivalTeam.childCount];
+
+        for (int i = 0; i < 4; i++)
+        {
+            rivalTeam.GetChild(i).transform.position = myPlayers[i].transform.position * -1 + new Vector3(0, 1.0f, 0);
+            myIA_Players[i] = rivalTeam.GetChild(i).gameObject;
         }
 
         introObj.SetActive(true);

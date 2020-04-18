@@ -1219,7 +1219,7 @@ PrefabInstance:
     - target: {fileID: 8884114884737457605, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_MaxValue
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8884114884737457605, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
@@ -1231,6 +1231,11 @@ PrefabInstance:
       propertyPath: m_HandleRect
       value: 
       objectReference: {fileID: 1749559754}
+    - target: {fileID: 8884114884737457605, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
+        type: 3}
+      propertyPath: m_MinValue
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2348716264489416399, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1239,7 +1244,7 @@ PrefabInstance:
     - target: {fileID: 2348716264489416399, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2348716264489416399, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
@@ -1249,7 +1254,7 @@ PrefabInstance:
     - target: {fileID: 2348716264489416399, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3052353997050764881, guid: 7350c2bd9cfe6fe4aaa30ee131cc3d62,
         type: 3}
@@ -3071,7 +3076,6 @@ MonoBehaviour:
   eneregyFill: 0.06
   lastPlayer: {fileID: 1349886834}
   animator: {fileID: 2086483703}
-  energy: 0
   fightRef: 0
   field: {fileID: 2091783943}
   myConfrontationImage: {fileID: 2145777233}

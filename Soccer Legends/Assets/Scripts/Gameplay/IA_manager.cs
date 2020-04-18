@@ -230,7 +230,7 @@ public class IA_manager : MonoBehaviour
         if (rival_in_our_Camp)
         {
             float y_value = cierre.GetComponent<MyPlayer_PVE>().startPosition.y;
-            if(Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
+            if(Vector2.Distance(ballPos, cierre.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
             cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
         }
         else
@@ -382,14 +382,14 @@ public class IA_manager : MonoBehaviour
         cierre = ia_players[0];
         Vector2 pivotObjectivePos = Vector2.zero;
         float y_value = cierre.GetComponent<MyPlayer_PVE>().startPosition.y;
-        if (Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
+        if (Vector2.Distance(ballPos, cierre.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
         cierre.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
         //Set Forwards
         y_value = closeForward.GetComponent<MyPlayer_PVE>().startPosition.y;
-        if (Vector2.Distance(ballPos, closeForward.transform.position) < 1.0f) y_value = ballPos.y;
+        if (Vector2.Distance(ballPos, closeForward.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
         closeForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerWithBall.transform.position.x, y_value, 0.0f });
         y_value = farForward.GetComponent<MyPlayer_PVE>().startPosition.y;
-        if (Vector2.Distance(ballPos, farForward.transform.position) < 1.0f) y_value = ballPos.y;
+        if (Vector2.Distance(ballPos, farForward.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
         farForward.GetComponent<MyPlayer_PVE>().MoveTo(new float[] { playerCloseToBall.transform.position.x, y_value, 0.0f });
     }
 

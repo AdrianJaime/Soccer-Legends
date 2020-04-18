@@ -25,7 +25,7 @@ public class PSOnlineManager : MonoBehaviourPun
             confirmTeam = true;
             StaticInfo.teamSelectedToPlay = mg.characterSelected;
             photonView.RPC("getRivalConfirmation", RpcTarget.Others);
-            Destroy(GameObject.Find("Canvas True"));
+            GameObject.Find("Canvas True").SetActive(false);
                 }
     }
 

@@ -29,7 +29,7 @@ public class PVP_IA_manager : MonoBehaviour
     private void Start()
     {
         mg = GameObject.Find("Manager").GetComponent<Manager>();
-        if (!playerTeam) teamStrategy = (IA_manager.strategy)Random.Range(0, 3);
+        playerTeam = ia_players[0].GetComponent<MyPlayer>().photonView.IsMine;
     }
 
     // Update is called once per frame
@@ -155,6 +155,8 @@ public class PVP_IA_manager : MonoBehaviour
 
     void equilibratedDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
+        float lagOffset = -0.5f;
+        ballPos += new Vector3(0, lagOffset, 0);
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject cierre, closeForward, farForward, playerWithBall, playerCloseToBall;
@@ -163,7 +165,7 @@ public class PVP_IA_manager : MonoBehaviour
         //Find player with Ball
         for (int i = 0; i < rivalPlayers.Length; i++)
         {
-            playerPositions[i] = rivalPlayers[i].transform.position;
+            playerPositions[i] = rivalPlayers[i].GetComponent<MyPlayer>().realOnlinePosition;
             //We also check if there is any player inside the IA team field for the pivot position
             if (!rival_in_our_Camp && Vector2.Distance(playerPositions[i], rivalPlayers[i].GetComponent<MyPlayer>().goal.transform.position) < 7.5f) rival_in_our_Camp = true;
             if (rivalPlayers[i].GetComponent<MyPlayer>().ball != null)
@@ -208,7 +210,7 @@ public class PVP_IA_manager : MonoBehaviour
         //Set objectives
         if (playerWithBall.GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
         {
-            closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y + lagOffset, 0.0f });
             Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
             farForward.GetComponent<MyPlayer>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
         }
@@ -224,8 +226,8 @@ public class PVP_IA_manager : MonoBehaviour
         if (rival_in_our_Camp)
         {
             float y_value = cierre.GetComponent<MyPlayer>().startPosition.y;
-            if (Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
-            cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
+            if (Vector2.Distance(ballPos, cierre.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
+            cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value + lagOffset, 0.0f });
         }
         else
         {
@@ -237,6 +239,8 @@ public class PVP_IA_manager : MonoBehaviour
 
     void offensiveDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
+        float lagOffset = -0.5f;
+        ballPos += new Vector3(0, lagOffset, 0);
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject pivot, closePlayer, farPlayer, playerWithBall, playerCloseToBall, playerCloseToGoal, goal;
         pivot = closePlayer = farPlayer = playerWithBall = playerCloseToBall = playerWithBall = null;
@@ -251,7 +255,7 @@ public class PVP_IA_manager : MonoBehaviour
         //Find player with Ball and closest to goal for the Pivot
         for (int i = 0; i < rivalPlayers.Length; i++)
         {
-            playerPositions[i] = rivalPlayers[i].transform.position;
+            playerPositions[i] = rivalPlayers[i].GetComponent<MyPlayer>().realOnlinePosition;
 
             if (rivalPlayers[i].GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER && Vector2.Distance(playerPositions[i], goal.transform.position) < minGoalDist)
             {
@@ -305,7 +309,7 @@ public class PVP_IA_manager : MonoBehaviour
         //Set objectives
         if (playerWithBall.GetComponent<MyPlayer>().formationPos != IA_manager.formationPositions.GOALKEEPER)
         {
-            closePlayer.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y, 0.0f });
+            closePlayer.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, playerWithBall.transform.position.y + lagOffset, 0.0f });
             Vector2 farForwardPos = playerWithBall.transform.position + (playerCloseToBall.transform.position - playerWithBall.transform.position) / 2.0f;
             farPlayer.GetComponent<MyPlayer>().MoveTo(new float[] { farForwardPos.x, farForwardPos.y - 0.5f, 0.0f });
             pivot.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, playerCloseToGoal.transform.position.y, 0.0f });
@@ -321,6 +325,8 @@ public class PVP_IA_manager : MonoBehaviour
 
     void defensiveDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
+        float lagOffset = -0.5f;
+        ballPos += new Vector3(0, lagOffset, 0);
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject cierre, closeForward, farForward, playerWithBall, playerCloseToBall;
@@ -329,7 +335,7 @@ public class PVP_IA_manager : MonoBehaviour
         //Find player with Ball
         for (int i = 0; i < rivalPlayers.Length; i++)
         {
-            playerPositions[i] = rivalPlayers[i].transform.position;
+            playerPositions[i] = rivalPlayers[i].GetComponent<MyPlayer>().realOnlinePosition;
             //We also check if there is any player inside the IA team field for the pivot position
             if (!rival_in_our_Camp && Vector2.Distance(playerPositions[i], rivalPlayers[i].GetComponent<MyPlayer>().goal.transform.position) < 7.5f) rival_in_our_Camp = true;
             if (rivalPlayers[i].GetComponent<MyPlayer>().ball != null)
@@ -376,15 +382,15 @@ public class PVP_IA_manager : MonoBehaviour
         cierre = ia_players[0];
         Vector2 pivotObjectivePos = Vector2.zero;
         float y_value = cierre.GetComponent<MyPlayer>().startPosition.y;
-        if (Vector2.Distance(ballPos, cierre.transform.position) < 1.0f) y_value = ballPos.y;
-        cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value, 0.0f });
+        if (Vector2.Distance(ballPos, cierre.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
+        cierre.GetComponent<MyPlayer>().MoveTo(new float[] { ballPos.x, y_value + lagOffset, 0.0f });
         //Set Forwards
         y_value = closeForward.GetComponent<MyPlayer>().startPosition.y;
-        if (Vector2.Distance(ballPos, closeForward.transform.position) < 1.0f) y_value = ballPos.y;
-        closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, y_value, 0.0f });
+        if (Vector2.Distance(ballPos, closeForward.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
+        closeForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerWithBall.transform.position.x, y_value + lagOffset, 0.0f });
         y_value = farForward.GetComponent<MyPlayer>().startPosition.y;
-        if (Vector2.Distance(ballPos, farForward.transform.position) < 1.0f) y_value = ballPos.y;
-        farForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerCloseToBall.transform.position.x, y_value, 0.0f });
+        if (Vector2.Distance(ballPos, farForward.transform.position) < separationDist / 2.0f) y_value = ballPos.y;
+        farForward.GetComponent<MyPlayer>().MoveTo(new float[] { playerCloseToBall.transform.position.x, y_value + lagOffset, 0.0f });
     }
 
     void equilibratedAtacking(GameObject[] rivalPlayers, Vector3 ballPos)

@@ -35,6 +35,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     public CharacterBasic characterBasic;
 
     private Vector3 smoothMove, aux;
+    public Vector3 realOnlinePosition { get { return smoothMove; } }
     private GameObject actualLine;
     private Manager mg;
     private List<Vector3> points;
@@ -59,7 +60,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         PhotonNetwork.SendRate = 20;
-        PhotonNetwork.SerializationRate = 15;
+        PhotonNetwork.SerializationRate = 20;
         Debug.Log(photonView.isActiveAndEnabled);
         mg = GameObject.Find("Manager").GetComponent<Manager>();
         strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
@@ -120,7 +121,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                    characterBasic.info.def);
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
-        //characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
+        characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
 
         //HARDCODED STATS 
@@ -185,10 +186,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
     private void smoothMovement()
     {
+        smoothMove = new Vector3(smoothMove.x, smoothMove.y, transform.position.y / 100.0f);
         if (Vector2.Distance(smoothMove, transform.position) < 0.75f)
         {
             //Vector3 nextPos;
-            Vector3 newPos = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 5.0f);
+            Vector3 newPos = Vector3.Lerp(transform.position, smoothMove, Time.deltaTime * 7.5f);
             velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
             transform.position = newPos;
             //nextPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
@@ -276,10 +278,13 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         }
         else if (stream.IsReading)
         {
+            //float playerLag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
+            //Vector3 lastSmoothPos = smoothMove;
+            //Vector3 facingDir = (lastSmoothPos - transform.position).normalized;
             smoothMove = (Vector3)stream.ReceiveNext();
             stunned = (bool)stream.ReceiveNext();
             GetComponent<Rigidbody2D>().velocity = (Vector2)stream.ReceiveNext();
-            //photonView.ViewID = (int)stream.ReceiveNext();
+            //smoothMove = smoothMove + (facingDir * (speed * playerLag));
         }
     }
 

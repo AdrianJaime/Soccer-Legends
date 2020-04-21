@@ -25,6 +25,12 @@ public class SpecialAttackInfo : ScriptableObject
             case "StatBuff":
                 specialAtack = new StatBuff(this);
                 break;
+            case "EnemyTEQDebuff":
+                specialAtack = new EnemyTEQDebuff(this);
+                break;
+            case "DeadlyStun":
+                specialAtack = new DeadlyStun(this);
+                break;
         }
     }
 }

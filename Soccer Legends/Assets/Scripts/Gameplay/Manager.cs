@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviourPun, IPunObservable
 {
-    enum fightState { FIGHT, SHOOT, NONE };
+    public enum fightState { FIGHT, SHOOT, NONE };
 
     public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar;
     [SerializeField]
@@ -39,7 +39,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     private bool shooting = false;
     private Vector2 score = new Vector2(0, 0);
     private int randomValue;
-    fightState state = fightState.FIGHT;
+    [System.NonSerialized]
+    public fightState state = fightState.FIGHT;
 
     Vector2[] swipes;
 
@@ -117,7 +118,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                 if (!PhotonNetwork.IsMasterClient)
-                    photonView.RPC("setFightDir", RpcTarget.MasterClient, 
+                    photonView.RPC("setFightDir", RpcTarget.Others, 
                         PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                 directionSlide.SetActive(false); specialSlide.SetActive(false);
             }
@@ -184,7 +185,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                     }
 
-                    if (!PhotonNetwork.IsMasterClient) photonView.RPC("setFightDir", RpcTarget.MasterClient, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+                    photonView.RPC("setFightDir", RpcTarget.Others, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
 
                     Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
                     " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
@@ -197,7 +198,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
             }
             updateUI_Stats();
             if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
-            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && PhotonNetwork.IsMasterClient) Fight(); 
+            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && PhotonNetwork.IsMasterClient)
+                Invoke("Fight", 0.5f);
         }
         
         else if (GameStarted && GameOn)
@@ -343,11 +345,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 fightRef = Time.time;
                 GameOn = false;
+                state = fightState.FIGHT;
                 directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
-                state = fightState.FIGHT;
                 //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
                 //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
                 player1.fightDir = null;
@@ -437,11 +439,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
             {
                 fightRef = Time.time;
                 GameOn = false;
+                state = fightState.SHOOT;
                 directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
-                state = fightState.SHOOT;
                 //if(player1 == null) player1 = PhotonView.Find(_player1).gameObject.GetComponent<MyPlayer>();
                 //if(IA_Player == null) IA_Player = PhotonView.Find(_player2).gameObject.GetComponent<MyPlayer>();
                 player1.fightDir = null;
@@ -642,8 +644,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void specialUpgrade(int _id)
     {
-        GameObject local = PhotonView.Find(_id).gameObject, rival;
-        SpecialAttackInfo specialInfo = local.GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo;
+        GameObject specialOwner = PhotonView.Find(_id).gameObject, rival;
+        SpecialAttackInfo specialInfo = specialOwner.GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo;
         if (_id == fightingIA)
         {
             rival = PhotonView.Find(fightingPlayer).gameObject;
@@ -654,7 +656,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             rival = PhotonView.Find(fightingIA).gameObject;
             mySpecialName.text = specialInfo.name;
         }
-        StartCoroutine(specialInfo.specialAtack.callSpecial(this, local, rival));
+        StartCoroutine(specialInfo.specialAtack.callSpecial(this, specialOwner, rival));
     }
 
     [PunRPC]

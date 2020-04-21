@@ -118,7 +118,7 @@ public class MyPlayer_PVE : MonoBehaviour
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
 
         //HARDCODED STATS
-        stats = new Stats(7, 5, 5);
+        stats = new Stats(700, 500, 500);
 
         if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
         {
@@ -333,7 +333,7 @@ public class MyPlayer_PVE : MonoBehaviour
             ball.transform.parent = null;
             ball = null;
         }
-        mg.resumeGame();
+        if (!mg.GameOn) mg.resumeGame();
         StartCoroutine(Blink(4.0f));
     }
 

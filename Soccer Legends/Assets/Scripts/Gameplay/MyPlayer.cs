@@ -361,7 +361,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             ball.transform.parent = null;
             ball = null;
         }
-        mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
+        if(!mg.GameOn)mg.photonView.RPC("resumeGame", RpcTarget.AllViaServer);
         StartCoroutine(Blink(4.0f));
     }
 

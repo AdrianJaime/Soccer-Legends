@@ -21,6 +21,9 @@ public class StatBuff : SpecialAttack
 
     public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner, GameObject rival)
     {
+        while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
+            rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+
         specialOwner.GetComponent<MyPlayer_PVE>().stats.shoot *= 3;
         specialOwner.GetComponent<MyPlayer_PVE>().stats.defense *= 3;
         specialOwner.GetComponent<MyPlayer_PVE>().stats.technique *= 3;
@@ -34,6 +37,9 @@ public class StatBuff : SpecialAttack
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
     {
+        while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
+            rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+
         specialOwner.GetComponent<MyPlayer>().stats.shoot *= 3;
         specialOwner.GetComponent<MyPlayer>().stats.defense *= 3;
         specialOwner.GetComponent<MyPlayer>().stats.technique *= 3;

@@ -89,7 +89,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3076,6 +3076,7 @@ MonoBehaviour:
   eneregyFill: 0.12
   lastPlayer: {fileID: 1349886834}
   animator: {fileID: 2086483703}
+  lastSpecialClip: {fileID: 7400000, guid: 6143ec858117dc94e9ecd8c57a0b18eb, type: 2}
   fightRef: 0
   field: {fileID: 2091783943}
   myConfrontationImage: {fileID: 2145777233}
@@ -3979,6 +3980,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640607495640033407, guid: 3b353b608938889469cdc9091c71f219,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640607495640033407, guid: 3b353b608938889469cdc9091c71f219,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b353b608938889469cdc9091c71f219, type: 3}

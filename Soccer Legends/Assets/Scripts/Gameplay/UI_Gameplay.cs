@@ -6,8 +6,9 @@ using Photon.Pun;
 
 public class UI_Gameplay : MonoBehaviour
 {
-   public void OnAnimationEventEnded(string anim)
+    public void OnAnimationEventEnded(string anim)
     {
+        GetComponent<Image>().enabled = false;
         if (GameObject.Find("Manager").GetComponent<PVE_Manager>() != null)
             GameObject.Find("Manager").GetComponent<PVE_Manager>().fightResult(anim);
         else if (GameObject.Find("Manager").GetComponent<Manager>() != null && PhotonNetwork.IsMasterClient)

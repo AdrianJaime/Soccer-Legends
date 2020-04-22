@@ -139,7 +139,7 @@ public class PVE_Manager : MonoBehaviour
                             .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
                         {
                             myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                            enemySpecialBar -= 1 / 5.0f;
+                            enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
                             specialUpgrade(true);
                         }
                         else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 4) == 0 ? "Risky" : "Normal";
@@ -149,7 +149,7 @@ public class PVE_Manager : MonoBehaviour
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
                             energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= 1.0f;
+                            energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
                             while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
                             energyBar.GetComponent<Slider>().value = energy;
                             specialUpgrade();
@@ -169,7 +169,7 @@ public class PVE_Manager : MonoBehaviour
                             .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
                             {
                                 myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                                enemySpecialBar -= 1 / 5.0f;
+                                enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
                                 specialUpgrade(true);
                             }
                         else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 3) == 0 ? "Risky" : "Normal";
@@ -179,7 +179,7 @@ public class PVE_Manager : MonoBehaviour
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
                             energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= 1.0f;
+                            energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
                             while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
                             energyBar.GetComponent<Slider>().value = energy;
                             specialUpgrade();

@@ -149,7 +149,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
                             energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= 1.0f;
+                            energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
                             while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
                             energyBar.GetComponent<Slider>().value = energy;
                             photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
@@ -170,7 +170,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
                             float energy = energyBar.GetComponent<Slider>().value + energySegments;
                             energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= 1.0f;
+                            energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
                             while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
                             energyBar.GetComponent<Slider>().value = energy;
                             photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);

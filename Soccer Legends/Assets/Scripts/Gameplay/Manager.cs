@@ -26,6 +26,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public GameObject lastPlayer;
     [SerializeField]
     Animator animator;
+    [SerializeField]
+    AnimationClip lastSpecialClip;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
@@ -296,6 +298,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         animator.ResetTrigger("Lose");
         animator.ResetTrigger("Win");
         animator.ResetTrigger("SpecialAttack");
+        animator.SetBool("SpecialAnim", false);
         fightRef = Time.time;
     }
 
@@ -532,7 +535,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     }
                 }
                 
-                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir, randomValue);
+                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, randomValue);
                 break;
             case fightState.SHOOT:
 
@@ -570,7 +573,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         fightResult = playerWithBall == PhotonView.Find(fightingPlayer).gameObject ? "Lose" : "Win";
                     }
                     }
-                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir, PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir, randomValue);
+                photonView.RPC("setAnims", RpcTarget.AllViaServer, fightType, fightResult, randomValue);
                 break;
             case fightState.NONE:
                 return;
@@ -706,19 +709,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     [PunRPC]
-    public void setAnims(string fightType, string fightResult, string fightDirLocal, string fightDirRival, int _randomValue)
+    public void setAnims(string fightType, string fightResult, int _randomValue)
     {
-        if(!PhotonNetwork.IsMasterClient)
+        if (!PhotonNetwork.IsMasterClient && fightType != "Elude")
         {
-            string aux = fightDirLocal;
-            fightDirLocal = fightDirRival;
-            fightDirRival = aux;
-            randomValue = _randomValue;
+            fightResult = fightResult == "Win" ? "Lose" : "Win";
         }
+
+        randomValue = _randomValue;
+
         //Set booleans
         animator.SetBool("PlayerHasBall", PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null ? true : false);
-        animator.SetBool("PlayerSpecial", fightDirLocal == "Special");
-        animator.SetBool("EnemySpecial", fightDirRival == "Special");
+        animator.SetBool("PlayerSpecial", PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special");
+        animator.SetBool("EnemySpecial", PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special");
 
         //Slider Effect waitTime 
         float waitTime = 0.0f;
@@ -727,9 +730,29 @@ public class Manager : MonoBehaviourPun, IPunObservable
             if (animator.GetBool("PlayerSpecial")) waitTime += 1.0f;
             if (animator.GetBool("EnemySpecial")) waitTime += 1.0f;
             animator.SetTrigger(fightType);
-        }
 
-        StartCoroutine(sliderEffect(waitTime, fightType, fightResult));
+        //Override 
+        AnimationClip newAnimationClip = null;
+        if (animator.GetBool("PlayerSpecial") && fightResult == "Win" && PhotonView.Find(fightingPlayer)
+            .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
+            newAnimationClip = PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo
+                .specialAttackInfo.specialClip;
+        else if (animator.GetBool("EnemySpecial") && fightResult == "Lose" && PhotonView.Find(fightingIA)
+            .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
+            newAnimationClip = PhotonView.Find(fightingIA).GetComponent<MyPlayer>().characterBasic.basicInfo
+                .specialAttackInfo.specialClip;
+        if (newAnimationClip != null)
+        {
+            AnimatorOverrideController aoc = new AnimatorOverrideController(animator.runtimeAnimatorController);
+
+            aoc[lastSpecialClip] = newAnimationClip;
+            animator.runtimeAnimatorController = aoc;
+            animator.runtimeAnimatorController.name = "OverrideRunTimeController";
+            animator.SetBool("SpecialAnim", true);
+        }
+    }
+
+    StartCoroutine(sliderEffect(waitTime, fightType, fightResult));
 
     }
 
@@ -790,15 +813,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
 
         //Set Results 
+        animator.gameObject.GetComponent<Image>().enabled = animator.GetBool("SpecialAnim");
         animator.SetTrigger(fightType);
-        if (PhotonNetwork.IsMasterClient || fightType == "Elude")
-        {
-            animator.SetTrigger(fightResult);
-        }
-        else
-        {
-            animator.SetTrigger(fightResult == "Win" ? "Lose" : "Win");
-        }
+        animator.SetTrigger(fightResult);
 
         //Slider ending 
         Image losingPlayer = localS.handleRect.GetComponent<Image>().enabled == false ?
@@ -829,6 +846,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void fightResult(string anim)
     {
+        if (anim == "SpecialAnim") anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0) 
+                 .GetComponent<Slider>().handleRect.GetComponent<Image>().enabled == false ? 
+                 "EnemyWinConfrontation" : "PlayerWinBattle";
         switch (anim)
         {
             case "PlayerWinBattle":

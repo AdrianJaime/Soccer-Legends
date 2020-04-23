@@ -61,7 +61,7 @@ public class DeadlyStun : SpecialAttack
 
         while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
 
-        if (!rival.GetComponent<MyPlayer_PVE>().stunned) yield break;
+        if (!rival.GetComponent<MyPlayer>().stunned) yield break;
 
         string score0 = mg.scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;
         string score1 = mg.scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;

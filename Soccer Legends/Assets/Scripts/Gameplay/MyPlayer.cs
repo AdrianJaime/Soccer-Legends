@@ -125,7 +125,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
 
         //HARDCODED STATS 
-        stats = new Stats(7, 5, 5);
+        stats = new Stats(700, 500, 500);
 
         SetName(gameObject.name);
     }

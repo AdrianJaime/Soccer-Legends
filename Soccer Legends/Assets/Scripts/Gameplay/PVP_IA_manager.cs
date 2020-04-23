@@ -156,7 +156,6 @@ public class PVP_IA_manager : MonoBehaviour
     void equilibratedDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         float lagOffset = -0.5f;
-        ballPos += new Vector3(0, lagOffset, 0);
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject cierre, closeForward, farForward, playerWithBall, playerCloseToBall;
@@ -240,7 +239,6 @@ public class PVP_IA_manager : MonoBehaviour
     void offensiveDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         float lagOffset = -0.5f;
-        ballPos += new Vector3(0, lagOffset, 0);
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject pivot, closePlayer, farPlayer, playerWithBall, playerCloseToBall, playerCloseToGoal, goal;
         pivot = closePlayer = farPlayer = playerWithBall = playerCloseToBall = playerWithBall = null;
@@ -326,7 +324,6 @@ public class PVP_IA_manager : MonoBehaviour
     void defensiveDeffending(GameObject[] rivalPlayers, Vector3 ballPos)
     {
         float lagOffset = -0.5f;
-        ballPos += new Vector3(0, lagOffset, 0);
         bool rival_in_our_Camp = false;
         Vector2[] playerPositions = new Vector2[rivalPlayers.Length];
         GameObject cierre, closeForward, farForward, playerWithBall, playerCloseToBall;

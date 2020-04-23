@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class MyPlayer_PVE : MonoBehaviour
 {
-
+    [Serializable]
     public class Stats
     {
         public int shoot, technique, defense;
@@ -21,6 +21,7 @@ public class MyPlayer_PVE : MonoBehaviour
         }
     }
 
+    [SerializeField]
     public Stats stats;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject ball, line;

@@ -5,9 +5,10 @@ using UnityEngine;
 
 
 
-public enum Rarity {SILVER, BRONZE, GOLD }
+public enum Rarity { BRONZE, SILVER, GOLD }
 public enum Type {RED,GREEN,YELLOW,PURPLE,BLUE }
-public enum Rol { PIVOT, WINGER, FIXO, GOALKEEPER } //PIVOT, ALA, CIERRE, PORTERO
+public enum Rol { PIVOT, WINGER, LAST_MAN, GOALKEEPER } //PIVOT, ALA, CIERRE, PORTERO
+public enum School { DEMONS, EGYPT, MUSIC, FLAVOR, ZODIAC}
 
 
 [System.Serializable]
@@ -23,6 +24,7 @@ public class CharacterInfo : ScriptableObject
     public Rarity rarity;
     public Type type;
     public Rol rol;
+    public School school;
 
     //info drawable
     public Sprite artworkIcon, 

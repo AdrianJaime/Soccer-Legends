@@ -879,9 +879,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         goalkeeper = PhotonView.Find(fightingPlayer).gameObject;
                         playerWithBall = PhotonView.Find(fightingIA).gameObject;
                         if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Risky")
-                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, goalkeeper.GetComponent<MyPlayer>().photonView.ViewID, -goalkeeper.GetComponent<MyPlayer>().stats.shoot / 3, 0, 0);
+                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, goalkeeper.GetComponent<MyPlayer>().photonView.ViewID, 0, 0, -goalkeeper.GetComponent<MyPlayer>().stats.defense / 3);
                         if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Risky")
-                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, 0, 0, -playerWithBall.GetComponent<MyPlayer>().stats.defense + playerWithBall.GetComponent<MyPlayer>().stats.defense / 3);
+                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, -playerWithBall.GetComponent<MyPlayer>().stats.shoot + playerWithBall.GetComponent<MyPlayer>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, true);
                     }
                 }
@@ -914,9 +914,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
                         goalkeeper = PhotonView.Find(fightingIA).gameObject;
                         if (goalkeeper.GetComponent<MyPlayer>().fightDir == "Risky")
-                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, goalkeeper.GetComponent<MyPlayer>().photonView.ViewID, -goalkeeper.GetComponent<MyPlayer>().stats.shoot / 3, 0, 0);
+                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, goalkeeper.GetComponent<MyPlayer>().photonView.ViewID, 0, 0, -goalkeeper.GetComponent<MyPlayer>().stats.defense / 3);
                         if (playerWithBall.GetComponent<MyPlayer>().fightDir == "Risky")
-                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, 0, 0, -playerWithBall.GetComponent<MyPlayer>().stats.defense + playerWithBall.GetComponent<MyPlayer>().stats.defense / 3);
+                            photonView.RPC("statsUpdate", RpcTarget.AllViaServer, -playerWithBall.GetComponent<MyPlayer>().stats.shoot + playerWithBall.GetComponent<MyPlayer>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer>().photonView.RPC("Lose", RpcTarget.AllViaServer, true);
                     }
                     else

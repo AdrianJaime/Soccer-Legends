@@ -815,9 +815,9 @@ public class PVE_Manager : MonoBehaviour
                         goalkeeper = myPlayers[fightingPlayer];
                         playerWithBall = myIA_Players[fightingIA];
                         if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
+                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.defense + playerWithBall.GetComponent<MyPlayer_PVE>().stats.defense / 3);
+                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().Lose(true);
                     }
                 }
@@ -849,9 +849,9 @@ public class PVE_Manager : MonoBehaviour
                         playerWithBall = myPlayers[fightingPlayer];
                         goalkeeper = myIA_Players[fightingIA];
                         if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
+                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
                         if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.defense + playerWithBall.GetComponent<MyPlayer_PVE>().stats.defense / 3);
+                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().Lose(true);
                     }
                     else

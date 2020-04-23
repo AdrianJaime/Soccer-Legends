@@ -32,6 +32,15 @@ public class SpecialAttackInfo : ScriptableObject
             case "DeadlyStun":
                 specialAtack = new DeadlyStun(this);
                 break;
+            case "DEFBuff":
+                specialAtack = new DEFBuff(this);
+;                break;
+            case "ZodiacATQBUFF":
+                specialAtack = new ZodiacATQBUFF(this);
+                break;
+            case "FlavorTEQBuff":
+                specialAtack = new FlavorTEQBuff(this);
+                break;
         }
     }
 }

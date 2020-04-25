@@ -7,10 +7,10 @@ public class RainbowInterpolationMaterial : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] Material rend;
-    [SerializeField] Color []colors;
+    [SerializeField] ColorsScriptableObject  colorsType;
 
     private void Start()
     {
-        rend.SetColor("Color_E42400F8", colors[(int)StaticInfo.characterToAcces.basicInfo.type]);
+        rend.SetColor("Color_E42400F8", colorsType.colors[(int)StaticInfo.characterToAcces.basicInfo.type]);
     }
 }

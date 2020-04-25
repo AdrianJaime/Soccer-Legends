@@ -27,11 +27,14 @@ public class CharacterInfo : ScriptableObject
     public School school;
 
     //info drawable
+    public GameObject animation2DObject;
+
     public Sprite artworkIcon, 
                   completeArtwork,
                   artworkConforntation,
                   artworkSelectorIcon,
-                  artworkResult;
+                  artworkResult,
+                  artworkPointsGameplay;
 
     //info special attack
     public SpecialAttackInfo specialAttackInfo;

@@ -17,10 +17,9 @@ public class InventoryCardRender : MonoBehaviour
 
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
-    //como marcos o cosas asi
-    [SerializeField] Sprite[] starSprites;
-    [SerializeField] Sprite[] borderColors;
-    [SerializeField] Color[] elementColors;
+    //como marcos o cosas asi 
+    [SerializeField] SpriteConpendiumSO borderColors,starSprites;
+    [SerializeField] ColorsScriptableObject elementColors;
 
     EquipamentManager manager;
 
@@ -73,9 +72,9 @@ public class InventoryCardRender : MonoBehaviour
         {
             artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
 
-            borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
-            elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
-            spriteStars.sprite = starSprites[(int)characterInfo.basicInfo.rarity];
+            borderColor.sprite = borderColors.sprites[(int)characterInfo.basicInfo.rarity];
+            elementColor.color = elementColors.colors[(int)characterInfo.basicInfo.type];
+            spriteStars.sprite = starSprites.sprites[(int)characterInfo.basicInfo.rarity];
 
             if (!characterInfo.info.owned)
             {

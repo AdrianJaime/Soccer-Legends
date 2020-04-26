@@ -39,7 +39,7 @@ public class cameraMovement : MonoBehaviour
                 fingerIdx = -1;
             }
         if(cameraBallOffset.y == -3) transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 1.5f, transform.position.z), Time.deltaTime);
-        else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 3.5f, transform.position.z), Time.deltaTime);
+        else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 2.5f, transform.position.z), Time.deltaTime);
             lastCamPosition = transform.position;
         }
     }

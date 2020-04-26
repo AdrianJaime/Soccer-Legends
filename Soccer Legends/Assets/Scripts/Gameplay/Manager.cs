@@ -124,7 +124,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                 directionSlide.SetActive(false); specialSlide.SetActive(false);
             }
-            if ((Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
+            if (directionSlide.activeSelf && (Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
             {
                 Touch swipe;
                 if (fingerIdx != 0) fingerIdx = getTouchIdx();
@@ -156,7 +156,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                             energyBar.GetComponent<Slider>().value = energy;
                             photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
                         }
-                        else if (swipes[0].x > swipes[1].x)
+                        else if (swipes[0].x < swipes[1].x)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
                             if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
@@ -177,7 +177,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                             energyBar.GetComponent<Slider>().value = energy;
                             photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
                         }
-                        else if (swipes[0].x > swipes[1].x)
+                        else if (swipes[0].x < swipes[1].x)
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
                             if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -215,7 +215,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             //Energy Bar
             if (energyBar.GetComponent<Slider>().value != 1) energyBar.GetComponent<Slider>().value += (eneregyFill * Time.deltaTime);
             else if (energySegments < 5) { energySegments++; energyBar.GetComponent<Slider>().value = 0; }
-            energyNumbers.GetComponent<Text>().text = energyNumbers.transform.GetChild(0).GetComponent<Text>().text = energySegments.ToString();
+            energyNumbers.GetComponent<TextMeshProUGUI>().SetText(energySegments.ToString());
             energy = energyBar.GetComponent<Slider>().value + energySegments;
         }
     }
@@ -349,7 +349,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 fightRef = Time.time;
                 GameOn = false;
                 state = fightState.FIGHT;
-                directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
@@ -443,7 +442,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 fightRef = Time.time;
                 GameOn = false;
                 state = fightState.SHOOT;
-                directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
@@ -683,7 +681,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
                     playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
-                case IA_manager.strategy.EQUILIBRATED:
+                case IA_manager.strategy.TECHNICAL:
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
@@ -1008,8 +1006,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [PunRPC]
     public void UpdateScoreBoard()
     {
-        scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
-        scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
+        scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
+        scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
         Debug.Log(score[0].ToString() + score[1].ToString());
     }
 
@@ -1047,6 +1045,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 rend.color = c;
             }
         }
+
+        yield return new WaitForSeconds(0.25f);
+        directionSlide.SetActive(true);
 
         while (!GameOn) { yield return new WaitForSeconds(Time.deltaTime); }
 

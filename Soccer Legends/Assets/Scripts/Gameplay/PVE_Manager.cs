@@ -112,7 +112,7 @@ public class PVE_Manager : MonoBehaviour
         }
         if (!GameOn && GameStarted)
         {
-           if(Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1)
+           if(directionSlide.activeSelf && Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1)
             {
                 Touch swipe;
                 if (fingerIdx != 0) fingerIdx = getTouchIdx();
@@ -154,7 +154,7 @@ public class PVE_Manager : MonoBehaviour
                             energyBar.GetComponent<Slider>().value = energy;
                             specialUpgrade();
                         }
-                        else if (swipes[0].x > swipes[1].x)
+                        else if (swipes[0].x < swipes[1].x)
                         {
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
                             if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
@@ -184,7 +184,7 @@ public class PVE_Manager : MonoBehaviour
                             energyBar.GetComponent<Slider>().value = energy;
                             specialUpgrade();
                         }
-                        else if (swipes[0].x > swipes[1].x)
+                        else if (swipes[0].x < swipes[1].x)
                         {
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
                             if (fightingPlayer == 3) statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 2);
@@ -212,7 +212,7 @@ public class PVE_Manager : MonoBehaviour
             //Energy Bar
             if (energyBar.GetComponent<Slider>().value != 1) energyBar.GetComponent<Slider>().value += (eneregyFill * Time.deltaTime);
             else if (energySegments < 5) { energySegments++; energyBar.GetComponent<Slider>().value = 0; }
-            energyNumbers.GetComponent<Text>().text = energyNumbers.transform.GetChild(0).GetComponent<Text>().text = energySegments.ToString();
+            energyNumbers.GetComponent<TextMeshProUGUI>().SetText(energySegments.ToString());
             if (enemySpecialBar != 1) enemySpecialBar += (eneregyFill * Time.deltaTime) / 5.0f;
         }
     }
@@ -304,7 +304,6 @@ public class PVE_Manager : MonoBehaviour
             {
                 GameOn = false;
                 state = fightState.FIGHT;
-                directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
@@ -376,7 +375,6 @@ public class PVE_Manager : MonoBehaviour
             {
                 GameOn = false;
                 state = fightState.SHOOT;
-                directionSlide.SetActive(true);
                 if (player1.characterBasic.basicInfo.specialAttackInfo.specialAtack
                     .canUseSpecial(this, player1.gameObject, energyBar.GetComponent<Slider>().value + energySegments))
                     specialSlide.SetActive(true);
@@ -634,7 +632,7 @@ public class PVE_Manager : MonoBehaviour
                     playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
                     playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
-                case IA_manager.strategy.EQUILIBRATED:
+                case IA_manager.strategy.TECHNICAL:
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
@@ -936,8 +934,8 @@ public class PVE_Manager : MonoBehaviour
 
     public void UpdateScoreBoard()
     {
-        scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
-        scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
+        scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().SetText(score[0].ToString());
+        scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().SetText(score[1].ToString());
     }
 
     public void Reposition()
@@ -974,6 +972,9 @@ public class PVE_Manager : MonoBehaviour
                 rend.color = c;
             }
         }
+
+        yield return new WaitForSeconds(0.25f);
+        directionSlide.SetActive(true);
 
         while (!GameOn) { yield return new WaitForSeconds(Time.deltaTime); }
 

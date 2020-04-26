@@ -6,7 +6,7 @@ using UnityEditor;
 public class IA_manager : MonoBehaviour
 {
     public enum formationPositions { ALA, PIVOT, CIERRE, GOALKEEPER}
-    public enum strategy { EQUILIBRATED, OFFENSIVE, DEFFENSIVE }
+    public enum strategy { TECHNICAL, OFFENSIVE, DEFFENSIVE }
     enum IA_State { FREE_BALL, PLAYER_HAS_BALL, IA_HAS_BALL}
 
     public strategy teamStrategy;
@@ -100,7 +100,7 @@ public class IA_manager : MonoBehaviour
     {
         switch (teamStrategy)
         {
-            case strategy.EQUILIBRATED:
+            case strategy.TECHNICAL:
                 equilibratedDeffending(_rivalPlayers, _ballPos);
                 break;
             case strategy.OFFENSIVE:
@@ -116,7 +116,7 @@ public class IA_manager : MonoBehaviour
     {
         switch (teamStrategy)
         {
-            case strategy.EQUILIBRATED:
+            case strategy.TECHNICAL:
                 equilibratedAtacking(_rivalPlayers, _ballPos);
                 break;
             case strategy.OFFENSIVE:
@@ -667,7 +667,7 @@ public class IA_manager : MonoBehaviour
                 case formationPositions.CIERRE:
                     switch (teamStrategy)
                     {
-                        case strategy.EQUILIBRATED:
+                        case strategy.TECHNICAL:
                             if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:
@@ -682,7 +682,7 @@ public class IA_manager : MonoBehaviour
                 case formationPositions.ALA:
                     switch (teamStrategy)
                     {
-                        case strategy.EQUILIBRATED:
+                        case strategy.TECHNICAL:
                             if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
                             else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
@@ -698,7 +698,7 @@ public class IA_manager : MonoBehaviour
                 case formationPositions.PIVOT:
                     switch (teamStrategy)
                     {
-                        case strategy.EQUILIBRATED:
+                        case strategy.TECHNICAL:
                             if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
                             else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
@@ -714,7 +714,7 @@ public class IA_manager : MonoBehaviour
                     switch (teamStrategy)
                     {
                         case strategy.DEFFENSIVE:
-                        case strategy.EQUILIBRATED:
+                        case strategy.TECHNICAL:
                             if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:

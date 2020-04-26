@@ -106,7 +106,7 @@ public class PVP_IA_manager : MonoBehaviour
     {
         switch (teamStrategy)
         {
-            case IA_manager.strategy.EQUILIBRATED:
+            case IA_manager.strategy.TECHNICAL:
                 equilibratedDeffending(_rivalPlayers, _ballPos);
                 break;
             case IA_manager.strategy.OFFENSIVE:
@@ -122,7 +122,7 @@ public class PVP_IA_manager : MonoBehaviour
     {
         switch (teamStrategy)
         {
-            case IA_manager.strategy.EQUILIBRATED:
+            case IA_manager.strategy.TECHNICAL:
                 equilibratedAtacking(_rivalPlayers, _ballPos);
                 break;
             case IA_manager.strategy.OFFENSIVE:
@@ -662,7 +662,7 @@ public class PVP_IA_manager : MonoBehaviour
                 case IA_manager.formationPositions.CIERRE:
                     switch (teamStrategy)
                     {
-                        case IA_manager.strategy.EQUILIBRATED:
+                        case IA_manager.strategy.TECHNICAL:
                             if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
                         case IA_manager.strategy.OFFENSIVE:
@@ -677,7 +677,7 @@ public class PVP_IA_manager : MonoBehaviour
                 case IA_manager.formationPositions.ALA:
                     switch (teamStrategy)
                     {
-                        case IA_manager.strategy.EQUILIBRATED:
+                        case IA_manager.strategy.TECHNICAL:
                             if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
                             else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
@@ -693,7 +693,7 @@ public class PVP_IA_manager : MonoBehaviour
                 case IA_manager.formationPositions.PIVOT:
                     switch (teamStrategy)
                     {
-                        case IA_manager.strategy.EQUILIBRATED:
+                        case IA_manager.strategy.TECHNICAL:
                             if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
                             else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
@@ -709,7 +709,7 @@ public class PVP_IA_manager : MonoBehaviour
                     switch (teamStrategy)
                     {
                         case IA_manager.strategy.DEFFENSIVE:
-                        case IA_manager.strategy.EQUILIBRATED:
+                        case IA_manager.strategy.TECHNICAL:
                             if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
                             break;
                         case IA_manager.strategy.OFFENSIVE:

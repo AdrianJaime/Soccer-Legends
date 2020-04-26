@@ -63,7 +63,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         PhotonNetwork.SerializationRate = 20;
         Debug.Log(photonView.isActiveAndEnabled);
         mg = GameObject.Find("Manager").GetComponent<Manager>();
-        strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<PVP_strategyUI>();
+        strategyScript = GameObject.Find("StrategiesAndEnergy uP").GetComponent<PVP_strategyUI>();
         setPlayer();
 
         //int[] starr = { Random.Range(1, 10), Random.Range(1, 10), Random.Range(1, 10) };

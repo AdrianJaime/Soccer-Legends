@@ -59,7 +59,7 @@ public class MyPlayer_PVE : MonoBehaviour
     private void Start()
     {
         mg = GameObject.Find("Manager").GetComponent<PVE_Manager>();
-        strategyScript = GameObject.Find("CallStrategiesButton").GetComponent<strategyUI>();
+        strategyScript = GameObject.Find("StrategiesAndEnergy uP").GetComponent<strategyUI>();
         if (transform.parent.name.Substring(0, 7) == "Team IA") iaPlayer = true;
         else iaPlayer = false;
         setPlayer();

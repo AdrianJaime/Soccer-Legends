@@ -90,36 +90,41 @@ public class MyPlayer_PVE : MonoBehaviour
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
+                //HARDCODED STATS
+                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(2700, 7700), Random.Range(4700, 8700));
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
+                //HARDCODED STATS
+                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(4700, 8700), Random.Range(2700, 7700));
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
+                //HARDCODED STATS
+                if (!iaPlayer) stats = new Stats(Random.Range(4700, 8700), Random.Range(2700, 7700), Random.Range(2700, 7700));
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
                 speed *= 3;
+                //HARDCODED STATS
+                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(2700, 7700), Random.Range(4700, 8700));
                 break;
             default:
 
                 break;
         }
 
-        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
+       if(iaPlayer) stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
                     characterBasic.info.def);
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
         characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
-
-        //HARDCODED STATS
-        if(!iaPlayer) stats = new Stats(Random.Range(670, 720), Random.Range(470, 520), Random.Range(470, 520));
 
         if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
         {
@@ -156,7 +161,10 @@ public class MyPlayer_PVE : MonoBehaviour
             else if (playerObjective != Vector3.zero)
             {
                 //Vector3 nextPos;
-                Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                float runSpeed = speed;
+                if (((!iaPlayer && mg.HasTheBall() == 2) || (iaPlayer && mg.HasTheBall() == 1)) && formationPos != IA_manager.formationPositions.GOALKEEPER)
+                    runSpeed += speed * 0.25f;
+                Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * runSpeed);
                 GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
                 velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
                 transform.position = newPos;

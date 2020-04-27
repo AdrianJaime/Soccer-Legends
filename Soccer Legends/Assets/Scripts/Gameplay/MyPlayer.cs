@@ -152,7 +152,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                     if (playerObjective != Vector3.zero)
                     {
                         //Vector3 nextPos;
-                        Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * speed);
+                        float runSpeed = speed;
+                        if (mg.HasTheBall() == 2) runSpeed += speed * 0.25f;
+                        Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * runSpeed);
                         GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
                         velocity0 = ((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity * Time.deltaTime).magnitude;
                         transform.position = newPos;

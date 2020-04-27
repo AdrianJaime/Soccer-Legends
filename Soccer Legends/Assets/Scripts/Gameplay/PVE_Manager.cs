@@ -135,7 +135,7 @@ public class PVE_Manager : MonoBehaviour
                     swipes[1] = swipe.position;
                     if (state == fightState.FIGHT)
                     {
-                        if (UnityEngine.Random.Range(0, 4) > 2 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
+                        if (UnityEngine.Random.Range(0, 4) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
                             .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
                         {
                             myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
@@ -165,7 +165,7 @@ public class PVE_Manager : MonoBehaviour
                     }
                     else if (state == fightState.SHOOT)
                     {
-                        if (UnityEngine.Random.Range(0, 4) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
+                        if (UnityEngine.Random.Range(0, 10) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
                             .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
                             {
                                 myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
@@ -997,6 +997,8 @@ public class PVE_Manager : MonoBehaviour
     IEnumerator intro()
     {
         introObj.SetActive(true);
+        introObj.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
+            introObj.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = StaticInfo.tournamentTeam.teamName;
         introObj.transform.GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text =
             introObj.transform.GetChild(1).GetChild(1).GetComponent<Text>().text = PlayerPrefs.GetString("username");
 

@@ -6,8 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New_SpecialAttackInfo", menuName = "Cards/NewSpecialAttack")]
 public class SpecialAttackInfo : ScriptableObject
 {
-    [SerializeField]
-    protected string name;
+    public string name;
     [SerializeField]
     protected string description;
     [SerializeField]
@@ -40,6 +39,12 @@ public class SpecialAttackInfo : ScriptableObject
                 break;
             case "FlavorTEQBuff":
                 specialAtack = new FlavorTEQBuff(this);
+                break;
+            case "BastetTEQDebuff":
+                specialAtack = new BastetTEQDebuff(this);
+                break;
+            case "RaDEFBuff":
+                specialAtack = new RaDEFBuff(this);
                 break;
         }
     }

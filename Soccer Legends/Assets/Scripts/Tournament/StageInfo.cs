@@ -11,6 +11,14 @@ using UnityEngine;
 public class StageInfo : ScriptableObject
 {
     //info player
+    [System.Serializable]
+    public struct stagePlayer
+    {
+        public CharacterInfo characterInfo;
+        public MyPlayer_PVE.Stats stageStats;
+    }
+    [SerializeField]
+    public List<stagePlayer> stageTeam;
     public string ID_DB;
     public string stageName;
     public string description;

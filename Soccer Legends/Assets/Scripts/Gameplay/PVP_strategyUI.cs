@@ -30,11 +30,13 @@ public class PVP_strategyUI : MonoBehaviour
             c.a = 1.0f;
             GetComponent<Image>().color = c;
         }
+        else if (!mg.GameOn) cooldown += Time.deltaTime;
     }
 
     public void setStrategy(int _strat)
     {
-        if (!mg.GameOn) return;
+        if (!mg.GameOn || (int)mg.myPlayers[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy == _strat)
+        { interacting = true; return; }
         interacting = true;
         mg.photonView.RPC("setStrategyBonus", Photon.Pun.RpcTarget.AllViaServer, _strat, mg.myPlayers[0].GetComponent<MyPlayer>().photonView.ViewID);
         cooldown = Time.time;

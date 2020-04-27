@@ -25,7 +25,7 @@ public class PlayerSelector_CardRender : MonoBehaviour
     [SerializeField] Sprite[] starSprites;
     [SerializeField] Color[] elementColors;
 
-    private void Start()
+        private void Start()
     {
         if(characterInfo != null&&UtdateAtInit)
             UpdateRender();
@@ -35,6 +35,17 @@ public class PlayerSelector_CardRender : MonoBehaviour
     {
         if (characterInfo != null)
         {
+            if (transform.GetSiblingIndex() <
+            StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage].stageTeam.Count &&
+            GetComponent<PlayerSelector_CardSelection>() == null)
+            {
+                characterInfo.basicInfo = StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage]
+                    .stageTeam[transform.GetSiblingIndex()].characterInfo;
+                MyPlayer_PVE.Stats statsData = StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage]
+                    .stageTeam[transform.GetSiblingIndex()].stageStats;
+                characterInfo.info = new CharacterBasic.data(statsData.shoot, statsData.technique, statsData.defense);
+                StaticInfo.rivalTeam.Add(characterInfo);
+            }
             if (characterInfo.basicInfo != null)
             {
                 Color opaque = artworkImage.color;

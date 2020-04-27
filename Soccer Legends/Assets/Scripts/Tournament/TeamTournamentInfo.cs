@@ -17,5 +17,6 @@ public class TeamTournamentInfo : ScriptableObject
     //info drawable
     public Sprite teamArtwork;
     public List<StageInfo> stages; //lista con la infromación básica de cada stage dentro de este instituto
+    public int selectedStage;
 
 }

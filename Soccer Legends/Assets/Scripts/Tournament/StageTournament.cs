@@ -47,6 +47,11 @@ public class StageTournament : MonoBehaviour
         artReward.sprite = basicInfo.imageReward;
     }
 
+    public void selectStage()
+    {
+        StaticInfo.tournamentTeam.selectedStage = transform.GetSiblingIndex();
+    }
+
     public void ChangeScene(string _sceneName)
     {
         SceneManager.LoadScene(_sceneName);

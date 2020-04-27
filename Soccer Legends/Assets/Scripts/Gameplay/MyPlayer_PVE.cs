@@ -119,7 +119,7 @@ public class MyPlayer_PVE : MonoBehaviour
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
 
         //HARDCODED STATS
-        stats = new Stats(Random.Range(670, 720), Random.Range(470, 520), Random.Range(470, 520));
+        if(!iaPlayer) stats = new Stats(Random.Range(670, 720), Random.Range(470, 520), Random.Range(470, 520));
 
         if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
         {

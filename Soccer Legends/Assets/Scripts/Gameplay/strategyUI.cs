@@ -21,7 +21,7 @@ public class strategyUI : MonoBehaviour
     void LateUpdate()
     {
         interacting = false;
-        if (cooldown + 10.0f < Time.time && !GetComponent<Image>().enabled)
+        if (cooldown + 10.0f < Time.time && GetComponent<Image>().color.a == 0.5f)
         {
             Button[] stratButtons = transform.GetComponentsInChildren<Button>(true);
             foreach (var _button in stratButtons) _button.interactable = true;
@@ -29,11 +29,13 @@ public class strategyUI : MonoBehaviour
             c.a = 1.0f;
             GetComponent<Image>().color = c;
         }
+        else if (!mg.GameOn) cooldown += Time.deltaTime;
     }
 
     public void setStrategy(int _strat)
     {
-        if (!mg.GameOn) return;
+        if (!mg.GameOn || (int)mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy == _strat)
+        { interacting = true; return; }
         interacting = true;
         mg.setStrategyBonus(_strat);
         cooldown = Time.time;

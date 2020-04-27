@@ -8,12 +8,8 @@ public class PlayerSelector_Representation : MonoBehaviour
     public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();
 
     /// <summary> Encapsular esto tambein para el inventario script comun
-    public List<CharacterInfo> listOfCharacters = new List<CharacterInfo>();//hay que sustituir esto desde el editor por leerlo desde la carpeta
-    public CharacterInfo FindCharacterByID(string dbID)
-    {
-        Debug.Log("ENTRO EN LA FUNCION DE BUSCAR");
-        return listOfCharacters.Find(x => x.ID == dbID);
-    }/// </summary>
+    [SerializeField]
+    InventoryManager inventory;
 
     public string[] arrayID = new string[8];//DESCARGAMOS UNA LISTA DE INTS con la info del ID de cada personaje equipado en el team desde BD A traves del identifierEquip
 
@@ -22,22 +18,27 @@ public class PlayerSelector_Representation : MonoBehaviour
     /// </summary>
     public CharacterBasic[] arrayCharactersBase ;//DESCARGAMOS UNA LISTA DE INTS con la info del ID de cada personaje equipado en el team desde BD A traves del identifierEquip
 
-
-
     // Start is called before the first frame update
     void Awake()
     {
-        LoadEquipBD();
+        StaticInfo.rivalTeam = new List<CharacterBasic>();
+        LoadEquipBD(inventory);
     }
-    public void LoadEquipBD()
+
+    public void LoadEquipBD(InventoryManager _inventory)
     {
         int aux = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            arrayID[i] = PlayerPrefs.GetString("team" + "1" + "slot" + i);
+            Debug.Log("In " + "team" + "1" + "slot" + i + " There is: " + PlayerPrefs.GetString("team" + "1" + "slot" + i));
+        }
         foreach (string value in arrayID)
         {
             if (value != null)
             {
                 Debug.Log("BUSCO UN ID EN EL INVENTARIO");
-                CharacterInfo auxCharacter = FindCharacterByID(value);
+                CharacterInfo auxCharacter = _inventory.FindCharacterByID(value).basicInfo;
                 if (auxCharacter != null)
                 {
                     Debug.Log("LO ENCONTRÉ");

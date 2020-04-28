@@ -76,6 +76,8 @@ public class InventoryCardRender : MonoBehaviour
             elementColor.color = elementColors.colors[(int)characterInfo.basicInfo.type];
             spriteStars.sprite = starSprites.sprites[(int)characterInfo.basicInfo.rarity];
 
+            powerText.text = "CP: " + characterInfo.power.ToString();
+
             if (!characterInfo.info.owned)
             {
                 artworkImage.color = Color.black;

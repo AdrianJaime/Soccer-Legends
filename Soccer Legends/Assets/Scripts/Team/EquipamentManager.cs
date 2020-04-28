@@ -22,7 +22,6 @@ public class EquipamentManager : MonoBehaviour
         actualEquip.LoadEquipBD(inventoryManager);
         //CARGAMOS EN LOS SLOTS
         LoadEquipInSlots();
-        Debug.Log("team" + actualEquip.identifierEquip + "slot" + 1);
     }
 
 
@@ -82,9 +81,8 @@ public class EquipamentManager : MonoBehaviour
             actualEquip.arrayEquiped[characterUsed] = false;
             actualEquip.listOfCharacters[characterUsed] = null;
             actualEquip.arraySlots[characterUsed].Set(null);
-           // PlayerPrefs.DeleteKey("team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament);
+            PlayerPrefs.DeleteKey("team" + actualEquip.identifierEquip + "slot" + identifierCurrentSlotEquipament);
             identifierCurrentSlotEquipament = -1;
-
         }
     }
 

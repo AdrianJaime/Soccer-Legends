@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-using Proyecto26;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 [System.Serializable]
 public class CharacterBasic : MonoBehaviour
@@ -34,6 +37,12 @@ public class CharacterBasic : MonoBehaviour
     public int currentExp=0;
     public int power=1;
 
+    private void Start()
+    {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+    }
     public CharacterBasic()
     {
 
@@ -68,15 +77,28 @@ public class CharacterBasic : MonoBehaviour
     public void LoadCharacterStats(string id)
     {
         //Recupera la info de base de datos a traves del basicInfo->ID
-        Debug.Log("Tus muertos 23");
+        string idstr;
 
-        RestClient.Get<data>("https://soccer-legends-db.firebaseio.com/player/0/characters/"+id+".json").Then(response =>
+        if (int.Parse(id) < 10) idstr = "00" + id;
+        else if (int.Parse(id) < 100) idstr = "0" + id;
+        else idstr = id;
+        FirebaseDatabase.DefaultInstance.GetReference("card").GetValueAsync().ContinueWith(task =>
         {
-            info = response;
+            if (task.IsFaulted) Debug.Log("F in the chat");
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                string statsSTR = snapshot.Child(idstr).Child("maxSTATS").GetValue(true).ToString();
+                string[] stats = statsSTR.Split('-');
+                info.atk = int.Parse(stats[0]);
+                info.teq = int.Parse(stats[1]);
+                info.def = int.Parse(stats[2]);
+                power = info.atk + info.teq + info.def;
+            }
         });
 
-        ///ALFA CHANGE
-        info.owned = true;
+                ///ALFA CHANGE
+                info.owned = true;
 
 
     }

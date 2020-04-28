@@ -92,10 +92,7 @@ def unwrap_kwarg_namespace(func):
   # When we move to python 3, getfullargspec so that we can tell the
   # difference between args and kwargs -- then this could be used for functions
   # that have both args and kwargs
-  if 'getfullargspec' in dir(inspect):
-    argspec = inspect.getfullargspec(func)
-  else:
-    argspec = inspect.getargspec(func)  # Python 2 compatibility.
+  argspec = inspect.getargspec(func)
 
   def wrapped(argparse_namespace=None, **kwargs):
     """Take a Namespace object and map it to kwargs.

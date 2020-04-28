@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -12,7 +13,6 @@ public class InventoryManager : MonoBehaviour
 
     public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();
     [SerializeField] CharactersCompendium listOfCharacters;
-
 
     private void Awake()
     {
@@ -35,7 +35,8 @@ public class InventoryManager : MonoBehaviour
                 actualCard.GetComponent<CharacterBasic>().basicInfo = listOfCharacters.compendiumOfCharacters[counterIdentifier];
                 //con la infromación basica cargamos los datos de BD con el ID del personaje.
                 actualCard.GetComponent<CharacterBasic>().LoadCharacterStats(actualCard.GetComponent<CharacterBasic>().basicInfo.ID);
-                
+
+
                 listActualCharacters.Add(actualCard.GetComponent<CharacterBasic>());//GUARDAMOS ESTO 
                 listOfSlots.Add(actualCard);
             }

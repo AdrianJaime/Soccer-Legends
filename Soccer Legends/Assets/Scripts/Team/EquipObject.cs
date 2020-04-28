@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 public class EquipObject : MonoBehaviour
 {
@@ -65,7 +68,6 @@ public class EquipObject : MonoBehaviour
                 }
                 else
                     Debug.Log("NO LO ENCONTRÉ DEJA DE PIRATEAR Y PONER IDs ERRONEOS");
-
                 aux++;
             }
         }

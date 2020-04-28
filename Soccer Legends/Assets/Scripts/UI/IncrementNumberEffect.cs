@@ -13,10 +13,10 @@ public class IncrementNumberEffect : MonoBehaviour
     private void Start()
     {
         scoreUI = gameObject.GetComponent<Text>();
-        StartIncrementEffect(0, 10000);
+        StartIncrementEffect(10000, 5000,false);
     }
 
-    public void StartIncrementEffect(int _startNumber, int _goalNumber) 
+    public void StartIncrementEffect(int _startNumber, int _goalNumber, bool _increment) 
     {
         actualNumber = _startNumber; goalNumber = _goalNumber;
 
@@ -29,14 +29,25 @@ public class IncrementNumberEffect : MonoBehaviour
         else if (timeIncrement < 0.1)
             incrementNumber = (int)(10/duration);
 
-        StartCoroutine(ScoreUpdater(timeIncrement));
+        if(_increment) StartCoroutine(ScoreUpdaterUp(timeIncrement));
+        else StartCoroutine(ScoreUpdaterDown(timeIncrement));
     }
 
-    private IEnumerator ScoreUpdater(float _incrementTimer)
+    private IEnumerator ScoreUpdaterUp(float _incrementTimer)
     {
         while (actualNumber < goalNumber)
         {
             actualNumber+=incrementNumber; 
+            scoreUI.text = actualNumber.ToString(); 
+            yield return new WaitForSeconds(_incrementTimer);
+        }
+        scoreUI.text = goalNumber.ToString();
+    }
+    IEnumerator ScoreUpdaterDown(float _incrementTimer)
+    {
+        while (actualNumber > goalNumber)
+        {
+            actualNumber-=incrementNumber; 
             scoreUI.text = actualNumber.ToString(); 
             yield return new WaitForSeconds(_incrementTimer);
         }

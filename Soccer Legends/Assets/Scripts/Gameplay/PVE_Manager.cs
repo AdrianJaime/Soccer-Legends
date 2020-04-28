@@ -142,7 +142,7 @@ public class PVE_Manager : MonoBehaviour
                             enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
                             specialUpgrade(true);
                         }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 4) == 0 ? "Risky" : "Normal";
+                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 100) < (15 + (60 - ((int)(timeStart + 60 - Time.time)))) ? "Risky" : "Normal";
 
                         if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {
@@ -172,7 +172,7 @@ public class PVE_Manager : MonoBehaviour
                                 enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
                                 specialUpgrade(true);
                             }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 3) == 0 ? "Risky" : "Normal";
+                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 100) < (35 + (60 - ((int)(timeStart + 60 - Time.time)))) ? "Risky" : "Normal";
 
                         if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {

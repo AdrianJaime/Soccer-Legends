@@ -24,7 +24,7 @@ public class RaDEFBuff : SpecialAttack
     public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner, GameObject rival)
     {
         while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
-            specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+            rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
         for(int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
@@ -44,7 +44,7 @@ public class RaDEFBuff : SpecialAttack
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
     {
         while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
-            specialOwner.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+            rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
         for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {

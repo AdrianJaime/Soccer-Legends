@@ -91,28 +91,28 @@ public class MyPlayer_PVE : MonoBehaviour
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(2700, 7700), Random.Range(4700, 8700));
+                if (!iaPlayer) stats = new Stats(Random.Range(700, 1700), Random.Range(700, 1700), Random.Range(1700, 2700));
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(4700, 8700), Random.Range(2700, 7700));
+                if (!iaPlayer) stats = new Stats(Random.Range(700, 1700), Random.Range(1700, 2700), Random.Range(700, 1700));
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(4700, 8700), Random.Range(2700, 7700), Random.Range(2700, 7700));
+                if (!iaPlayer) stats = new Stats(Random.Range(1700, 2700), Random.Range(700, 1700), Random.Range(700, 1700));
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
                 speed *= 3;
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(2700, 7700), Random.Range(2700, 7700), Random.Range(4700, 8700));
+                if (!iaPlayer) stats = new Stats(Random.Range(700, 1700), Random.Range(700, 1700), Random.Range(1700, 2700));
                 break;
             default:
 
@@ -174,7 +174,7 @@ public class MyPlayer_PVE : MonoBehaviour
             }
             else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             checkCollisionDetection();
-            if (iaPlayer && ball && Time.frameCount % 60 == 0) stablishNewShootCheck();
+            if (iaPlayer && ball != null && Time.frameCount % 60 == 0) stablishNewShootCheck();
         }
         else GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         //}

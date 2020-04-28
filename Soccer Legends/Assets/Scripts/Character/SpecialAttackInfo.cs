@@ -46,6 +46,12 @@ public class SpecialAttackInfo : ScriptableObject
             case "RaDEFBuff":
                 specialAtack = new RaDEFBuff(this);
                 break;
+            case "SagitarioSpecial":
+                specialAtack = new SagitarioSpecial(this);
+                break;
+            case "CapricornioSpecial":
+                specialAtack = new CapricornioSpecial(this);
+                break;
         }
     }
 }

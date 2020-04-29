@@ -36,9 +36,9 @@ public class CharacterLevelUp : MonoBehaviour
         }
         else
         {
-            oldAtkTextLocation.text = "ATK: " + character.info.atk.ToString();
-            oldTeqTextLocation.text = "TEQ: " + character.info.teq.ToString();
-            oldDefTextLocation.text = "DEF: " + character.info.def.ToString();
+            oldAtkTextLocation.text = character.info.atk.ToString();
+            oldTeqTextLocation.text = character.info.teq.ToString();
+            oldDefTextLocation.text = character.info.def.ToString();
             newAtkTextLocation.text = "ATK: -";
             newTeqTextLocation.text = "TEQ: -";
             newDefTextLocation.text = "DEF: -";

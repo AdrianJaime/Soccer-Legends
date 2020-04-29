@@ -82,23 +82,58 @@ public class CharacterBasic : MonoBehaviour
         if (int.Parse(id) < 10) idstr = "00" + id;
         else if (int.Parse(id) < 100) idstr = "0" + id;
         else idstr = id;
-        FirebaseDatabase.DefaultInstance.GetReference("card").GetValueAsync().ContinueWith(task =>
+
+        FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + idstr).GetValueAsync().ContinueWith(task =>
         {
             if (task.IsFaulted) Debug.Log("F in the chat");
             else if (task.IsCompleted)
             {
                 DataSnapshot snapshot = task.Result;
-                string statsSTR = snapshot.Child(idstr).Child("maxSTATS").GetValue(true).ToString();
-                string[] stats = statsSTR.Split('-');
-                info.atk = int.Parse(stats[0]);
-                info.teq = int.Parse(stats[1]);
-                info.def = int.Parse(stats[2]);
-                power = info.atk + info.teq + info.def;
+                int exp = int.Parse(snapshot.Child("exp").GetValue(true).ToString());
+                info.level = Mathf.RoundToInt(Mathf.Pow(exp * 5 / 4, 0.33333f));
+
+                //Guarrada ajustar exp
+                    //if (info.level > levelMAX) info.level = levelMAX;
+                    //FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + idstr + "/exp").SetValueAsync((Mathf.Pow(levelMAX, 3) * 4 / 5).ToString());
+                //////////
+                
+                info.owned = bool.Parse(snapshot.Child("owned").GetValue(true).ToString());
             }
         });
 
-                ///ALFA CHANGE
-                info.owned = true;
+        FirebaseDatabase.DefaultInstance.GetReference("card/" + idstr).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted) Debug.Log("F in the chat");
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                string maxStatsSTR = snapshot.Child("maxSTATS").GetValue(true).ToString();
+                string baseStatsSTR = snapshot.Child("baseSTATS").GetValue(true).ToString();
+                string[] maxStats = maxStatsSTR.Split('-');
+                string[] baseStats = baseStatsSTR.Split('-');
+
+                info.atk = Mathf.RoundToInt(int.Parse(baseStats[0]) + (int.Parse(maxStats[0]) - int.Parse(baseStats[0])) * ((float)info.level / 100));
+                info.teq = Mathf.RoundToInt(int.Parse(baseStats[1]) + (int.Parse(maxStats[1]) - int.Parse(baseStats[1])) * ((float)info.level / 100));
+                info.def = Mathf.RoundToInt(int.Parse(baseStats[2]) + (int.Parse(maxStats[2]) - int.Parse(baseStats[2])) * ((float)info.level / 100));
+
+                power = info.atk + info.teq + info.def;
+
+                switch (snapshot.Child("rarity").GetValue(true).ToString())
+                {
+                    case "bronze":
+                        levelMAX = 60;
+                        break;
+                    case "silver":
+                        levelMAX = 80;
+                        break;
+                    case "gold":
+                        levelMAX = 100;
+                        break;
+                }
+            }
+        });
+        ///ALFA CHANGE
+        //info.owned = true;
 
 
     }

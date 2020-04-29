@@ -35,10 +35,11 @@ public class PlayerSelector_CardRender : MonoBehaviour
     {
         if (characterInfo != null)
         {
-            if (transform.GetSiblingIndex() <
-            StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage].stageTeam.Count &&
-            GetComponent<PlayerSelector_CardSelection>() == null)
+            if (GetComponent<PlayerSelector_CardSelection>() == null && transform.parent.parent.parent.parent.parent
+                .GetComponent<PlayerSelector_Representation>() == null && transform.GetSiblingIndex() <
+                StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage].stageTeam.Count)
             {
+                transform.parent.parent.parent.parent.GetChild(1).GetComponent<Text>().text = StaticInfo.tournamentTeam.teamName;
                 characterInfo.basicInfo = StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage]
                     .stageTeam[transform.GetSiblingIndex()].characterInfo;
                 MyPlayer_PVE.Stats statsData = StaticInfo.tournamentTeam.stages[StaticInfo.tournamentTeam.selectedStage]

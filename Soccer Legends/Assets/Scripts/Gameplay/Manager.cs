@@ -371,7 +371,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
                     playerWithoutBall = PhotonView.Find(fightingIA).gameObject;
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
-                    statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "TEQ "
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "TEC "
                         + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString();
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
@@ -383,7 +383,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     playerWithBall = PhotonView.Find(fightingIA).gameObject;
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
-                        playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() + " TEQ";
+                        playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() + " TEC";
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                         + playerWithoutBall.GetComponent<MyPlayer>().stats.defense.ToString();
@@ -465,7 +465,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 playerWithBall = PhotonView.Find(fightingPlayer).gameObject;
                 goalkeeper = PhotonView.Find(fightingIA).gameObject;
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
-                statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "ATQ "
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "ATK "
                         + playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString();
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
@@ -477,7 +477,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 playerWithBall = PhotonView.Find(fightingIA).gameObject;
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
-                        playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString() + " ATQ";
+                        playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString() + " ATK";
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                     + goalkeeper.GetComponent<MyPlayer>().stats.defense.ToString();
@@ -598,10 +598,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 case "DEF":
                     uiNumStat[i] = fightingPlayers[i].stats.defense;
                     break;
-                case "TEQ":
+                case "TEC":
                     uiNumStat[i] = fightingPlayers[i].stats.technique;
                     break;
-                case "ATQ":
+                case "ATK":
                     uiNumStat[i] = fightingPlayers[i].stats.shoot;
                     break;
             }
@@ -676,31 +676,34 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
+                    {
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
                     }
                     playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
                 case IA_manager.strategy.TECHNICAL:
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
                     }
                     else if (lastStrat == IA_manager.strategy.DEFFENSIVE)
                     {
                         playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
                     }
+                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 2;
                     break;
                 case IA_manager.strategy.OFFENSIVE:
                     if (lastStrat == IA_manager.strategy.DEFFENSIVE)
                     {
                         playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
+                    {
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
                     }
                     playerScript.stats.shoot = playerScript.stats.shoot + playerScript.stats.shoot / 2;
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
             }
         }

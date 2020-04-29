@@ -323,7 +323,7 @@ public class PVE_Manager : MonoBehaviour
                     playerWithBall = myPlayers[fightingPlayer];
                     playerWithoutBall = myIA_Players[fightingIA];
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
-                    statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "TEQ "
+                    statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "TEC "
                         + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString();
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
@@ -335,7 +335,7 @@ public class PVE_Manager : MonoBehaviour
                     playerWithBall = myIA_Players[fightingIA];
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
-                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() + " TEQ";
+                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() + " TEC";
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                         + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
@@ -398,7 +398,7 @@ public class PVE_Manager : MonoBehaviour
                 playerWithBall = myPlayers[fightingPlayer];
                 goalkeeper = myIA_Players[fightingIA];
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
-                statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "ATQ "
+                statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "ATK "
                         + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString();
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
@@ -410,7 +410,7 @@ public class PVE_Manager : MonoBehaviour
                 playerWithBall = myIA_Players[fightingIA];
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
-                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() + " ATQ";
+                        playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() + " ATK";
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                     + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
@@ -541,10 +541,10 @@ public class PVE_Manager : MonoBehaviour
                 case "DEF":
                     uiNumStat[i] = fightingPlayers[i].stats.defense;
                     break;
-                case "TEQ":
+                case "TEC":
                     uiNumStat[i] = fightingPlayers[i].stats.technique;
                     break;
-                case "ATQ":
+                case "ATK":
                     uiNumStat[i] = fightingPlayers[i].stats.shoot;
                     break;
             }
@@ -627,31 +627,34 @@ public class PVE_Manager : MonoBehaviour
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
+                    {
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
                     }
                     playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
                 case IA_manager.strategy.TECHNICAL:
                     if (lastStrat == IA_manager.strategy.OFFENSIVE)
                     {
                         playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
                     }
                     else if (lastStrat == IA_manager.strategy.DEFFENSIVE)
                     {
                         playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
                     }
+                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 2;
                     break;
                 case IA_manager.strategy.OFFENSIVE:
                     if (lastStrat == IA_manager.strategy.DEFFENSIVE)
                     {
                         playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 5;
+                    }
+                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
+                    {
+                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
                     }
                     playerScript.stats.shoot = playerScript.stats.shoot + playerScript.stats.shoot / 2;
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 4;
                     break;
             }
         }
@@ -1019,7 +1022,7 @@ public class PVE_Manager : MonoBehaviour
         enemyOutroPoints.transform.GetChild(0).GetComponent<Text>().text = enemyOutroPoints.text = score[1].ToString();
 
         yield return new WaitForSeconds(4.0f);
-        SceneManager.LoadScene("MainMenuScene");
+        SceneManager.LoadScene("ResultRewardScene");
     }
 
     public int getTouchIdx()

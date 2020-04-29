@@ -29,18 +29,19 @@ public class CapricornioSpecial : SpecialAttack
         specialOwner.GetComponent<MyPlayer_PVE>().stats.technique +=
                     (specialOwner.GetComponent<MyPlayer_PVE>().stats.technique * 50) / 100;
 
-        int counter = 0;
+        //Esperamos a que se salga del combate
+        while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
+
+        int counter = 1;
         while(counter < 3)
         {
             counter++;
 
-            //Esperamos a que se salga del combate
-            while(!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
+            
             //Esperamos a que se entre en un nuevo combate
             while (mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-            //Esperamos a que elijan los jugadores
-            while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
-            rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+            //Esperamos a que se salga del combate
+            while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
             //Se repite el ciclo hasta que al llegar aqui el contador sea 3
         }
 
@@ -58,18 +59,18 @@ public class CapricornioSpecial : SpecialAttack
         specialOwner.GetComponent<MyPlayer>().stats.technique +=
                     (specialOwner.GetComponent<MyPlayer>().stats.technique * 50) / 100;
 
-        int counter = 0;
+        //Esperamos a que se salga del combate
+        while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
+
+        int counter = 1;
         while (counter < 3)
         {
             counter++;
 
-            //Esperamos a que se salga del combate
-            while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
             //Esperamos a que se entre en un nuevo combate
             while (mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-            //Esperamos a que elijan los jugadores
-            while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
-            rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
+            //Esperamos a que se salga del combate
+            while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
             //Se repite el ciclo hasta que al llegar aqui el contador sea 3
         }
 

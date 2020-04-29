@@ -91,28 +91,28 @@ public class MyPlayer_PVE : MonoBehaviour
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(1300, 2200), Random.Range(1300, 2200), Random.Range(2200, 3200));
+                if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(1300, 2200), Random.Range(2200, 3200), Random.Range(1300, 2200));
+                if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(3200, 4200), Random.Range(2300, 3200));
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(2200, 3200), Random.Range(1300, 2200), Random.Range(1300, 2200));
+                if (!iaPlayer) stats = new Stats(Random.Range(3200, 4200), Random.Range(2300, 3200), Random.Range(2300, 3200));
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
                 speed *= 3;
                 //HARDCODED STATS
-                if (!iaPlayer) stats = new Stats(Random.Range(1300, 2200), Random.Range(1300, 2200), Random.Range(2200, 3200));
+                if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             default:
 

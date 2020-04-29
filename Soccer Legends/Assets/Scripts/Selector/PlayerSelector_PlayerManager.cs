@@ -16,6 +16,7 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
 
     private void Awake()
     {
+        StaticInfo.rivalTeam = new List<CharacterBasic>();
         LoadEquipBD();
     }
 
@@ -52,6 +53,7 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
     private void Start()
     {
         confirmationButton.interactable = false;
+        transform.GetChild(0).GetChild(1).GetComponent<Text>().text = PlayerPrefs.GetString("username");
     }
 
     public bool AddPlayerSelected(CharacterBasic player)

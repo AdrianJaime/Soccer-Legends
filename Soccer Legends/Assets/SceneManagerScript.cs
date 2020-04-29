@@ -9,4 +9,10 @@ public class SceneManagerScript : MonoBehaviour
     {
         SceneManager.LoadScene(_sceneName);
     }
+
+    public void LoadMatch()
+    {
+        if(GetComponent<FSOnlineManager>() == null) SceneManager.LoadScene("Match-PVE_test");
+        else SceneManager.LoadScene("Match");
+    }
 }

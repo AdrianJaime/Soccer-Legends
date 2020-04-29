@@ -52,6 +52,15 @@ public class SpecialAttackInfo : ScriptableObject
             case "CapricornioSpecial":
                 specialAtack = new CapricornioSpecial(this);
                 break;
+            case "ClassicaSpecial":
+                specialAtack = new ClassicaSpecial(this);
+                break;
+            case "LuciferSpecial":
+                specialAtack = new LuciferSpecial(this);
+                break;
+            case "VainillaSpecial":
+                specialAtack = new VainillaSpecial(this);
+                break;
         }
     }
 }

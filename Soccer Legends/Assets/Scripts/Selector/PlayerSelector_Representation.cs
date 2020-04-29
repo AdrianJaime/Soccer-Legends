@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerSelector_Representation : MonoBehaviour
+public class PlayerSelector_Representation : MonoBehaviourPun, IPunObservable
 {
 
     public List<CharacterBasic> listActualCharacters = new List<CharacterBasic>();
 
     /// <summary> Encapsular esto tambein para el inventario script comun
     [SerializeField]
-    InventoryManager inventory;
+    CharactersCompendium inventory;
 
     public string[] arrayID = new string[8];//DESCARGAMOS UNA LISTA DE INTS con la info del ID de cada personaje equipado en el team desde BD A traves del identifierEquip
 
@@ -21,29 +22,38 @@ public class PlayerSelector_Representation : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        StaticInfo.rivalTeam = new List<CharacterBasic>();
-        LoadEquipBD(inventory);
+        sendTeam();
     }
 
-    public void LoadEquipBD(InventoryManager _inventory)
+    public void sendTeam()
     {
-        int aux = 0;
         for (int i = 0; i < 8; i++)
         {
             arrayID[i] = PlayerPrefs.GetString("team" + "1" + "slot" + i);
             Debug.Log("In " + "team" + "1" + "slot" + i + " There is: " + PlayerPrefs.GetString("team" + "1" + "slot" + i));
         }
-        foreach (string value in arrayID)
+        photonView.RPC("setTeam", RpcTarget.OthersBuffered, arrayID);
+    }
+
+    [PunRPC]
+    public void setTeam(string[] _arrayID)
+    {
+        transform.GetChild(0).GetChild(1).GetComponent<UnityEngine.UI.Text>().text = 
+            PhotonNetwork.PlayerListOthers[0].NickName;
+        int aux = 0;
+        foreach (string value in _arrayID)
         {
             if (value != null)
             {
                 Debug.Log("BUSCO UN ID EN EL INVENTARIO");
-                CharacterInfo auxCharacter = _inventory.FindCharacterByID(value).basicInfo;
+                CharacterInfo auxCharacter = inventory.compendiumOfCharacters.Find(x => x.ID == value);
                 if (auxCharacter != null)
                 {
                     Debug.Log("LO ENCONTRÉ");
-                    listActualCharacters[aux].basicInfo=auxCharacter;
-
+                    transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(aux)
+                        .GetComponent<CharacterBasic>().basicInfo = auxCharacter;
+                    transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(aux)
+                        .GetComponent<PlayerSelector_CardRender>().UpdateRender();
                 }
                 else
                     Debug.Log("NO LO ENCONTRÉ DEJA DE PIRATEAR Y PONER IDs ERRONEOS");
@@ -54,4 +64,7 @@ public class PlayerSelector_Representation : MonoBehaviour
         }
     }
 
-}
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
+    { }
+
+    }

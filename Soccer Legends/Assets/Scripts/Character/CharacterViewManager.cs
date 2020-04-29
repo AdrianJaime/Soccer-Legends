@@ -10,7 +10,7 @@ public class CharacterViewManager : MonoBehaviour
 {
     private CharacterBasic actualCharacter;
 
-    [SerializeField] Text pivotStat, defenseStat, technicalStat, nameCharacter, levelCharacter, descriptionCharacter, decriptionSpecialAttack;
+    [SerializeField] Text pivotStat, defenseStat, technicalStat, nameCharacter, levelCharacter, descriptionCharacter, decriptionSpecialAttack, combatPower;
     [SerializeField] Image imageCharacter, imageFillNameRarity, starsImage, colorTypeElement;
 
     [SerializeField] ColorsScriptableObject colorsRarity,colorsType;
@@ -33,6 +33,7 @@ public class CharacterViewManager : MonoBehaviour
         pivotStat.text = actualCharacter.info.atk.ToString();
         defenseStat.text = actualCharacter.info.def.ToString();
         technicalStat.text = actualCharacter.info.teq.ToString();
+        combatPower.text = actualCharacter.power.ToString();
 
         //Image
         ///OLD 

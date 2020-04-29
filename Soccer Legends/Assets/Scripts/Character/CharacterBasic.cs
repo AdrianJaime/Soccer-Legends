@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-using Proyecto26;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 [System.Serializable]
 public class CharacterBasic : MonoBehaviour
@@ -34,6 +37,12 @@ public class CharacterBasic : MonoBehaviour
     public int currentExp=0;
     public int power=1;
 
+    private void Start()
+    {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+    }
     public CharacterBasic()
     {
 
@@ -68,15 +77,63 @@ public class CharacterBasic : MonoBehaviour
     public void LoadCharacterStats(string id)
     {
         //Recupera la info de base de datos a traves del basicInfo->ID
-        Debug.Log("Tus muertos 23");
+        string idstr;
 
-        RestClient.Get<data>("https://soccer-legends-db.firebaseio.com/player/0/characters/"+id+".json").Then(response =>
+        if (int.Parse(id) < 10) idstr = "00" + id;
+        else if (int.Parse(id) < 100) idstr = "0" + id;
+        else idstr = id;
+
+        FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + idstr).GetValueAsync().ContinueWith(task =>
         {
-            info = response;
+            if (task.IsFaulted) Debug.Log("F in the chat");
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                int exp = int.Parse(snapshot.Child("exp").GetValue(true).ToString());
+                info.level = Mathf.RoundToInt(Mathf.Pow(exp * 5 / 4, 0.33333f));
+
+                //Guarrada ajustar exp
+                    //if (info.level > levelMAX) info.level = levelMAX;
+                    //FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + idstr + "/exp").SetValueAsync((Mathf.Pow(levelMAX, 3) * 4 / 5).ToString());
+                //////////
+                
+                info.owned = bool.Parse(snapshot.Child("owned").GetValue(true).ToString());
+            }
         });
 
+        FirebaseDatabase.DefaultInstance.GetReference("card/" + idstr).GetValueAsync().ContinueWith(task =>
+        {
+            if (task.IsFaulted) Debug.Log("F in the chat");
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                string maxStatsSTR = snapshot.Child("maxSTATS").GetValue(true).ToString();
+                string baseStatsSTR = snapshot.Child("baseSTATS").GetValue(true).ToString();
+                string[] maxStats = maxStatsSTR.Split('-');
+                string[] baseStats = baseStatsSTR.Split('-');
+
+                info.atk = Mathf.RoundToInt(int.Parse(baseStats[0]) + (int.Parse(maxStats[0]) - int.Parse(baseStats[0])) * ((float)info.level / 100));
+                info.teq = Mathf.RoundToInt(int.Parse(baseStats[1]) + (int.Parse(maxStats[1]) - int.Parse(baseStats[1])) * ((float)info.level / 100));
+                info.def = Mathf.RoundToInt(int.Parse(baseStats[2]) + (int.Parse(maxStats[2]) - int.Parse(baseStats[2])) * ((float)info.level / 100));
+
+                power = info.atk + info.teq + info.def;
+
+                switch (snapshot.Child("rarity").GetValue(true).ToString())
+                {
+                    case "bronze":
+                        levelMAX = 60;
+                        break;
+                    case "silver":
+                        levelMAX = 80;
+                        break;
+                    case "gold":
+                        levelMAX = 100;
+                        break;
+                }
+            }
+        });
         ///ALFA CHANGE
-        info.owned = true;
+        //info.owned = true;
 
 
     }

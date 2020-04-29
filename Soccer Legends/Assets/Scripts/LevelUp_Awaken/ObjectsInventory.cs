@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 
 public class ObjectsInventory : MonoBehaviour
 {
@@ -18,7 +21,9 @@ public class ObjectsInventory : MonoBehaviour
     {
         //1. Leemos la base de datos y guardamos los datos del los consumibles actuales del juegador en listRealDataConsum
         //
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
         //2. Creamos los slots con la info previa
         //
         CreateObjects();

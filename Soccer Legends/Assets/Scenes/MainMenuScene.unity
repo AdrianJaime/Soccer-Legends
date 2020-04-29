@@ -1076,7 +1076,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 100 000 000
+  m_Text: 
 --- !u!222 &513008393
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1417,15 +1417,15 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7697394028578515398, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3938899975818610895, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
         type: 3}
       propertyPath: m_Color.r
       value: 0.9747988
+      objectReference: {fileID: 0}
+    - target: {fileID: 7697394028578515398, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad, type: 3}
@@ -1633,6 +1633,26 @@ PrefabInstance:
     - target: {fileID: 1013571430194655157, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3938899975818610895, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3938899975818610895, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.098039225
+      objectReference: {fileID: 0}
+    - target: {fileID: 3938899975818610895, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7697394028578515398, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6179512964746773695, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
@@ -1854,7 +1874,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 12
+  m_Text: 
 --- !u!222 &628314817
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2521,7 +2541,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'RANK: 99'
+  m_Text: 
 --- !u!222 &767581402
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3469,6 +3489,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 978310241}
   m_CullTransparentMesh: 0
+--- !u!114 &1032883811 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6179512964746773695, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 588449641}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1059972904
 GameObject:
   m_ObjectHideFlags: 0
@@ -4344,6 +4376,7 @@ GameObject:
   - component: {fileID: 1414440392}
   - component: {fileID: 1414440391}
   - component: {fileID: 1414440394}
+  - component: {fileID: 1414440395}
   m_Layer: 0
   m_Name: 'Main Camera '
   m_TagString: MainCamera
@@ -4427,6 +4460,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ec5b4ef1cd31a468bf740df241489b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1414440395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414440390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f888295feb71b4fa5f4111b5d93c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stamina: 0
+  maxSta: 0
+  info: 0
+  timeLeft: {fileID: 588681410}
+  timeLeftSH: {fileID: 831493326}
+  progress: {fileID: 1331424410}
+  progressSH: {fileID: 1176525259}
+  playerName: {fileID: 1953492762}
+  playerNameSH: {fileID: 25982404}
+  coin: {fileID: 513008392}
+  ball: {fileID: 628314816}
+  rank: {fileID: 767581401}
+  rankSH: {fileID: 1946871019}
+  staSlider: {fileID: 1032883811}
 --- !u!1 &1440808380
 GameObject:
   m_ObjectHideFlags: 0
@@ -4925,7 +4984,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Seficlout
+  m_Text: 
 --- !u!222 &1953492763
 CanvasRenderer:
   m_ObjectHideFlags: 0

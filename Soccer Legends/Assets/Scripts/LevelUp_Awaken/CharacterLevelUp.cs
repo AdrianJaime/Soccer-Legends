@@ -10,6 +10,7 @@ public class CharacterLevelUp : MonoBehaviour
     [SerializeField] Text oldAtkTextLocation, oldTeqTextLocation, oldDefTextLocation;
     [SerializeField] Text newAtkTextLocation, newTeqTextLocation, newDefTextLocation;
     [SerializeField] Text level, characterName;
+    [SerializeField] Transform placeToSpawnAnimation;
 
     CharacterBasic character;
     CharacterBasic newCharacter;
@@ -18,8 +19,22 @@ public class CharacterLevelUp : MonoBehaviour
         character = new CharacterBasic(StaticInfo.characterToAcces);
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
-        artworkLocation.sprite = character.basicInfo.completeArtwork;
         characterName.text = character.basicInfo.nameCharacter;
+
+
+        if (character.basicInfo.animation2DObject == null)
+        {
+            artworkLocation.sprite = character.basicInfo.completeArtwork;
+            artworkLocation.gameObject.SetActive(true);
+        }
+        else
+        {
+            //ReloadDBDataByAlejandro();
+            artworkLocation.gameObject.SetActive(false);
+            Instantiate(character.basicInfo.animation2DObject, placeToSpawnAnimation);
+        }
+
+
 
         UpdateUI();
     }

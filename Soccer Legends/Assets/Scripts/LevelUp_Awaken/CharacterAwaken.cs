@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CharacterAwaken : MonoBehaviour
 {
     [SerializeField] Image artworkLocation;
+    [SerializeField] Transform placeToSpawnAnimation;
 
     [SerializeField] Text levelMax,characterName;
 
@@ -16,9 +17,20 @@ public class CharacterAwaken : MonoBehaviour
         character = new CharacterBasic(StaticInfo.characterToAcces);
         newCharacter = new CharacterBasic(character);
         //get character from database with the id that hsa shared static info en vez de charazterbasic variable
-        artworkLocation.sprite = character.basicInfo.completeArtwork;
         characterName.text = character.basicInfo.nameCharacter;
 
+
+        if (character.basicInfo.animation2DObject == null)
+        {
+            artworkLocation.sprite = character.basicInfo.completeArtwork;
+            artworkLocation.gameObject.SetActive(true);
+        }
+        else
+        {
+            //ReloadDBDataByAlejandro();
+            artworkLocation.gameObject.SetActive(false);
+            Instantiate(character.basicInfo.animation2DObject, placeToSpawnAnimation);
+        }
 
         UpdateUI();
     }

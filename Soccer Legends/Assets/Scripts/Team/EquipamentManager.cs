@@ -66,9 +66,10 @@ public class EquipamentManager : MonoBehaviour
                 actualEquip.listOfCharacters[identifierCurrentSlotEquipament] = _character;
                 actualEquip.arraySlots[identifierCurrentSlotEquipament].Set(_character);
             }
+            if (identifierCurrentSlotEquipament == 0)
+                StaticInfo.firstCharcter = _character;
             identifierCurrentSlotEquipament = -1;
         }
-
 
     }
 

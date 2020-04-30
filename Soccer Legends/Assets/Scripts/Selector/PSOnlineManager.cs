@@ -23,7 +23,7 @@ public class PSOnlineManager : MonoBehaviourPun
         Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2) {
             confirmTeam = true;
-            StaticInfo.teamSelectedToPlay = mg.characterSelected;
+            StaticInfo.teamSelectedToPlay = new List<CharacterBasic>(mg.characterSelected);
             photonView.RPC("getRivalConfirmation", RpcTarget.Others);
             GameObject.Find("Canvas True").SetActive(false);
                 }

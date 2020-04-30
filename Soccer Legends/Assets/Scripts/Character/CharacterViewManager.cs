@@ -29,6 +29,7 @@ public class CharacterViewManager : MonoBehaviour
 
     public void UpdateInterface()
     {
+        colorTypeElement.color = colorsType.colors[(int)actualCharacter.basicInfo.type];
         //Stats
         pivotStat.text = actualCharacter.info.atk.ToString();
         defenseStat.text = actualCharacter.info.def.ToString();

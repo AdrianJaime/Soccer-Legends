@@ -20,8 +20,8 @@ public class FSOnlineManager : MonoBehaviourPun
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
             Debug.Log("Player Count-> " + PhotonNetwork.CurrentRoom.PlayerCount.ToString());
-            StaticInfo.teamSelectedToPlay.Clear();
-            StaticInfo.teamSelectedToPlay.AddRange(formationScr.listOfCharactersInFormation);
+            //StaticInfo.teamSelectedToPlay.Clear();
+            //StaticInfo.teamSelectedToPlay.AddRange(formationScr.listOfCharactersInFormation);
             confirmTeam = true;
             string[] characterID = new string[formationScr.listOfCharactersInFormation.Length];
             int[] atq = new int[formationScr.listOfCharactersInFormation.Length];

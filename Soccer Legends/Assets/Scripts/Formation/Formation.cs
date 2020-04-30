@@ -32,7 +32,7 @@ public class Formation : MonoBehaviour
         //    }
         //}
         charactersAvailable = StaticInfo.teamSelectedToPlay;
-        StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
+        //StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
         for (int i = 0; i < StaticInfo.teamSelectedToPlay.Count; i++)
         {
             StaticInfo.teamSelectedToPlay[i].LoadCharacterStats(StaticInfo.teamSelectedToPlay[i].basicInfo.ID);

@@ -32,6 +32,11 @@ public class Formation : MonoBehaviour
         //    }
         //}
         charactersAvailable = StaticInfo.teamSelectedToPlay;
+        StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
+        for (int i = 0; i < StaticInfo.teamSelectedToPlay.Count; i++)
+        {
+            StaticInfo.teamSelectedToPlay[i].LoadCharacterStats(StaticInfo.teamSelectedToPlay[i].basicInfo.ID);
+        }
     }
 
     public void CheckButtonInteractable()
@@ -60,12 +65,13 @@ public class Formation : MonoBehaviour
     }
      public void reorderTeam()
     {
-        StaticInfo.teamSelectedToPlay.Clear();
-        StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
+        //StaticInfo.teamSelectedToPlay.Clear();
+        //(StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
 
         MyPlayer_PVE.Stats localStats = new MyPlayer_PVE.Stats(0,0,0), rivalStats = new MyPlayer_PVE.Stats(0,0,0);
         for (int i = 0; i < rivalSprites.Length; i++)
         {
+            StaticInfo.teamSelectedToPlay[i].basicInfo = listOfCharactersInFormation[i].basicInfo;
             rivalSprites[i].sprite = StaticInfo.rivalTeam[i].basicInfo.artworkSelectorIcon;
             rivalStats.shoot += StaticInfo.rivalTeam[i].info.atk;
             localStats.shoot += StaticInfo.teamSelectedToPlay[i].info.atk;

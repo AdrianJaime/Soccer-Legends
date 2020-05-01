@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
-using Firebase.Auth;
+//using Firebase.Auth;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +30,7 @@ public class SignInScript : MonoBehaviour
 
         //txt.text = "Pressed";
         // Initialize Firebase Auth
-        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        //Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
         //txt.text = "He pasado";
         // Sign In and Get a server auth code.
         UnityEngine.Social.localUser.Authenticate((bool success) => {
@@ -51,28 +51,28 @@ public class SignInScript : MonoBehaviour
             Debug.LogFormat("SignInOnClick: Auth code is: {0}", authCode);
 
             // Use Server Auth Code to make a credential
-            Firebase.Auth.Credential credential = Firebase.Auth.PlayGamesAuthProvider.GetCredential(authCode);
+            //Firebase.Auth.Credential credential = Firebase.Auth.PlayGamesAuthProvider.GetCredential(authCode);
 
-            // Sign In to Firebase with the credential
-            auth.SignInWithCredentialAsync(credential).ContinueWith(task => {
-                if (task.IsCanceled)
-                {
-                 //   txt.text = "SignInOnClick was canceled.";
-                    Debug.LogError("SignInOnClick was canceled.");
-                    return;
-                }
-                if (task.IsFaulted)
-                {
-                    //txt.text = "SignInOnClick encountered an error: " + task.Exception;
-                    Debug.LogError("SignInOnClick encountered an error: " + task.Exception);
-                    return;
-                }
+            //// Sign In to Firebase with the credential
+            //auth.SignInWithCredentialAsync(credential).ContinueWith(task => {
+            //    if (task.IsCanceled)
+            //    {
+            //     //   txt.text = "SignInOnClick was canceled.";
+            //        Debug.LogError("SignInOnClick was canceled.");
+            //        return;
+            //    }
+            //    if (task.IsFaulted)
+            //    {
+            //        //txt.text = "SignInOnClick encountered an error: " + task.Exception;
+            //        Debug.LogError("SignInOnClick encountered an error: " + task.Exception);
+            //        return;
+            //    }
 
-                Firebase.Auth.FirebaseUser newUser = task.Result;
-                Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
-                PlayerPrefs.SetString("username", newUser.DisplayName);
-                SceneManager.LoadScene("MainMenuScene");
-            });
+            //    Firebase.Auth.FirebaseUser newUser = task.Result;
+            //    Debug.LogFormat("SignInOnClick: User signed in successfully: {0} ({1})", newUser.DisplayName, newUser.UserId);
+            //    PlayerPrefs.SetString("username", newUser.DisplayName);
+            //    SceneManager.LoadScene("MainMenuScene");
+            //});
         });
     }
 }

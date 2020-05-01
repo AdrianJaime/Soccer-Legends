@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Firebase;
-using Firebase.Unity.Editor;
-using Firebase.Database;
+//using Firebase;
+//using Firebase.Unity.Editor;
+//using Firebase.Database;
 
 public class EquipObject : MonoBehaviour
 {

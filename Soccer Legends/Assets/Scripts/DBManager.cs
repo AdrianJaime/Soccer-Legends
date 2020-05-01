@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Proyecto26;
-using Firebase;
-using Firebase.Storage;
+//using Firebase;
+//using Firebase.Storage;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
@@ -43,15 +43,15 @@ public class DBManager : MonoBehaviour
     public void DownloadDB()
     {
 
-        FirebaseStorage storage = FirebaseStorage.DefaultInstance;
-        StorageReference gs_reference = storage.GetReferenceFromUrl("gs://soccer-legends-db.appspot.com/Image.jpg");
-        gs_reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) =>
-        {
-            if (!task.IsFaulted && !task.IsCanceled)
-            {
-                url = task.Result;
-            }
-        });
+        //FirebaseStorage storage = FirebaseStorage.DefaultInstance;
+        //StorageReference gs_reference = storage.GetReferenceFromUrl("gs://soccer-legends-db.appspot.com/Image.jpg");
+        //gs_reference.GetDownloadUrlAsync().ContinueWith((Task<Uri> task) =>
+        //{
+        //    if (!task.IsFaulted && !task.IsCanceled)
+        //    {
+        //        url = task.Result;
+        //    }
+        //});
     }
 
     IEnumerator GetImage()

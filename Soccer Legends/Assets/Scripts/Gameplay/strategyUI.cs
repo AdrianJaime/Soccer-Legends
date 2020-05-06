@@ -37,7 +37,7 @@ public class strategyUI : MonoBehaviour
         if (!mg.GameOn || (int)mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy == _strat)
         { interacting = true; return; }
         interacting = true;
-        mg.setStrategyBonus(_strat);
+        mg.myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
         cooldown = Time.time;
         Button[] stratButtons = transform.GetComponentsInChildren<Button>();
         foreach (var _button in stratButtons) _button.interactable = false;

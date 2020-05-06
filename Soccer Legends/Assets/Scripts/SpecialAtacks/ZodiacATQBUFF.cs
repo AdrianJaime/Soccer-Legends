@@ -26,14 +26,17 @@ public class ZodiacATQBUFF : SpecialAttack
         while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
             rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
+        int percentage = 0;
+
         for(int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
             if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>()
-                .characterBasic.basicInfo.school == School.ZODIAC)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.shoot +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.shoot * 10) / 100;
+                .characterBasic.basicInfo.school == School.ZODIAC) percentage += 10;
         }
-            
+
+        mg.statsUpdate(!specialOwner.transform.parent.GetComponent<IA_manager>().playerTeam,
+            specialOwner.GetComponent<MyPlayer_PVE>().stats.shoot * percentage / 100, 0, 0);
+
         yield break;
     }
 
@@ -42,13 +45,16 @@ public class ZodiacATQBUFF : SpecialAttack
         while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
             rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
+        int percentage = 0;
+
         for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
             if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>()
-                .characterBasic.basicInfo.school == School.ZODIAC)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.shoot +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.shoot * 10) / 100;
+                .characterBasic.basicInfo.school == School.ZODIAC) percentage += 10;
         }
+
+        mg.statsUpdate(specialOwner.GetComponent<MyPlayer>().photonView.ViewID, 
+            specialOwner.GetComponent<MyPlayer>().stats.shoot * percentage / 100, 0, 0);
 
         yield break;
     }

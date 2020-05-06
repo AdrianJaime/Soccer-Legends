@@ -32,7 +32,6 @@ public class Formation : MonoBehaviour
         //    }
         //}
         charactersAvailable = StaticInfo.teamSelectedToPlay;
-        //StaticInfo.teamSelectedToPlay.AddRange(listOfCharactersInFormation);
         for (int i = 0; i < StaticInfo.teamSelectedToPlay.Count; i++)
         {
             StaticInfo.teamSelectedToPlay[i].LoadCharacterStats(StaticInfo.teamSelectedToPlay[i].basicInfo.ID);
@@ -71,7 +70,7 @@ public class Formation : MonoBehaviour
         MyPlayer_PVE.Stats localStats = new MyPlayer_PVE.Stats(0,0,0), rivalStats = new MyPlayer_PVE.Stats(0,0,0);
         for (int i = 0; i < rivalSprites.Length; i++)
         {
-            StaticInfo.teamSelectedToPlay[i].basicInfo = listOfCharactersInFormation[i].basicInfo;
+            StaticInfo.teamSelectedToPlay.Insert(i, StaticInfo.teamSelectedToPlay.Find(x => x.basicInfo.ID == listOfCharactersInFormation[i].basicInfo.ID));
             rivalSprites[i].sprite = StaticInfo.rivalTeam[i].basicInfo.artworkSelectorIcon;
             rivalStats.shoot += StaticInfo.rivalTeam[i].info.atk;
             localStats.shoot += StaticInfo.teamSelectedToPlay[i].info.atk;
@@ -80,6 +79,7 @@ public class Formation : MonoBehaviour
             rivalStats.defense += StaticInfo.rivalTeam[i].info.def;
             localStats.defense += StaticInfo.teamSelectedToPlay[i].info.def;
         }
+        StaticInfo.teamSelectedToPlay.RemoveRange(4, StaticInfo.teamSelectedToPlay.Count - 4);
 
         localInfo.GetChild(0).GetComponent<Text>().text = PlayerPrefs.GetString("username");
         rivalInfo.GetChild(0).GetComponent<Text>().text = StaticInfo.tournamentTeam.teamName;

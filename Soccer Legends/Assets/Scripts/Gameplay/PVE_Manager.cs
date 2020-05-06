@@ -35,7 +35,6 @@ public class PVE_Manager : MonoBehaviour
     private float timeStart = 0;
     public float fightRef = 0;
     private int fightingPlayer = 0, fightingIA = 0;
-    private string fightDir;
     private bool shooting = false;
     private Vector2 score = new Vector2(0, 0);
     private int randomValue;
@@ -142,7 +141,14 @@ public class PVE_Manager : MonoBehaviour
                             enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
                             specialUpgrade(true);
                         }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 100) < (15 + (60 - ((int)(timeStart + 60 - Time.time)))) ? "Risky" : "Normal";
+                        else if (UnityEngine.Random.Range(0, 100) < (15 + (60 - ((int)(timeStart + 60 - Time.time)))))
+                        {
+                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                            if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().ball != null)
+                                statsUpdate(true, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                            else statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                        }
+                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
                         if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {
@@ -158,8 +164,8 @@ public class PVE_Manager : MonoBehaviour
                         {
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
                             if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
-                                statsUpdate(false, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / 2, 0);
-                            else statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 2);
+                                statsUpdate(false, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                            else statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
                         }
                         else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                     }
@@ -167,12 +173,18 @@ public class PVE_Manager : MonoBehaviour
                     {
                         if (UnityEngine.Random.Range(0, 10) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
                             .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
-                            {
-                                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                                enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
-                                specialUpgrade(true);
-                            }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = UnityEngine.Random.Range(0, 100) < (35 + (60 - ((int)(timeStart + 60 - Time.time)))) ? "Risky" : "Normal";
+                        {
+                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                            enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
+                            specialUpgrade(true);
+                        }
+                        else if (UnityEngine.Random.Range(0, 100) < (35 + (60 - ((int)(timeStart + 60 - Time.time)))))
+                        {
+                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                            if (fightingIA == 3) statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            else statsUpdate(true, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
+                        }
+                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
                         if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
                         {
@@ -187,8 +199,8 @@ public class PVE_Manager : MonoBehaviour
                         else if (swipes[0].x < swipes[1].x)
                         {
                             myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
-                            if (fightingPlayer == 3) statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 2);
-                            else statsUpdate(false, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot / 2, 0, 0);
+                            if (fightingPlayer == 3) statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            else statsUpdate(false, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
                         }
                         else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                     }
@@ -197,7 +209,6 @@ public class PVE_Manager : MonoBehaviour
                     fingerIdx = -1;
                 }
             }
-            updateUI_Stats();
             if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir != null)
                 Invoke("Fight", 0.5f);
         }
@@ -267,6 +278,8 @@ public class PVE_Manager : MonoBehaviour
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
         statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>(). value = 0;
+        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().SetStats();
+        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().SetStats();
         for (int i = 0; i < myIA_Players.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
@@ -340,6 +353,10 @@ public class PVE_Manager : MonoBehaviour
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                         + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
                 }
+                updateUI_Stats();
+                setPositionBonus(player1, IA_Player);
+                setStrategyBonus(player1, IA_Player);
+                setTypeBonus(player1, IA_Player);
                 playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
                 StartCoroutine(enableConfrontationAnim());
                 animator.SetTrigger("Confrontation");
@@ -415,6 +432,10 @@ public class PVE_Manager : MonoBehaviour
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                     + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
             }
+            updateUI_Stats();
+            setPositionBonus(player1, IA_Player);
+            setStrategyBonus(player1, IA_Player);
+            setTypeBonus(player1, IA_Player);
             playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
             StartCoroutine(enableConfrontationAnim());
             animator.SetTrigger("Confrontation");
@@ -452,7 +473,11 @@ public class PVE_Manager : MonoBehaviour
                     if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Special" ||
                         myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Special") fightType = "SpecialAttack";
                     else fightType = "Battle";
-                    randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                    if(playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique == playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense)
+                        randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                    else if(playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique > playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense)
+                        randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1);
+                    else randomValue = UnityEngine.Random.Range(playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + 1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense + 1);
                     Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString() +
                     " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.technique.ToString());
                     Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name + "has a deffense of " + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
@@ -498,7 +523,11 @@ public class PVE_Manager : MonoBehaviour
                         goalkeeper = myPlayers[fightingPlayer];
                         playerWithBall = myIA_Players[fightingIA];
                     }
-                    randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                    if (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot == goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense)
+                        randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
+                    else if (playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot > goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense)
+                        randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + 1);
+                    else randomValue = UnityEngine.Random.Range(playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + 1, playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + 1);
                     Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString() +
                     " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot.ToString());
                     Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name + "has a deffense of " + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString() +
@@ -614,49 +643,83 @@ public class PVE_Manager : MonoBehaviour
         StartCoroutine(specialInfo.specialAtack.callSpecial(this, local, rival));
     }
 
-    public void setStrategyBonus(int _strat)
+    void setTypeBonus(MyPlayer_PVE _p1, MyPlayer_PVE _p2)
     {
-        IA_manager.strategy lastStrat = myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy;
-        myPlayers[0].transform.parent.GetComponent<IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
-        foreach (GameObject player in myPlayers)
-        {
-            MyPlayer_PVE playerScript = player.GetComponent<MyPlayer_PVE>();
-            switch (player.transform.parent.GetComponent<IA_manager>().teamStrategy)
+        List<MyPlayer_PVE> fightList = new List<MyPlayer_PVE>(new MyPlayer_PVE[] { _p1, _p2 });
+        bool bonus = false;
+        for (int i = 0; i < 2; i++) {
+            switch (fightList[0].characterBasic.basicInfo.type)
             {
-                case IA_manager.strategy.DEFFENSIVE:
-                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
-                    {
-                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
-                    {
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
-                    }
-                    playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
+                case Type.BLUE:
+                    bonus = fightList[1].characterBasic.basicInfo.type == Type.RED;
                     break;
-                case IA_manager.strategy.TECHNICAL:
-                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
-                    {
-                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.DEFFENSIVE)
-                    {
-                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                    }
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 2;
+                case Type.GREEN:
+                    bonus = fightList[1].characterBasic.basicInfo.type == Type.BLUE;
                     break;
-                case IA_manager.strategy.OFFENSIVE:
-                    if (lastStrat == IA_manager.strategy.DEFFENSIVE)
-                    {
-                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
-                    {
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
-                    }
-                    playerScript.stats.shoot = playerScript.stats.shoot + playerScript.stats.shoot / 2;
+                case Type.PURPLE:
+                    bonus = fightList[1].characterBasic.basicInfo.type == Type.GREEN;
+                    break;
+                case Type.RED:
+                    bonus = fightList[1].characterBasic.basicInfo.type == Type.YELLOW;
+                    break;
+                case Type.YELLOW:
+                    bonus = fightList[1].characterBasic.basicInfo.type == Type.PURPLE;
                     break;
             }
+            if(bonus)
+            {
+                MyPlayer_PVE.Stats statsBonus = new MyPlayer_PVE.Stats(0, 0, 0);
+                if(state == fightState.SHOOT && fightList[0].ball != null) statsBonus.shoot = fightList[0].stats.shoot / 2;
+                else if(fightList[0].ball != null) statsBonus.technique = fightList[0].stats.technique / 2;
+                else if(fightList[0].ball == null) statsBonus.defense = fightList[0].stats.defense / 2;
+                statsUpdate(!fightList[0].transform.parent.GetComponent<IA_manager>().playerTeam, statsBonus.shoot, statsBonus.technique, statsBonus.defense);
+                return;
+            }
+            fightList.Reverse();
+        }
+    }
+
+    public void setStrategyBonus(MyPlayer_PVE _player1, MyPlayer_PVE _player2)
+    {
+        MyPlayer_PVE[] _players = new MyPlayer_PVE[] { _player1, _player2 };
+        foreach(var _player in _players)
+        switch (_player.transform.parent.GetComponent<IA_manager>().teamStrategy)
+        {
+            case IA_manager.strategy.DEFFENSIVE:
+                statsUpdate(!_player.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, _player.stats.defense * 20 / 100);
+                break;
+            case IA_manager.strategy.TECHNICAL:
+                statsUpdate(!_player.transform.parent.GetComponent<IA_manager>().playerTeam, 0, _player.stats.technique * 20 / 100, 0);
+                break;
+            case IA_manager.strategy.OFFENSIVE:
+                statsUpdate(!_player.transform.parent.GetComponent<IA_manager>().playerTeam, _player.stats.shoot * 20 / 100, 0, 0);
+                break;
+        }
+    }
+
+    void setPositionBonus(MyPlayer_PVE _player1, MyPlayer_PVE _player2)
+    {
+        MyPlayer_PVE[] _players = new MyPlayer_PVE[] { _player1, _player2 };
+        foreach (var _player in _players)
+        {
+            bool hasBonus = false;
+            switch (_player.formationPos)
+            {
+                case IA_manager.formationPositions.ALA:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.WINGER;
+                    break;
+                case IA_manager.formationPositions.CIERRE:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.LAST_MAN;
+                    break;
+                case IA_manager.formationPositions.GOALKEEPER:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.GOALKEEPER;
+                    break;
+                case IA_manager.formationPositions.PIVOT:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.PIVOT;
+                    break;
+            }
+            if(hasBonus) statsUpdate(!_player.transform.parent.GetComponent<IA_manager>().playerTeam, 
+                _player.stats.shoot * 10 / 100, _player.stats.technique * 10 / 100, _player.stats.defense * 10 / 100);
         }
     }
 
@@ -702,6 +765,11 @@ public class PVE_Manager : MonoBehaviour
     IEnumerator sliderEffect(float waitTime, string fightType, string fightResult)
     {
         yield return new WaitForSeconds(waitTime + Time.deltaTime);
+
+        updateUI_Stats();
+
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().StartEffect();
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().StartEffect();
 
         Slider localS = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
         Slider rivalS = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
@@ -750,6 +818,9 @@ public class PVE_Manager : MonoBehaviour
         }
 
         currentVal = randomValue;
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().enabled = false;
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().enabled = false;
+        updateUI_Stats();
         localS.value = currentVal;
         rivalS.value = currentVal - localS.maxValue;
         localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;
@@ -803,10 +874,6 @@ public class PVE_Manager : MonoBehaviour
                         //Gana el que chuta a puerta
                         playerWithBall = myPlayers[fightingPlayer];
                         goalkeeper = myIA_Players[fightingIA];
-                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
                         goalRefFrame = Time.frameCount;
                     }
@@ -815,30 +882,11 @@ public class PVE_Manager : MonoBehaviour
                         //Pierde el que chuta a puerta
                         goalkeeper = myPlayers[fightingPlayer];
                         playerWithBall = myIA_Players[fightingIA];
-                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().Lose(true);
                     }
                 }
-                else
-                {
-                    //El jugador gana la batalla a la IA
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                    {
-                        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
-                            statsUpdate(false, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
-                        else statsUpdate(false, 0, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                    }
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                    {
-                        if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().ball != null)
-                            statsUpdate(true, 0, -myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
-                        else statsUpdate(true, 0, 0, -myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                    }
+                else //El jugador gana la batalla a la IA
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().Lose();
-                }
                 break;
             case "EnemyWinConfrontation":
                 if (fightingIA == 3 || fightingPlayer == 3)
@@ -849,10 +897,6 @@ public class PVE_Manager : MonoBehaviour
                         //Pierde el que chuta a puerta
                         playerWithBall = myPlayers[fightingPlayer];
                         goalkeeper = myIA_Players[fightingIA];
-                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot + playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().Lose(true);
                     }
                     else
@@ -860,52 +904,19 @@ public class PVE_Manager : MonoBehaviour
                         //Gana el que chuta a puerta
                         goalkeeper = myPlayers[fightingPlayer];
                         playerWithBall = myIA_Players[fightingIA];
-                        if (goalkeeper.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!goalkeeper.transform.parent.GetComponent<IA_manager>().playerTeam, 0, 0, -goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                        if (playerWithBall.GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                            statsUpdate(!playerWithBall.transform.parent.GetComponent<IA_manager>().playerTeam, -playerWithBall.GetComponent<MyPlayer_PVE>().stats.shoot / 3, 0, 0);
                         playerWithBall.GetComponent<MyPlayer_PVE>().ShootBall(new float[] { -1.0f * (goalkeeper.transform.position.x / Mathf.Abs(goalkeeper.transform.position.x)), goalkeeper.GetComponent<MyPlayer_PVE>().rival_goal.transform.position.y, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.x, playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y });
                         goalRefFrame = Time.frameCount;
                     }
                 }
-                else
-                {
-                    //La IA gana la batalla al jugador
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                    {
-                        if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
-                            statsUpdate(false, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
-                        else statsUpdate(false, 0, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                    }
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                    {
-                        if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().ball != null)
-                            statsUpdate(true, 0, - myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
-                        else statsUpdate(true, 0, 0, -myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                    }
+                else //La IA gana la batalla al jugador
                     myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().Lose();
-                }
                 break;
             case "PlayerDodge":
             case "EnemyDodge":
-                if (animator.GetBool("PlayerHasBall"))
-                {
-                    //El jugador esquiva a la IA
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                        statsUpdate(false, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                        statsUpdate(true, 0, 0, -myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense + myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / 3);
+                if (animator.GetBool("PlayerHasBall")) //El jugador esquiva a la IA
                     myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().Lose();
-                }
-                else
-                {
-                    //La IA esquiva al jugador
-                    if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                        statsUpdate(false, 0, 0, -myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense + myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / 3);
-                    if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir == "Risky")
-                        statsUpdate(true, 0, -myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / 3, 0);
+                else //La IA esquiva al jugador
                     myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().Lose();
-                }
                 break;
         }
     }

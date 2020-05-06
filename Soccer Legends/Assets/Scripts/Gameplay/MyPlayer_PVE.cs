@@ -19,10 +19,17 @@ public class MyPlayer_PVE : MonoBehaviour
             technique = _technique;
             defense = _defense;
         }
+        public Stats(Stats _stats)
+        {
+            shoot = _stats.shoot;
+            technique = _stats.technique;
+            defense = _stats.defense;
+        }
     }
 
     [SerializeField]
     public Stats stats;
+    private Stats matchBasicStats; public Stats matchBaseStats { get { return matchBasicStats; } }
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject ball, line;
     public bool onMove = false, stunned = false, colliding = false, covered = false;
@@ -90,60 +97,39 @@ public class MyPlayer_PVE : MonoBehaviour
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(3200, 4200), Random.Range(2300, 3200));
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(3200, 4200), Random.Range(2300, 3200), Random.Range(2300, 3200));
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
                 speed *= 3;
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             default:
-
                 break;
         }
 
-       stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
-                    characterBasic.info.def);
+        matchBasicStats = new Stats(characterBasic.info.atk, characterBasic.info.teq, characterBasic.info.def);
+        SetStats();
+        
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
         characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
-
-        if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
-        {
-            stats.shoot = stats.shoot + stats.shoot / 2;
-            stats.technique = stats.technique + stats.technique / 4;
-        }
-        else if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.DEFFENSIVE)
-        {
-            stats.defense = stats.defense + stats.defense / 2;
-            stats.technique = stats.technique + stats.technique / 4;
-        }
         SetName(gameObject.name);
     }
 
 
     private void Update()
     {
-        //if (photonView.IsMine) //Check if we're the local player
-        //{
         if (mg.GameOn && !stunned)
         {
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -419,11 +405,12 @@ public class MyPlayer_PVE : MonoBehaviour
         else return false;
     }
 
-    private void SetStats(int[] arr)
+    public void SetStats(int _atk = 0, int _tec = 0, int _def = 0)
     {
-        Debug.Log("Sent:" + arr[0] + arr[1] + arr[2]);
-        stats = new Stats(arr[0], arr[1], arr[2]);
-        //if(transform.GetChild(0).GetComponentInChildren<Text>().text != stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString()) photonView.RPC("SetName", RpcTarget.AllViaServer, stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString());
+        matchBasicStats.shoot += _atk;
+        matchBasicStats.technique += _tec;
+        matchBasicStats.defense += _def;
+        stats = new Stats(matchBasicStats);
     }
 
     public void RepositionPlayer()

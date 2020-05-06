@@ -276,7 +276,8 @@ namespace DanielLochner.Assets.SimpleScrollSnap
                 "color.r",
                 "color.g",
                 "color.b",
-                "color.a"
+                "color.a",
+                "alejandro_render_sort"
             };
             for (int i = 0; i < simpleScrollSnap.transitionEffects.Count; i++)
             {

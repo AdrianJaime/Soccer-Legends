@@ -668,6 +668,9 @@ namespace DanielLochner.Assets.SimpleScrollSnap
                                 graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, transitionEffect.GetValue(displacement));
                             }
                             break;
+                        case "alejandro_render_sort":
+                            panel.GetComponentsInChildren<Canvas>()[0].sortingOrder = (int)transitionEffect.GetValue(displacement);
+                            break;
                     }
                 }
             }

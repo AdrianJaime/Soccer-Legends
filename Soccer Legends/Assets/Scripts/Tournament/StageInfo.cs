@@ -22,6 +22,7 @@ public class StageInfo : ScriptableObject
     public string ID_DB;
     public string stageName;
     public string description;
+    public bool isBoss;
 
     //info drawable
     public Sprite stageArtwork;

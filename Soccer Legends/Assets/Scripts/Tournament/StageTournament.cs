@@ -13,6 +13,7 @@ public class StageTournament : MonoBehaviour
 {
     public Text description, stageName,stageNameShadow;
     public Image stageArt,artReward, clearPanel;
+    public SpriteConpendiumSO stagesPanels, stagesButtons;
     public StageInfo basicInfo;//Información básica sobre ésta stage, variables que no varían
     public RewardLogic reward;
 

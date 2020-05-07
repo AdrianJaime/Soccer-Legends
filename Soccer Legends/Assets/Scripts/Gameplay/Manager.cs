@@ -37,7 +37,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     private float timeStart = 0;
     public float fightRef = 0;
     private int fightingPlayer = 0, fightingIA = 0;
-    private string fightDir;
     private bool shooting = false;
     private Vector2 score = new Vector2(0, 0);
     private int randomValue;
@@ -63,6 +62,10 @@ public class Manager : MonoBehaviourPun, IPunObservable
     Text mySpecialName;
     [SerializeField]
     Text iaSpecialName;
+    [SerializeField]
+    Image localType;
+    [SerializeField]
+    Image rivalType;
 
     [SerializeField]
     GameObject introObj;
@@ -160,8 +163,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
                             if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
-                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique / 2, 0);
-                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / 2);
+                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
                         }
                         else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                     }
@@ -181,8 +184,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         {
                             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
                             if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos == IA_manager.formationPositions.GOALKEEPER)
-                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / 2);
-                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot / 2, 0, 0);
+                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
                         }
                         else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                     }
@@ -198,7 +201,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     fingerIdx = -1;
                 }
             }
-            updateUI_Stats();
             if (PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir != null &&
             PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir != null && PhotonNetwork.IsMasterClient)
                 Invoke("Fight", 0.5f);
@@ -290,7 +292,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         for (int i = 0; i < myIA_Players.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer>().fightDir = null;
+            myPlayers[i].GetComponent<MyPlayer>().SetStats();
             myIA_Players[i].GetComponent<MyPlayer>().fightDir = null;
+            myIA_Players[i].GetComponent<MyPlayer>().SetStats();
         }
         animator.ResetTrigger("Confrontation");
         animator.ResetTrigger("Battle");
@@ -388,6 +392,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                         + playerWithoutBall.GetComponent<MyPlayer>().stats.defense.ToString();
                 }
+                updateUI_Stats();
+                /*BONUS*/
+                setPositionBonus(player1, IA_Player);
+                setStrategyBonus(player1, IA_Player);
+                setTypeBonus(player1, IA_Player);
+                ///////////////////////////////////////
                 playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
                 StartCoroutine(enableConfrontationAnim());
                 animator.SetTrigger("Confrontation");
@@ -482,6 +492,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "DEF "
                     + goalkeeper.GetComponent<MyPlayer>().stats.defense.ToString();
             }
+            updateUI_Stats();
+            /*BONUS*/
+            setPositionBonus(player1, IA_Player);
+            setStrategyBonus(player1, IA_Player);
+            setTypeBonus(player1, IA_Player);
+            ////////////////////////////////////////
             playerWithBall.GetComponent<MyPlayer>().photonView.RPC("GetBall", RpcTarget.AllViaServer);
             StartCoroutine(enableConfrontationAnim());
             animator.SetTrigger("Confrontation");
@@ -512,8 +528,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == "Special" ||
                     PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir == "Special") fightType = "SpecialAttack";
                 else fightType = "Battle";
+                if (playerWithBall.GetComponent<MyPlayer>().stats.technique == playerWithoutBall.GetComponent<MyPlayer>().stats.defense)
                     randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.technique + playerWithoutBall.GetComponent<MyPlayer>().stats.defense + 1);
-                    Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() +
+                else if (playerWithBall.GetComponent<MyPlayer>().stats.technique > playerWithoutBall.GetComponent<MyPlayer>().stats.defense)
+                    randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.technique + 1);
+                else randomValue = UnityEngine.Random.Range(playerWithBall.GetComponent<MyPlayer>().stats.technique + 1, playerWithBall.GetComponent<MyPlayer>().stats.technique + playerWithoutBall.GetComponent<MyPlayer>().stats.defense + 1);
+                Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a technique of " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString() +
                     " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer>().stats.technique.ToString());
                     Debug.Log(playerWithoutBall.name + " from " + playerWithoutBall.transform.parent.name + "has a deffense of " + playerWithoutBall.GetComponent<MyPlayer>().stats.defense.ToString() +
                     " and a range between " + (playerWithBall.GetComponent<MyPlayer>().stats.technique + 1).ToString() + " and " +
@@ -554,8 +574,12 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         playerWithBall = PhotonView.Find(fightingIA).gameObject;
                     }
                     {
+                    if (playerWithBall.GetComponent<MyPlayer>().stats.shoot == goalkeeper.GetComponent<MyPlayer>().stats.defense)
                         randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.shoot + goalkeeper.GetComponent<MyPlayer>().stats.defense + 1);
-                        Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString() +
+                    else if (playerWithBall.GetComponent<MyPlayer>().stats.shoot > goalkeeper.GetComponent<MyPlayer>().stats.defense)
+                        randomValue = UnityEngine.Random.Range(1, playerWithBall.GetComponent<MyPlayer>().stats.shoot + 1);
+                    else randomValue = UnityEngine.Random.Range(playerWithBall.GetComponent<MyPlayer>().stats.shoot + 1, playerWithBall.GetComponent<MyPlayer>().stats.shoot + goalkeeper.GetComponent<MyPlayer>().stats.defense + 1);
+                    Debug.Log(playerWithBall.name + " from " + playerWithBall.transform.parent.name + "has a shoot of " + playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString() +
                         " and a range between 1 and " + playerWithBall.GetComponent<MyPlayer>().stats.shoot.ToString());
                         Debug.Log(goalkeeper.name + " from " + goalkeeper.transform.parent.name + "has a deffense of " + goalkeeper.GetComponent<MyPlayer>().stats.defense.ToString() +
                         " and a range between " + (playerWithBall.GetComponent<MyPlayer>().stats.shoot + 1).ToString() + " and " +
@@ -660,52 +684,97 @@ public class Manager : MonoBehaviourPun, IPunObservable
         StartCoroutine(specialInfo.specialAtack.callSpecial(this, specialOwner, rival));
     }
 
-    [PunRPC]
-    public void setStrategyBonus(int _strat, int _id)
+    void setTypeBonus(MyPlayer _p1, MyPlayer _p2)
     {
-        GameObject[] _team = new GameObject[PhotonView.Find(_id).transform.parent.childCount];
-        for (int i = 0; i < _team.Length; i++) _team[i] = PhotonView.Find(_id).transform.parent.GetChild(i).gameObject;
-        IA_manager.strategy lastStrat =_team[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy;
-        _team[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
-        foreach (GameObject player in _team)
+        List<KeyValuePair<MyPlayer, Image>> fightList = new List<KeyValuePair<MyPlayer, Image>>
+        { new KeyValuePair<MyPlayer, Image>(_p1, localType),
+            new KeyValuePair<MyPlayer, Image>(_p2, rivalType)};
+        rivalType.GetComponent<RectTransform>().eulerAngles = localType.GetComponent<RectTransform>().eulerAngles = Vector3.zero;
+        bool bonus = false;
+        for (int i = 0; i < 2; i++)
         {
-            MyPlayer playerScript = player.GetComponent<MyPlayer>();
-            switch (player.transform.parent.GetComponent<PVP_IA_manager>().teamStrategy)
+            Color c = new Color();
+            switch (fightList[0].Key.characterBasic.basicInfo.type)
             {
-                case IA_manager.strategy.DEFFENSIVE:
-                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
-                    {
-                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
-                    {
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
-                    }
-                    playerScript.stats.defense = playerScript.stats.defense + playerScript.stats.defense / 2;
+                case Type.BLUE:
+                    ColorUtility.TryParseHtmlString("#0092F8", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.RED;
                     break;
-                case IA_manager.strategy.TECHNICAL:
-                    if (lastStrat == IA_manager.strategy.OFFENSIVE)
-                    {
-                        playerScript.stats.shoot = playerScript.stats.shoot - playerScript.stats.shoot / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.DEFFENSIVE)
-                    {
-                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                    }
-                    playerScript.stats.technique = playerScript.stats.technique + playerScript.stats.technique / 2;
+                case Type.GREEN:
+                    ColorUtility.TryParseHtmlString("#19A600", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.BLUE;
                     break;
-                case IA_manager.strategy.OFFENSIVE:
-                    if (lastStrat == IA_manager.strategy.DEFFENSIVE)
-                    {
-                        playerScript.stats.defense = playerScript.stats.defense - playerScript.stats.defense / 3;
-                    }
-                    else if (lastStrat == IA_manager.strategy.TECHNICAL)
-                    {
-                        playerScript.stats.technique = playerScript.stats.technique - playerScript.stats.technique / 3;
-                    }
-                    playerScript.stats.shoot = playerScript.stats.shoot + playerScript.stats.shoot / 2;
+                case Type.PURPLE:
+                    ColorUtility.TryParseHtmlString("#D700FF", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.GREEN;
+                    break;
+                case Type.RED:
+                    ColorUtility.TryParseHtmlString("#D60000", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.YELLOW;
+                    break;
+                case Type.YELLOW:
+                    ColorUtility.TryParseHtmlString("#E7E300", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.PURPLE;
                     break;
             }
+            if (bonus)
+            {
+                MyPlayer.Stats statsBonus = new MyPlayer.Stats(0, 0, 0);
+                if (state == fightState.SHOOT && fightList[0].Key.ball != null) statsBonus.shoot = fightList[0].Key.stats.shoot / 2;
+                else if (fightList[0].Key.ball != null) statsBonus.technique = fightList[0].Key.stats.technique / 2;
+                else if (fightList[0].Key.ball == null) statsBonus.defense = fightList[0].Key.stats.defense / 2;
+                statsUpdate(fightList[0].Key.photonView.ViewID, statsBonus.shoot, statsBonus.technique, statsBonus.defense);
+                if (i == 0) rivalType.GetComponent<RectTransform>().eulerAngles =
+                         localType.GetComponent<RectTransform>().eulerAngles = new Vector3(0, 0, 90.0f);
+                else rivalType.GetComponent<RectTransform>().eulerAngles =
+                        localType.GetComponent<RectTransform>().eulerAngles = new Vector3(0, 0, 270.0f);
+            }
+            fightList[0].Value.color = c;
+            fightList.Reverse();
+        }
+    }
+
+    public void setStrategyBonus(MyPlayer _player1, MyPlayer _player2)
+    {
+        MyPlayer[] _players = new MyPlayer[] { _player1, _player2 };
+        foreach (var _player in _players)
+            switch (_player.transform.parent.GetComponent<PVP_IA_manager>().teamStrategy)
+            {
+                case IA_manager.strategy.DEFFENSIVE:
+                    statsUpdate(_player.photonView.ViewID, 0, 0, _player.stats.defense * 20 / 100);
+                    break;
+                case IA_manager.strategy.TECHNICAL:
+                    statsUpdate(_player.photonView.ViewID, 0, _player.stats.technique * 20 / 100, 0);
+                    break;
+                case IA_manager.strategy.OFFENSIVE:
+                    statsUpdate(_player.photonView.ViewID, _player.stats.shoot * 20 / 100, 0, 0);
+                    break;
+            }
+    }
+
+    void setPositionBonus(MyPlayer _player1, MyPlayer _player2)
+    {
+        MyPlayer[] _players = new MyPlayer[] { _player1, _player2 };
+        foreach (var _player in _players)
+        {
+            bool hasBonus = false;
+            switch (_player.formationPos)
+            {
+                case IA_manager.formationPositions.ALA:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.WINGER;
+                    break;
+                case IA_manager.formationPositions.CIERRE:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.LAST_MAN;
+                    break;
+                case IA_manager.formationPositions.GOALKEEPER:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.GOALKEEPER;
+                    break;
+                case IA_manager.formationPositions.PIVOT:
+                    hasBonus = _player.characterBasic.basicInfo.rol == Rol.PIVOT;
+                    break;
+            }
+            if (hasBonus) statsUpdate(_player.photonView.ViewID,
+                 _player.stats.shoot * 10 / 100, _player.stats.technique * 10 / 100, _player.stats.defense * 10 / 100);
         }
     }
 
@@ -761,6 +830,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
     {
         yield return new WaitForSeconds(waitTime + Time.deltaTime);
 
+        updateUI_Stats();
+
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().StartEffect();
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().StartEffect();
+
         Slider localS = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
         Slider rivalS = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
 
@@ -808,6 +882,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         }
 
         currentVal = randomValue;
+        statsUI.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().enabled = false;
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<NumberEffect>().enabled = false;
+        updateUI_Stats();
         localS.value = currentVal;
         rivalS.value = currentVal - localS.maxValue;
         localS.handleRect.GetComponent<Image>().enabled = currentVal <= localS.maxValue;

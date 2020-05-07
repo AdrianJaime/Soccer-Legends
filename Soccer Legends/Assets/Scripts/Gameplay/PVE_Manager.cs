@@ -61,9 +61,9 @@ public class PVE_Manager : MonoBehaviour
     [SerializeField]
     Text iaSpecialName;
     [SerializeField]
-    SpriteRenderer localType;
+    Image localType;
     [SerializeField]
-    SpriteRenderer rivalType;
+    Image rivalType;
 
     [SerializeField]
     GameObject introObj;
@@ -358,7 +358,6 @@ public class PVE_Manager : MonoBehaviour
                         + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
                 }
                 updateUI_Stats();
-                updateTypesUI(player1, IA_Player);
                 /*BONUS*/
                 setPositionBonus(player1, IA_Player);
                 setStrategyBonus(player1, IA_Player);
@@ -440,7 +439,6 @@ public class PVE_Manager : MonoBehaviour
                     + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
             }
             updateUI_Stats();
-            updateTypesUI(player1, IA_Player);
             /*BONUS*/
             setPositionBonus(player1, IA_Player);
             setStrategyBonus(player1, IA_Player);
@@ -616,36 +614,6 @@ public class PVE_Manager : MonoBehaviour
             uiNumStat[1].ToString() + " " + uiStats[1];
     }
 
-    void updateTypesUI(MyPlayer_PVE _player1, MyPlayer_PVE _player2)
-    {
-        KeyValuePair<MyPlayer_PVE, SpriteRenderer>[] _players = new KeyValuePair<MyPlayer_PVE, SpriteRenderer>[] 
-        { new KeyValuePair<MyPlayer_PVE, SpriteRenderer>(_player1, localType),
-            new KeyValuePair<MyPlayer_PVE, SpriteRenderer>(_player2, rivalType)};
-        foreach (var _player in _players)
-        {
-            Color c = new Color();
-            switch (_player.Key.characterBasic.basicInfo.type)
-            {
-                case Type.BLUE:
-                    ColorUtility.TryParseHtmlString("#0092F8", out c);
-                    break;
-                case Type.GREEN:
-                    ColorUtility.TryParseHtmlString("#19A600", out c);
-                    break;
-                case Type.PURPLE:
-                    ColorUtility.TryParseHtmlString("#D700FF", out c);
-                    break;
-                case Type.RED:
-                    ColorUtility.TryParseHtmlString("#D60000", out c);
-                    break;
-                case Type.YELLOW:
-                    ColorUtility.TryParseHtmlString("#E7E300", out c);
-                    break;
-            }
-            _player.Value.color = c;
-        }
-    }
-
     public void statsUpdate(bool _ia, int _atq, int _teq, int _def)
     {
         if (_ia)
@@ -685,36 +653,49 @@ public class PVE_Manager : MonoBehaviour
 
     void setTypeBonus(MyPlayer_PVE _p1, MyPlayer_PVE _p2)
     {
-        List<MyPlayer_PVE> fightList = new List<MyPlayer_PVE>(new MyPlayer_PVE[] { _p1, _p2 });
+        List<KeyValuePair<MyPlayer_PVE, Image>> fightList = new List<KeyValuePair<MyPlayer_PVE, Image>>
+        { new KeyValuePair<MyPlayer_PVE, Image>(_p1, localType),
+            new KeyValuePair<MyPlayer_PVE, Image>(_p2, rivalType)};
+        rivalType.GetComponent<RectTransform>().eulerAngles = localType.GetComponent<RectTransform>().eulerAngles = Vector3.zero;
         bool bonus = false;
         for (int i = 0; i < 2; i++) {
-            switch (fightList[0].characterBasic.basicInfo.type)
+            Color c = new Color();
+            switch (fightList[0].Key.characterBasic.basicInfo.type)
             {
                 case Type.BLUE:
-                    bonus = fightList[1].characterBasic.basicInfo.type == Type.RED;
+                    ColorUtility.TryParseHtmlString("#0092F8", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.RED;
                     break;
                 case Type.GREEN:
-                    bonus = fightList[1].characterBasic.basicInfo.type == Type.BLUE;
+                    ColorUtility.TryParseHtmlString("#19A600", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.BLUE;
                     break;
                 case Type.PURPLE:
-                    bonus = fightList[1].characterBasic.basicInfo.type == Type.GREEN;
+                    ColorUtility.TryParseHtmlString("#D700FF", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.GREEN;
                     break;
                 case Type.RED:
-                    bonus = fightList[1].characterBasic.basicInfo.type == Type.YELLOW;
+                    ColorUtility.TryParseHtmlString("#D60000", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.YELLOW;
                     break;
                 case Type.YELLOW:
-                    bonus = fightList[1].characterBasic.basicInfo.type == Type.PURPLE;
+                    ColorUtility.TryParseHtmlString("#E7E300", out c);
+                    bonus = fightList[1].Key.characterBasic.basicInfo.type == Type.PURPLE;
                     break;
             }
             if(bonus)
             {
                 MyPlayer_PVE.Stats statsBonus = new MyPlayer_PVE.Stats(0, 0, 0);
-                if(state == fightState.SHOOT && fightList[0].ball != null) statsBonus.shoot = fightList[0].stats.shoot / 2;
-                else if(fightList[0].ball != null) statsBonus.technique = fightList[0].stats.technique / 2;
-                else if(fightList[0].ball == null) statsBonus.defense = fightList[0].stats.defense / 2;
-                statsUpdate(!fightList[0].transform.parent.GetComponent<IA_manager>().playerTeam, statsBonus.shoot, statsBonus.technique, statsBonus.defense);
-                return;
+                if(state == fightState.SHOOT && fightList[0].Key.ball != null) statsBonus.shoot = fightList[0].Key.stats.shoot / 2;
+                else if(fightList[0].Key.ball != null) statsBonus.technique = fightList[0].Key.stats.technique / 2;
+                else if(fightList[0].Key.ball == null) statsBonus.defense = fightList[0].Key.stats.defense / 2;
+                statsUpdate(!fightList[0].Key.transform.parent.GetComponent<IA_manager>().playerTeam, statsBonus.shoot, statsBonus.technique, statsBonus.defense);
+                if(i == 0) rivalType.GetComponent<RectTransform>().eulerAngles = 
+                        localType.GetComponent<RectTransform>().eulerAngles = new Vector3(0, 0, 90.0f);
+                else rivalType.GetComponent<RectTransform>().eulerAngles =
+                        localType.GetComponent<RectTransform>().eulerAngles = new Vector3(0, 0, 270.0f);
             }
+            fightList[0].Value.color = c;
             fightList.Reverse();
         }
     }

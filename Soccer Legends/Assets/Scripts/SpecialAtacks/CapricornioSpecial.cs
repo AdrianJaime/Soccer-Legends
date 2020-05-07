@@ -30,8 +30,8 @@ public class CapricornioSpecial : SpecialAttack
             while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
             rivalsList.Find(x=> x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
             counter++;
-            specialOwner.GetComponent<MyPlayer_PVE>().stats.technique +=
-                     (specialOwner.GetComponent<MyPlayer_PVE>().stats.technique * 50) / 100;
+            mg.statsUpdate(!specialOwner.transform.parent.GetComponent<IA_manager>().playerTeam,
+                0, specialOwner.GetComponent<MyPlayer_PVE>().stats.technique * 50 / 100, 0);
             while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
         }
     }
@@ -45,8 +45,8 @@ public class CapricornioSpecial : SpecialAttack
             while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
             rivalsList.Find(x => x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
             counter++;
-            specialOwner.GetComponent<MyPlayer>().stats.technique +=
-                     (specialOwner.GetComponent<MyPlayer>().stats.technique * 50) / 100;
+            mg.statsUpdate(specialOwner.GetComponent<MyPlayer>().photonView.ViewID,
+                0, specialOwner.GetComponent<MyPlayer>().stats.technique * 50 / 100, 0);
             while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
         }
     }

@@ -23,33 +23,40 @@ public class VainillaSpecial : SpecialAttack
 
     public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner, GameObject rival)
     {
-        while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
-            rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
-
-        for(int i = 0; i < specialOwner.transform.parent.childCount; i++)
+        List<MyPlayer_PVE> rivalsList = new List<MyPlayer_PVE>(rival.transform.parent.GetComponentsInChildren<MyPlayer_PVE>(true));
+        List<MyPlayer_PVE> flavorList = new List<MyPlayer_PVE>();
+        for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
-            if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>()
-                .characterBasic.basicInfo.school == School.FLAVOR)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.shoot +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.shoot * 10) / 100;
+            if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().characterBasic.basicInfo
+                .school == School.FLAVOR) flavorList.Add(specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>());
         }
-            
-        yield break;
+        while (mg.GameStarted)
+        {
+            while (flavorList.Find(x => x.fightDir != null) == null ||
+            rivalsList.Find(x => x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
+            MyPlayer_PVE flavorPlayer = flavorList.Find(x => x.fightDir != null);
+            mg.statsUpdate(!flavorPlayer.transform.parent.GetComponent<IA_manager>().playerTeam,
+                flavorPlayer.stats.shoot * 10 / 100, 0, 0);
+            while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
+        }
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
     {
-        while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
-            rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
-
+        List<MyPlayer> rivalsList = new List<MyPlayer>(rival.transform.parent.GetComponentsInChildren<MyPlayer>(true));
+        List<MyPlayer> flavorList = new List<MyPlayer>();
         for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
-            if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>()
-                .characterBasic.basicInfo.school == School.FLAVOR)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.shoot +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.shoot * 10) / 100;
+            if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().characterBasic.basicInfo
+                .school == School.FLAVOR) flavorList.Add(specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>());
         }
-
-        yield break;
+        while (mg.GameStarted)
+        {
+            while (flavorList.Find(x => x.fightDir != null) == null ||
+            rivalsList.Find(x => x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
+            MyPlayer flavorPlayer = flavorList.Find(x => x.fightDir != null);
+            mg.statsUpdate(flavorPlayer.photonView.ViewID, flavorPlayer.stats.shoot * 10 / 100, 0, 0);
+            while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
+        }
     }
 }

@@ -36,8 +36,6 @@ public class ZodiacATQBUFF : SpecialAttack
 
         mg.statsUpdate(!specialOwner.transform.parent.GetComponent<IA_manager>().playerTeam,
             specialOwner.GetComponent<MyPlayer_PVE>().stats.shoot * percentage / 100, 0, 0);
-
-        yield break;
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
@@ -55,7 +53,5 @@ public class ZodiacATQBUFF : SpecialAttack
 
         mg.statsUpdate(specialOwner.GetComponent<MyPlayer>().photonView.ViewID, 
             specialOwner.GetComponent<MyPlayer>().stats.shoot * percentage / 100, 0, 0);
-
-        yield break;
     }
 }

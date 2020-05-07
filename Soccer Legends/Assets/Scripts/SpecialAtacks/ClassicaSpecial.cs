@@ -34,8 +34,8 @@ public class ClassicaSpecial : SpecialAttack
             while (musicList.Find(x => x.Key.fightDir != null).Key == null ||
             rivalsList.Find(x => x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
             KeyValuePair<MyPlayer_PVE, int> musicPlayer = musicList.Find(x => x.Key.fightDir != null);
-            musicPlayer.Key.stats.technique += musicPlayer.Key.stats.technique * 30 / 100;
-            musicPlayer.Key.stats.technique += musicPlayer.Key.stats.defense * 30 / 100;
+            mg.statsUpdate(!musicPlayer.Key.transform.parent.GetComponent<IA_manager>().playerTeam,
+                0, musicPlayer.Key.stats.technique * 30 / 100, musicPlayer.Key.stats.defense * 30 / 100);
             KeyValuePair<MyPlayer_PVE, int> newMusicPlayer = 
                 new KeyValuePair<MyPlayer_PVE, int>(musicPlayer.Key, musicPlayer.Value - 1);
             musicList.Remove(musicPlayer);
@@ -59,8 +59,8 @@ public class ClassicaSpecial : SpecialAttack
             while (musicList.Find(x => x.Key.fightDir != null).Key == null ||
             rivalsList.Find(x => x.fightDir != null) == null) yield return new WaitForSeconds(Time.deltaTime);
             KeyValuePair<MyPlayer, int> musicPlayer = musicList.Find(x => x.Key.fightDir != null);
-            musicPlayer.Key.stats.technique += musicPlayer.Key.stats.technique * 30 / 100;
-            musicPlayer.Key.stats.technique += musicPlayer.Key.stats.defense * 30 / 100;
+            mg.statsUpdate(musicPlayer.Key.photonView.ViewID, 0, musicPlayer.Key.stats.technique * 30 / 100, 
+                musicPlayer.Key.stats.defense * 30 / 100);
             KeyValuePair<MyPlayer, int> newMusicPlayer = 
                 new KeyValuePair<MyPlayer, int>(musicPlayer.Key, musicPlayer.Value - 1);
             musicList.Remove(musicPlayer);

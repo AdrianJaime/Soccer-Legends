@@ -277,13 +277,13 @@ public class PVE_Manager : MonoBehaviour
         GameStarted = true; GameOn = true;
         scoreBoard.SetActive(true); directionSlide.SetActive(false); specialSlide.SetActive(false); statsUI.SetActive(false);
         statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
-        statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>(). value = 0;
-        myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().SetStats();
-        myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().SetStats();
+        statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>().value = 0;
         for (int i = 0; i < myIA_Players.Length; i++)
         {
             myPlayers[i].GetComponent<MyPlayer_PVE>().fightDir = null;
-            myIA_Players[i].GetComponent<MyPlayer_PVE>().fightDir = null;
+            myPlayers[i].GetComponent<MyPlayer_PVE>().SetStats();
+            myIA_Players[i].GetComponent<MyPlayer_PVE>().fightDir = null;    
+            myIA_Players[i].GetComponent<MyPlayer_PVE>().SetStats();
         }
         animator.ResetTrigger("Confrontation");
         animator.ResetTrigger("Battle");

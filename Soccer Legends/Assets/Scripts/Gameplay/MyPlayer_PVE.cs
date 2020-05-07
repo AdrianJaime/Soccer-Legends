@@ -29,7 +29,7 @@ public class MyPlayer_PVE : MonoBehaviour
 
     [SerializeField]
     public Stats stats;
-    private Stats matchBasicStats; public Stats matchBaseStats { get { return matchBasicStats; } }
+    private Stats matchBasicStats;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject ball, line;
     public bool onMove = false, stunned = false, colliding = false, covered = false;
@@ -117,9 +117,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 break;
         }
 
-        matchBasicStats = new Stats(characterBasic.info.atk, characterBasic.info.teq, characterBasic.info.def);
         SetStats();
-        
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
         characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
@@ -405,12 +403,9 @@ public class MyPlayer_PVE : MonoBehaviour
         else return false;
     }
 
-    public void SetStats(int _atk = 0, int _tec = 0, int _def = 0)
+    public void SetStats()
     {
-        matchBasicStats.shoot += _atk;
-        matchBasicStats.technique += _tec;
-        matchBasicStats.defense += _def;
-        stats = new Stats(matchBasicStats);
+        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq, characterBasic.info.def);
     }
 
     public void RepositionPlayer()

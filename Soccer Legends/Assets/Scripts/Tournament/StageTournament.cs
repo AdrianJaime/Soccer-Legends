@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 /// <summary>
 /// Este Script se encarga de organizar el apartado visual dentro 
@@ -11,8 +12,8 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class StageTournament : MonoBehaviour
 {
-    public Text description, stageName,stageNameShadow;
-    public Image stageArt,artReward, clearPanel;
+    public TextMeshProUGUI description;
+    public Image stageBASE,stageBUTTON, stageBoss, artReward, clearPanel;
     public SpriteConpendiumSO stagesPanels, stagesButtons;
     public StageInfo basicInfo;//Información básica sobre ésta stage, variables que no varían
     public RewardLogic reward;
@@ -39,12 +40,21 @@ public class StageTournament : MonoBehaviour
 
             Destroy(clearPanel);
         }
-
-
+        //Base Sprite
+        if (basicInfo.isBoss) {
+            stageBoss.enabled = (true);
+            stageBASE.sprite = stagesPanels.sprites[2];
+            stageBUTTON.sprite = stagesButtons.sprites[2];
+        }
+        else
+        {
+            stageBoss.enabled=(false);
+            stageBASE.sprite = stagesPanels.sprites[1];
+            stageBUTTON.sprite = stagesButtons.sprites[1];
+        }
+        //sprites
         description.text = basicInfo.description;
-        stageName.text = basicInfo.stageName;
-        stageNameShadow.text = basicInfo.stageName;
-        stageArt.sprite = basicInfo.stageArtwork;
+        stageBoss.sprite = basicInfo.stageArtwork;
         artReward.sprite = basicInfo.imageReward;
     }
 

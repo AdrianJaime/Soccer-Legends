@@ -15,7 +15,6 @@ public class StagesManager : MonoBehaviour
     public GameObject stagePrefab;
     public List<StageTournament> stages;
 
-    public bool ownedReward = false;
 
     private void Awake()
     {

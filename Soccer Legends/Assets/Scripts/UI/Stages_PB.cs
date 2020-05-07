@@ -13,7 +13,7 @@ public class Stages_PB : MonoBehaviour
 
     public StagesManager stagesManager;
     public Image rewardTeamStages;
-    public RewardLogic reward;
+    //public RewardLogic reward;
     public Text percent;
 
     private void Start()
@@ -41,15 +41,15 @@ public class Stages_PB : MonoBehaviour
         else
             percent.text = "0%";
 
-        if (!stagesManager.ownedReward)
-        {
-            if (stagesCount == clearedStages)
-            {
-                //
-                reward.UnlockReward();
-            }
+        //if (!stagesManager.ownedReward)
+        //{
+        //    if (stagesCount == clearedStages)
+        //    {
+        //        //
+        //        reward.UnlockReward();
+        //    }
                 
-        }
+        //}
 
     }
 

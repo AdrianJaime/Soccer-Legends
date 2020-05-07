@@ -536,6 +536,7 @@ GameObject:
   - component: {fileID: 631449879}
   - component: {fileID: 631449878}
   - component: {fileID: 631449877}
+  - component: {fileID: 631449880}
   m_Layer: 5
   m_Name: Stage
   m_TagString: Untagged
@@ -601,7 +602,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 631449878}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 631449880}
+        m_MethodName: OpenTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &631449878
@@ -641,6 +653,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 631449875}
   m_CullTransparentMesh: 0
+--- !u!114 &631449880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 631449875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563a51d11799a7408116114bf8e72d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artTeam: {fileID: 0}
+  basicInfo: {fileID: 0}
 --- !u!1001 &649216160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2182,6 +2208,7 @@ GameObject:
   - component: {fileID: 1070622580}
   - component: {fileID: 1070622579}
   - component: {fileID: 1070622578}
+  - component: {fileID: 1070622581}
   m_Layer: 5
   m_Name: Stage
   m_TagString: Untagged
@@ -2247,7 +2274,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1070622579}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 631449880}
+        m_MethodName: OpenTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1070622579
@@ -2287,6 +2325,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070622576}
   m_CullTransparentMesh: 0
+--- !u!114 &1070622581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070622576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563a51d11799a7408116114bf8e72d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artTeam: {fileID: 0}
+  basicInfo: {fileID: 11400000, guid: e999561b46616bf45a14088e97f6a5e2, type: 2}
 --- !u!1 &1079533919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2375,6 +2427,7 @@ GameObject:
   - component: {fileID: 1100958098}
   - component: {fileID: 1100958097}
   - component: {fileID: 1100958096}
+  - component: {fileID: 1100958099}
   m_Layer: 5
   m_Name: Stage
   m_TagString: Untagged
@@ -2440,7 +2493,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1100958097}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 631449880}
+        m_MethodName: OpenTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1100958097
@@ -2480,6 +2544,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1100958094}
   m_CullTransparentMesh: 0
+--- !u!114 &1100958099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100958094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563a51d11799a7408116114bf8e72d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artTeam: {fileID: 0}
+  basicInfo: {fileID: 0}
 --- !u!1 &1124906391
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,6 +2832,7 @@ GameObject:
   - component: {fileID: 1380077190}
   - component: {fileID: 1380077189}
   - component: {fileID: 1380077188}
+  - component: {fileID: 1380077191}
   m_Layer: 5
   m_Name: Stage
   m_TagString: Untagged
@@ -2819,7 +2898,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1380077189}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 631449880}
+        m_MethodName: OpenTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1380077189
@@ -2859,6 +2949,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1380077186}
   m_CullTransparentMesh: 0
+--- !u!114 &1380077191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380077186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563a51d11799a7408116114bf8e72d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artTeam: {fileID: 0}
+  basicInfo: {fileID: 11400000, guid: 3c6789cf1a1cf694ea4dbb898d8838cb, type: 2}
 --- !u!1 &1414440390
 GameObject:
   m_ObjectHideFlags: 0
@@ -3717,6 +3821,7 @@ GameObject:
   - component: {fileID: 2083049556}
   - component: {fileID: 2083049555}
   - component: {fileID: 2083049557}
+  - component: {fileID: 2083049558}
   m_Layer: 5
   m_Name: Stage
   m_TagString: Untagged
@@ -3819,6 +3924,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2083049555}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 631449880}
+        m_MethodName: OpenTeam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &2083049558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083049553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563a51d11799a7408116114bf8e72d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  artTeam: {fileID: 0}
+  basicInfo: {fileID: 11400000, guid: 4cc02f5067bde9d4d9037b319d04723b, type: 2}

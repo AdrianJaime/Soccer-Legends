@@ -251,15 +251,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a78be6585e3da4c4cbfd3df4d5119860, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teamImage: {fileID: 869739290}
-  teamName: {fileID: 1357754039}
-  teamNameShadow: {fileID: 1960136723}
-  info: {fileID: 11400000, guid: 3c6789cf1a1cf694ea4dbb898d8838cb, type: 2}
+  info: {fileID: 0}
   placeToSpawn: {fileID: 37710209}
   stagePrefab: {fileID: 8940025790345671288, guid: 794abf6f63a09ba40b072915143b8291,
     type: 3}
   stages: []
-  ownedReward: 0
 --- !u!1001 &412255856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -390,18 +386,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 412255856}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &475278782 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3001127483421069847, guid: 02b9ad27a554f8c40b5cc2bf40b9e67b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1312265121}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e692cbcf90ca3154e97e727746eee1c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &480154869 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5595168012245117042, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
@@ -428,7 +412,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stagesManager: {fileID: 308256157}
   rewardTeamStages: {fileID: 776973093}
-  reward: {fileID: 475278782}
   percent: {fileID: 912317046}
 --- !u!1 &525749723
 GameObject:
@@ -2103,16 +2086,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProgressBar
       objectReference: {fileID: 0}
-    - target: {fileID: 1013571430194655157, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1013571430194655157, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1535013383754275759, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2232,6 +2205,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.0309279
+      objectReference: {fileID: 0}
+    - target: {fileID: 1013571430194655157, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1013571430194655157, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1e3d9d3ea0429b4187d8bcd5a7f08ad, type: 3}

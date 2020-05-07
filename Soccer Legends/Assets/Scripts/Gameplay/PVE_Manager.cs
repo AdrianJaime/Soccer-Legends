@@ -60,6 +60,10 @@ public class PVE_Manager : MonoBehaviour
     Text mySpecialName;
     [SerializeField]
     Text iaSpecialName;
+    [SerializeField]
+    SpriteRenderer localType;
+    [SerializeField]
+    SpriteRenderer rivalType;
 
     [SerializeField]
     GameObject introObj;
@@ -354,9 +358,12 @@ public class PVE_Manager : MonoBehaviour
                         + playerWithoutBall.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
                 }
                 updateUI_Stats();
+                updateTypesUI(player1, IA_Player);
+                /*BONUS*/
                 setPositionBonus(player1, IA_Player);
                 setStrategyBonus(player1, IA_Player);
                 setTypeBonus(player1, IA_Player);
+                ///////////////////////////////////////
                 playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
                 StartCoroutine(enableConfrontationAnim());
                 animator.SetTrigger("Confrontation");
@@ -433,9 +440,12 @@ public class PVE_Manager : MonoBehaviour
                     + goalkeeper.GetComponent<MyPlayer_PVE>().stats.defense.ToString();
             }
             updateUI_Stats();
+            updateTypesUI(player1, IA_Player);
+            /*BONUS*/
             setPositionBonus(player1, IA_Player);
             setStrategyBonus(player1, IA_Player);
             setTypeBonus(player1, IA_Player);
+            ////////////////////////////////////////
             playerWithBall.GetComponent<MyPlayer_PVE>().GetBall();
             StartCoroutine(enableConfrontationAnim());
             animator.SetTrigger("Confrontation");
@@ -604,6 +614,36 @@ public class PVE_Manager : MonoBehaviour
         statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text =
         statsUI.transform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text =
             uiNumStat[1].ToString() + " " + uiStats[1];
+    }
+
+    void updateTypesUI(MyPlayer_PVE _player1, MyPlayer_PVE _player2)
+    {
+        KeyValuePair<MyPlayer_PVE, SpriteRenderer>[] _players = new KeyValuePair<MyPlayer_PVE, SpriteRenderer>[] 
+        { new KeyValuePair<MyPlayer_PVE, SpriteRenderer>(_player1, localType),
+            new KeyValuePair<MyPlayer_PVE, SpriteRenderer>(_player2, rivalType)};
+        foreach (var _player in _players)
+        {
+            Color c = new Color();
+            switch (_player.Key.characterBasic.basicInfo.type)
+            {
+                case Type.BLUE:
+                    ColorUtility.TryParseHtmlString("#0092F8", out c);
+                    break;
+                case Type.GREEN:
+                    ColorUtility.TryParseHtmlString("#19A600", out c);
+                    break;
+                case Type.PURPLE:
+                    ColorUtility.TryParseHtmlString("#D700FF", out c);
+                    break;
+                case Type.RED:
+                    ColorUtility.TryParseHtmlString("#D60000", out c);
+                    break;
+                case Type.YELLOW:
+                    ColorUtility.TryParseHtmlString("#E7E300", out c);
+                    break;
+            }
+            _player.Value.color = c;
+        }
     }
 
     public void statsUpdate(bool _ia, int _atq, int _teq, int _def)

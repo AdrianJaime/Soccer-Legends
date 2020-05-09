@@ -16,6 +16,7 @@ public class StagesManager : MonoBehaviour
     public List<StageTournament> stages;
 
 
+
     private void Awake()
     {
         if(StaticInfo.tournamentTeam!=null)
@@ -37,4 +38,6 @@ public class StagesManager : MonoBehaviour
             stages.Add(auxStage.GetComponent<StageTournament>());
         }
     }
+
+
 }

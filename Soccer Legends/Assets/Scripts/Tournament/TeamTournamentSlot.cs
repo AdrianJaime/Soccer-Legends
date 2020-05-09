@@ -10,18 +10,25 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TeamTournamentSlot : MonoBehaviour
 {
-    public Image artTeam;
-
     public TeamTournamentInfo basicInfo;
-    // Start is called before the first frame update
-    void Start()
-    {
-        UpdateUI();
-    }
+    public bool canEnter = false;
+    [SerializeField] Color blockColor;
+    [SerializeField] Image image;
+    [SerializeField] Button button;
+    
 
-    void UpdateUI()
+    private void Start()
     {
-        artTeam.sprite = basicInfo.teamArtwork;
+        if (canEnter)
+        {
+            image.color = Color.white;
+            button.enabled = true;
+        }
+        else
+        {
+            image.color = blockColor;
+            button.enabled = false;
+        }
     }
 
     public void OpenTeam()

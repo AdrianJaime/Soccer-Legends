@@ -73,6 +73,11 @@ public class PVE_Manager : MonoBehaviour
     Text playerOutroPoints;
     [SerializeField]
     Text enemyOutroPoints;
+    //Taps
+    [SerializeField]
+    Transform trailTap;
+    float tapRef;
+    public GameObject circleTapPrefab;
 
     //Hardcoded bug fixes
     int goalRefFrame;
@@ -82,7 +87,7 @@ public class PVE_Manager : MonoBehaviour
     void Start()
     {
         confontationAnimSprites = new List<SpriteRenderer>();
-        timeStart = Time.time;
+        tapRef = timeStart = Time.time;
         touchesIdx = new List<int>();
         fingerIdx = -1;
         swipes = new Vector2[2];
@@ -131,84 +136,95 @@ public class PVE_Manager : MonoBehaviour
                 }
                 if (swipe.phase == TouchPhase.Began)
                 {
+                    tapRef = Time.time;
                     swipes[0] = swipe.position;
+                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                }
+                else if (swipe.phase == TouchPhase.Moved)
+                {
+                    trailTap.gameObject.SetActive(true);
+                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 }
                 else if (swipe.phase == TouchPhase.Ended && myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null)
                 {
                     swipes[1] = swipe.position;
-                    if (state == fightState.FIGHT)
+                    if (Vector2.Distance(swipes[0], swipes[1]) > Screen.width * 25.0f / 100.0f || tapRef + 0.5f < Time.time)
                     {
-                        if (UnityEngine.Random.Range(0, 4) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
-                            .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
+                        if (state == fightState.FIGHT)
                         {
-                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                            enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
-                            specialUpgrade(true);
-                        }
-                        else if (UnityEngine.Random.Range(0, 100) < (15 + (60 - ((int)(timeStart + 60 - Time.time)))))
-                        {
-                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
-                            if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().ball != null)
-                                statsUpdate(true, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
-                            else statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
-                        }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
+                            if (UnityEngine.Random.Range(0, 4) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
+                                .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
+                            {
+                                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                                enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
+                                specialUpgrade(true);
+                            }
+                            else if (UnityEngine.Random.Range(0, 100) < (15 + (60 - ((int)(timeStart + 60 - Time.time)))))
+                            {
+                                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                                if (myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().ball != null)
+                                    statsUpdate(true, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                                else statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            }
+                            else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
-                        {
-                            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                            float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                            energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
-                            while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                            energyBar.GetComponent<Slider>().value = energy;
-                            specialUpgrade();
+                            if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
+                            {
+                                myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                                float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                                energyBar.GetComponent<Slider>().value = energySegments = 0;
+                                energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
+                                while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                                energyBar.GetComponent<Slider>().value = energy;
+                                specialUpgrade();
+                            }
+                            else if (swipes[0].x < swipes[1].x)
+                            {
+                                myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                                if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
+                                    statsUpdate(false, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                                else statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            }
+                            else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                         }
-                        else if (swipes[0].x < swipes[1].x)
+                        else if (state == fightState.SHOOT)
                         {
-                            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
-                            if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().ball != null)
-                                statsUpdate(false, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
-                            else statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
-                        }
-                        else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
-                    }
-                    else if (state == fightState.SHOOT)
-                    {
-                        if (UnityEngine.Random.Range(0, 10) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
-                            .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
-                        {
-                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                            enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
-                            specialUpgrade(true);
-                        }
-                        else if (UnityEngine.Random.Range(0, 100) < (35 + (60 - ((int)(timeStart + 60 - Time.time)))))
-                        {
-                            myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
-                            if (fightingIA == 3) statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
-                            else statsUpdate(true, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
-                        }
-                        else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
+                            if (UnityEngine.Random.Range(0, 10) > 0 && myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialAtack
+                                .canUseSpecial(this, myIA_Players[fightingIA], enemySpecialBar * 5.0f))
+                            {
+                                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                                enemySpecialBar -= myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy / 5.0f;
+                                specialUpgrade(true);
+                            }
+                            else if (UnityEngine.Random.Range(0, 100) < (35 + (60 - ((int)(timeStart + 60 - Time.time)))))
+                            {
+                                myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                                if (fightingIA == 3) statsUpdate(true, 0, 0, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                                else statsUpdate(true, myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
+                            }
+                            else myIA_Players[fightingIA].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
 
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
-                        {
-                            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
-                            float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                            energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
-                            while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                            energyBar.GetComponent<Slider>().value = energy;
-                            specialUpgrade();
+                            if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
+                            {
+                                myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Special";
+                                float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                                energyBar.GetComponent<Slider>().value = energySegments = 0;
+                                energy -= myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
+                                while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                                energyBar.GetComponent<Slider>().value = energy;
+                                specialUpgrade();
+                            }
+                            else if (swipes[0].x < swipes[1].x)
+                            {
+                                myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
+                                if (fightingPlayer == 3) statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                                else statsUpdate(false, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
+                            }
+                            else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                         }
-                        else if (swipes[0].x < swipes[1].x)
-                        {
-                            myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Risky";
-                            if (fightingPlayer == 3) statsUpdate(false, 0, 0, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
-                            else statsUpdate(false, myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
-                        }
-                        else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
+                        directionSlide.SetActive(false); specialSlide.SetActive(false);
                     }
-                    directionSlide.SetActive(false); specialSlide.SetActive(false);
+                    trailTap.gameObject.SetActive(false);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -1094,4 +1110,6 @@ public class PVE_Manager : MonoBehaviour
     }
 
     public int getTotalTouches() { return touchesIdx.Count; }
+
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, transform.position.z); }
 }

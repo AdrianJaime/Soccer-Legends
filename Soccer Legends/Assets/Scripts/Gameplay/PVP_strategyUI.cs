@@ -37,6 +37,7 @@ public class PVP_strategyUI : MonoBehaviour
     {
         if (!mg.GameOn || (int)mg.myPlayers[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy == _strat)
         { interacting = true; return; }
+        InstantiateTap();
         interacting = true;
         mg.myPlayers[0].transform.parent.GetComponent<PVP_IA_manager>().teamStrategy = (IA_manager.strategy)_strat;
         cooldown = Time.time;
@@ -48,4 +49,16 @@ public class PVP_strategyUI : MonoBehaviour
     }
 
     public bool isInteracting() { return interacting; }
+
+    void InstantiateTap()
+    {
+        foreach (var tap in Input.touches)
+        {
+            if (tap.phase == TouchPhase.Ended)
+            {
+                Vector2 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(tap.position.x, tap.position.y, 0));
+                Instantiate(mg.circleTapPrefab, worldPos, mg.circleTapPrefab.transform.rotation, transform.parent.parent);
+            }
+        }
+    }
 }

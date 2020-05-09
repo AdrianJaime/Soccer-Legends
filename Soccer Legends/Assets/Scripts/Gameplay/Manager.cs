@@ -75,6 +75,11 @@ public class Manager : MonoBehaviourPun, IPunObservable
     Text playerOutroPoints;
     [SerializeField]
     Text enemyOutroPoints;
+    //Taps
+    [SerializeField]
+    Transform trailTap;
+    float tapRef;
+    public GameObject circleTapPrefab;
 
     //Hardcoded bug fixes
     int frameCount = 0;
@@ -142,61 +147,72 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 if (swipe.phase == TouchPhase.Began)
                 {
+                    tapRef = Time.time;
                     swipes[0] = swipe.position;
+                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                }
+                else if (swipe.phase == TouchPhase.Moved)
+                {
+                    trailTap.gameObject.SetActive(true);
+                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 }
                 else if (swipe.phase == TouchPhase.Ended && PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
                 {
                     swipes[1] = swipe.position;
-                    if(state == fightState.FIGHT)
+                    if (Vector2.Distance(swipes[0], swipes[1]) > Screen.width * 25.0f / 100.0f || tapRef + 0.5f < Time.time)
                     {
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
+                        if (state == fightState.FIGHT)
                         {
-                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
-                            float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                            energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
-                            while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                            energyBar.GetComponent<Slider>().value = energy;
-                            photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
+                            if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
+                            {
+                                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
+                                float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                                energyBar.GetComponent<Slider>().value = energySegments = 0;
+                                energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
+                                while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                                energyBar.GetComponent<Slider>().value = energy;
+                                photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
+                            }
+                            else if (swipes[0].x < swipes[1].x)
+                            {
+                                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
+                                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
+                                    photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
+                                else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            }
+                            else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                         }
-                        else if (swipes[0].x < swipes[1].x)
+                        else if (state == fightState.SHOOT)
                         {
-                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
-                            if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().ball != null)
-                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.technique / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0);
-                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                            if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
+                            {
+                                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
+                                float energy = energyBar.GetComponent<Slider>().value + energySegments;
+                                energyBar.GetComponent<Slider>().value = energySegments = 0;
+                                energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
+                                while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
+                                energyBar.GetComponent<Slider>().value = energy;
+                                photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
+                            }
+                            else if (swipes[0].x < swipes[1].x)
+                            {
+                                PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
+                                if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos == IA_manager.formationPositions.GOALKEEPER)
+                                    photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
+                                else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
+                            }
+                            else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
                         }
-                        else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
-                    }
-                    else if(state == fightState.SHOOT)
-                    {
-                        if (swipes[0].y > swipes[1].y && Vector2.Angle(new Vector2(0, -1), new Vector2(swipes[1].x - swipes[0].x, swipes[1].y - swipes[0].y)) <= 60.0f && specialSlide.activeSelf)
-                        {
-                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Special";
-                            float energy = energyBar.GetComponent<Slider>().value + energySegments;
-                            energyBar.GetComponent<Slider>().value = energySegments = 0;
-                            energy -= PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.requiredEnergy;
-                            while (energy > 1.0f) { energy -= 1.0f; energySegments++; }
-                            energyBar.GetComponent<Slider>().value = energy;
-                            photonView.RPC("specialUpgrade", RpcTarget.All, fightingPlayer);
-                        }
-                        else if (swipes[0].x < swipes[1].x)
-                        {
-                            PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Risky";
-                            if (PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().formationPos == IA_manager.formationPositions.GOALKEEPER)
-                                photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, 0, 0, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.defense / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2));
-                            else photonView.RPC("statsUpdate", RpcTarget.All, fightingPlayer, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().stats.shoot / (UnityEngine.Random.Range(0, 2) == 0 ? -2 : 2), 0, 0);
-                        }
-                        else PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir = "Normal";
-                    }
 
-                    photonView.RPC("setFightDir", RpcTarget.Others, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+                        photonView.RPC("setFightDir", RpcTarget.Others, PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
 
-                    Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
-                    " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
-                    Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
-                        " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
-                    directionSlide.SetActive(false); specialSlide.SetActive(false);
+                        Debug.Log(PhotonView.Find(fightingPlayer).name + " from " + PhotonView.Find(fightingPlayer).transform.parent.name +
+                        " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
+                        Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
+                            " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
+                        directionSlide.SetActive(false); specialSlide.SetActive(false);
+                    }
+                    trailTap.gameObject.SetActive(false);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -1239,4 +1255,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
     }
 
     public int getTotalTouches() { return touchesIdx.Count; }
+
+    private Vector3 putZAxis(Vector3 vec) { return new Vector3(vec.x, vec.y, transform.position.z); }
 }

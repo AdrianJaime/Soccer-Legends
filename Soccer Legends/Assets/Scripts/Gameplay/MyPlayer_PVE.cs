@@ -211,8 +211,8 @@ public class MyPlayer_PVE : MonoBehaviour
                             //Pass
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                             ShootBall(dir);
-                            //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                         }
+                        Instantiate(mg.circleTapPrefab, aux, mg.circleTapPrefab.transform.rotation, null);
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);

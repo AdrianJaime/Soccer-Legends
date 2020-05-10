@@ -247,6 +247,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                             photonView.RPC("ShootBall", RpcTarget.All, dir);
                         }
+                        Instantiate(mg.circleTapPrefab, aux, mg.circleTapPrefab.transform.rotation, null);
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);

@@ -224,7 +224,6 @@ public class PVE_Manager : MonoBehaviour
                         }
                         directionSlide.SetActive(false); specialSlide.SetActive(false);
                     }
-                    trailTap.gameObject.SetActive(false);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -810,6 +809,7 @@ public class PVE_Manager : MonoBehaviour
 
         Slider localS = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
         Slider rivalS = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
+        trailTap.gameObject.SetActive(false);
 
         float sumMaxVal = localS.maxValue + rivalS.maxValue;
         float currentVal = localS.maxValue;

@@ -212,7 +212,6 @@ public class Manager : MonoBehaviourPun, IPunObservable
                             " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
                         directionSlide.SetActive(false); specialSlide.SetActive(false);
                     }
-                    trailTap.gameObject.SetActive(false);
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -853,6 +852,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
         Slider localS = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
         Slider rivalS = statsUI.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Slider>();
+        trailTap.gameObject.SetActive(false);
 
         float sumMaxVal = localS.maxValue + rivalS.maxValue;
         float currentVal = localS.maxValue;
@@ -1213,7 +1213,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
             Debug.Log("Disconnecting. . .");
         }
         Debug.Log("DISCONNECTED!");
-    SceneManager.LoadScene("MainMenuScene");
+    SceneManager.LoadScene("ResultRewardScene");
     }
 
     

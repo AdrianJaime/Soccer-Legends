@@ -12,11 +12,11 @@ using TMPro;
 /// </summary>
 public class StageTournament : MonoBehaviour
 {
-    public TextMeshProUGUI description;
-    public Image stageBASE,stageBUTTON, stageBoss, artReward, clearPanel;
-    public SpriteConpendiumSO stagesPanels, stagesButtons;
+    [SerializeField] TextMeshProUGUI description;
+    [SerializeField] Image stageBASE,stageBUTTON, stageBoss, artReward, clearPanel, difficultSprite;
+    [SerializeField] SpriteConpendiumSO stagesPanels, stagesButtons, difficultStagesImages;
     public StageInfo basicInfo;//Información básica sobre ésta stage, variables que no varían
-    public RewardLogic reward;
+    [SerializeField] RewardLogic reward;
 
     public bool clear = true; 
     bool ownedReward = false;
@@ -56,6 +56,11 @@ public class StageTournament : MonoBehaviour
         description.text = basicInfo.description;
         stageBoss.sprite = basicInfo.stageArtwork;
         artReward.sprite = basicInfo.imageReward;
+
+        if (PlayerPrefs.GetInt("stages_difficult") != -1)
+        {
+            difficultSprite.sprite = difficultStagesImages.sprites[PlayerPrefs.GetInt("stages_difficult")];
+        }
     }
 
     public void selectStage()

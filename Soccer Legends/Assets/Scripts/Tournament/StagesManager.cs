@@ -9,17 +9,22 @@ using UnityEngine.UI;
 /// </summary>
 public class StagesManager : MonoBehaviour
 {
-
+    [SerializeField] ColorsScriptableObject difficultColors;
+    [SerializeField] Image rectSpawnImage;
     public TeamTournamentInfo info; //publico para poner por defecto alguno en el testing
-    public Transform placeToSpawn;
-    public GameObject stagePrefab;
+    [SerializeField] Transform placeToSpawn;
+    [SerializeField] GameObject stagePrefab;
     public List<StageTournament> stages;
+    [SerializeField] float alphaTransparencyPanelSpawn ;
 
 
 
     private void Awake()
     {
-        if(StaticInfo.tournamentTeam!=null)
+        Color colorDifficult = difficultColors.colors[PlayerPrefs.GetInt("stages_difficult")];
+        rectSpawnImage.color =new Color( colorDifficult.r,colorDifficult.g,colorDifficult.b, alphaTransparencyPanelSpawn);
+       
+        if (StaticInfo.tournamentTeam!=null)
             info = StaticInfo.tournamentTeam;
         SetUpStages();
     }

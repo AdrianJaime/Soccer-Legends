@@ -11,9 +11,8 @@ public class PVE_Manager : MonoBehaviour
 {
     public enum fightState { FIGHT, SHOOT, NONE };
 
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar;
-    [SerializeField]
-    GameObject timmer;
+    public bool autoplay = false;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar, timmer;
     [SerializeField]
     GameObject energyNumbers;
     [SerializeField]
@@ -120,34 +119,39 @@ public class PVE_Manager : MonoBehaviour
         }
         if (!GameOn && GameStarted)
         {
-           if(directionSlide.activeSelf && Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1)
+           if(autoplay || (directionSlide.activeSelf && Input.touchCount == 1 && touchesIdx.Count == 0 || fingerIdx != -1))
             {
-                Touch swipe;
-                if (fingerIdx != 0) fingerIdx = getTouchIdx();
-                try
+                Touch swipe = new Touch();
+                if (!autoplay)
                 {
-                    swipe = Input.GetTouch(fingerIdx);
+                    if (fingerIdx != 0) fingerIdx = getTouchIdx();
+                    try
+                    {
+                        swipe = Input.GetTouch(fingerIdx);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        releaseTouchIdx(fingerIdx);
+                        fingerIdx = -1;
+                        return;
+                    }
                 }
-                catch (ArgumentException e)
-                {
-                    releaseTouchIdx(fingerIdx);
-                    fingerIdx = -1;
-                    return;
-                }
-                if (swipe.phase == TouchPhase.Began)
+                else { directionSlide.SetActive(false); specialSlide.SetActive(false); }
+                if (!autoplay && swipe.phase == TouchPhase.Began)
                 {
                     tapRef = Time.time;
                     swipes[0] = swipe.position;
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 }
-                else if (swipe.phase == TouchPhase.Moved)
+                else if (!autoplay && swipe.phase == TouchPhase.Moved)
                 {
                     trailTap.gameObject.SetActive(true);
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                 }
-                else if (swipe.phase == TouchPhase.Ended && myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null)
+                else if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || swipe.phase == TouchPhase.Ended))
                 {
-                    swipes[1] = swipe.position;
+                    if (autoplay) swipes = new Vector2[] { Vector2.zero, Vector2.left };
+                    else swipes[1] = swipe.position;
                     if (Vector2.Distance(swipes[0], swipes[1]) > Screen.width * 25.0f / 100.0f || tapRef + 0.5f < Time.time)
                     {
                         if (state == fightState.FIGHT)
@@ -1061,6 +1065,8 @@ public class PVE_Manager : MonoBehaviour
 
     IEnumerator outro()
     {
+        Time.timeScale = 1.0f;
+        energyNumbers.transform.parent.GetComponent<strategyUI>().enabled = false;
         GameStarted = false;
         GameOn = false;
         outroObj.gameObject.SetActive(true);

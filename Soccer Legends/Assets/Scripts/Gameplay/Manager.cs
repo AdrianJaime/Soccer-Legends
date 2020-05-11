@@ -12,9 +12,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
 {
     public enum fightState { FIGHT, SHOOT, NONE };
 
-    public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar;
-    [SerializeField]
-    GameObject timmer;
+    public GameObject player1Prefab, player2Prefab, ballPrefab, directionSlide, specialSlide, scoreBoard, energyBar, timmer;
     [SerializeField]
     GameObject energyNumbers;
     [SerializeField]

@@ -11,6 +11,8 @@ public class strategyUI : MonoBehaviour
 
     double cooldown = 60 * 10;
 
+    short timeMultiplier = 1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +32,8 @@ public class strategyUI : MonoBehaviour
             GetComponent<Image>().color = c;
         }
         else if (!mg.GameOn) cooldown += Time.deltaTime;
+        if (Time.timeScale != 1.0f) mg.timmer.GetComponent<TMPro.TextMeshProUGUI>()
+                .SetText(mg.timmer.GetComponent<TMPro.TextMeshProUGUI>().text + "x" + ((int)Time.timeScale).ToString());
     }
 
     public void setStrategy(int _strat)
@@ -50,7 +54,28 @@ public class strategyUI : MonoBehaviour
         GetComponent<Image>().color = c;
     }
 
+    public void pauseGame()
+    {
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = timeMultiplier;
+            InstantiateTap();
+        }
+        else Time.timeScale = 0.0f;
+        interacting = true;
+    }
+
+    public void setTimeMultiplier(int incr)
+    {
+        if (timeMultiplier + incr == 0.0f || timeMultiplier + incr == 4.0f) return;
+        timeMultiplier += (short)incr;
+        Time.timeScale = timeMultiplier;
+        InstantiateTap();
+    }
+
     public bool isInteracting() { return interacting; }
+
+    public void setAutoplay() { mg.autoplay = !mg.autoplay; interacting = true; InstantiateTap(); }
 
     void InstantiateTap()
     {

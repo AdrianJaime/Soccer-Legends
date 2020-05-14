@@ -11,7 +11,7 @@ public class MissionObject : MonoBehaviour
     public struct OBJECT_DATA
     {
         public int number;
-        public ConsumBaseInfo baseInfo;
+        public string id;
     }
 
     [SerializeField] Text titleText, descriptionText, progressText,claimButtonText;
@@ -25,12 +25,13 @@ public class MissionObject : MonoBehaviour
 
     string title, description,ID; //el ID es por si reclamas una recompensa, saber donde acceder en la BD para modificar variables
     int maxProgress, actualProgress;
-    List<OBJECT_DATA> rewards;
+   // List<OBJECT_DATA> rewards;
     bool claim;
 
-    public void SetUpVariables(string _id, bool _claim, string _title, string _description, int _actualProgress, int _maxProgress, List<OBJECT_DATA> _rewards, MissionDetail _popUpMissionScript)
+    public void SetUpVariables(string _id, bool _claim, string _title, string _description, int _actualProgress, int _maxProgress, /*List<OBJECT_DATA> _rewards,*/ MissionDetail _popUpMissionScript)
     {
-        ID = _id; claim = _claim; title = _title; description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; rewards = _rewards; popUpMission = _popUpMissionScript;
+        ID = _id; claim = _claim; title = _title; description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; popUpMission = _popUpMissionScript;
+        //rewards = _rewards;
 
         UpdateRender();
     }
@@ -46,11 +47,11 @@ public class MissionObject : MonoBehaviour
         {
             //comprobamos siempre que la i sea menor que la longitud de la lista para no accceder a un valor fuera de rango y pete.
             //tambien hago una comprobacion en el array de imagenes, por si acaso, aunque siempre va a ser constante 3.
-            if (i < rewards.Count&&i<rewardImage.Length)
-            {
-                rewardImage[i].sprite = rewards[i].baseInfo.image;
-                rewardImage[i].gameObject.SetActive(true);
-            }
+            //if (i < rewards.Count&&i<rewardImage.Length)
+            //{
+            //    rewardImage[i].sprite = rewards[i].baseInfo.image;
+            //    rewardImage[i].gameObject.SetActive(true);
+            //}
         }
         //barra de progreso
         progressBar.maxValue = maxProgress;
@@ -76,7 +77,7 @@ public class MissionObject : MonoBehaviour
 
     public void OpenPopUp()
     {
-        popUpMission.SetUpVariables(description, actualProgress, maxProgress, rewards);
+        popUpMission.SetUpVariables(description, actualProgress, maxProgress/*, rewards*/);
     }
 
 }

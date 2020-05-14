@@ -47,7 +47,7 @@ public class EventMissionsGenerator : MonoBehaviour
             {
                 GameObject spawnedMission = Instantiate(missionPrefab, inventory.transform.GetChild(0)); //Es el primer gameObject de la jerarquia, si se cambia no funcionará
                 MissionObject missionLogic = spawnedMission.GetComponent<MissionObject>();
-                missionLogic.SetUpVariables(mission.id, mission.claim, mission.title, mission.description, mission.actualProgress, mission.maxProgress, mission.rewards, popUpMissionScript);
+                missionLogic.SetUpVariables(mission.id, mission.claim, mission.title, mission.description, mission.actualProgress, mission.maxProgress,/* mission.rewards,*/ popUpMissionScript);
             }
         }
 

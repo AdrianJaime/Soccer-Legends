@@ -30,9 +30,9 @@ public class FSOnlineManager : MonoBehaviourPun
             for (int i = 0; i < formationScr.listOfCharactersInFormation.Length; i++)
             {
                 characterID[i] = formationScr.listOfCharactersInFormation[i].basicInfo.ID;
-                atq[i] = formationScr.listOfCharactersInFormation[i].info.atk;
-                teq[i] = formationScr.listOfCharactersInFormation[i].info.teq;
-                def[i] = formationScr.listOfCharactersInFormation[i].info.def;
+                atq[i] = StaticInfo.teamSelectedToPlay.Find(x => x.basicInfo.ID == characterID[i]).info.atk;
+                teq[i] = StaticInfo.teamSelectedToPlay.Find(x => x.basicInfo.ID == characterID[i]).info.teq;
+                def[i] = StaticInfo.teamSelectedToPlay.Find(x => x.basicInfo.ID == characterID[i]).info.def;
             }
             photonView.RPC("getRivalConfirmation", RpcTarget.Others, characterID, atq, teq, def);
             Destroy(GameObject.Find("Confirm"));
@@ -49,7 +49,7 @@ public class FSOnlineManager : MonoBehaviourPun
         {
             CharacterInfo auxCharacter = formationScr.fullInventory.compendiumOfCharacters.Find(x => x.ID == _ID[i]);
             StaticInfo.rivalTeam.Add(new CharacterBasic(auxCharacter,
-                           new CharacterBasic.data(_atq[i], _def[i], _teq[i])));
+                           new CharacterBasic.data(_atq[i], _teq[i], _def[i])));
         }
 
         rivalConfirmTeam = true;
@@ -62,6 +62,8 @@ public class FSOnlineManager : MonoBehaviourPun
         MyPlayer.Stats localStats = new MyPlayer.Stats(0, 0, 0), rivalStats = new MyPlayer.Stats(0, 0, 0);
         for (int i = 0; i < formationScr.rivalSprites.Length; i++)
         {
+            StaticInfo.teamSelectedToPlay.Insert(i, StaticInfo.teamSelectedToPlay
+                .Find(x => x.basicInfo.ID == formationScr.listOfCharactersInFormation[i].basicInfo.ID));
             formationScr.rivalSprites[i].sprite = StaticInfo.rivalTeam[i].basicInfo.artworkSelectorIcon;
             rivalStats.shoot += StaticInfo.rivalTeam[i].info.atk;
             localStats.shoot += StaticInfo.teamSelectedToPlay[i].info.atk;
@@ -70,6 +72,7 @@ public class FSOnlineManager : MonoBehaviourPun
             rivalStats.defense += StaticInfo.rivalTeam[i].info.def;
             localStats.defense += StaticInfo.teamSelectedToPlay[i].info.def;
         }
+        StaticInfo.teamSelectedToPlay.RemoveRange(4, StaticInfo.teamSelectedToPlay.Count - 4);
 
         formationScr.localInfo.GetChild(0).GetComponent<Text>().text = PhotonNetwork.LocalPlayer.NickName;
         formationScr.rivalInfo.GetChild(0).GetComponent<Text>().text = PhotonNetwork.PlayerListOthers[0].NickName;

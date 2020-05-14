@@ -20,6 +20,12 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
             technique = _technique;
             defense = _defense;
         }
+        public Stats(Stats _stats)
+        {
+            shoot = _stats.shoot;
+            technique = _stats.technique;
+            defense = _stats.defense;
+        }
     }
 
     public Stats stats;
@@ -117,16 +123,11 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                 break;
         }
 
-        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
-                   characterBasic.info.def);
+        SetStats();
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
         characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
-
-        //HARDCODED STATS 
-        stats = new Stats(7000, 5000, 5000);
-
         SetName(gameObject.name);
     }
 
@@ -246,6 +247,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                             photonView.RPC("ShootBall", RpcTarget.All, dir);
                         }
+                        Instantiate(mg.circleTapPrefab, aux, mg.circleTapPrefab.transform.rotation, null);
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -443,12 +445,9 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         else return false;
     }
 
-    [PunRPC]
-    private void SetStats(int[] arr)
+    public void SetStats()
     {
-        Debug.Log("Sent:" + arr[0] + arr[1] + arr[2]);
-        stats = new Stats(arr[0], arr[1], arr[2]);
-        if(transform.GetChild(0).GetComponentInChildren<Text>().text != stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString()) photonView.RPC("SetName", RpcTarget.AllViaServer, stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString());
+        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq, characterBasic.info.def);
     }
 
     public void RepositionPlayer()

@@ -26,19 +26,17 @@ public class RaDEFBuff : SpecialAttack
         while (specialOwner.GetComponent<MyPlayer_PVE>().fightDir == null ||
             rival.GetComponent<MyPlayer_PVE>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
-        for(int i = 0; i < specialOwner.transform.parent.childCount; i++)
+        int percentage = 30;
+
+        for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
             if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>()
-                .characterBasic.basicInfo.school == School.EGYPT && 
-                specialOwner.transform.parent.GetChild(i).gameObject != specialOwner)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.defense +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.defense * 10) / 100;
-            else if(specialOwner.transform.parent.GetChild(i).gameObject == specialOwner)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.defense +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer_PVE>().stats.defense * 30) / 100;
+                .characterBasic.basicInfo.school == School.EGYPT && specialOwner !=
+                specialOwner.transform.parent.GetChild(i).gameObject) percentage += 10;
         }
-            
-        yield break;
+
+        mg.statsUpdate(!specialOwner.transform.parent.GetComponent<IA_manager>().playerTeam,
+            0, 0, specialOwner.GetComponent<MyPlayer_PVE>().stats.defense * percentage / 100);
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
@@ -46,18 +44,16 @@ public class RaDEFBuff : SpecialAttack
         while (specialOwner.GetComponent<MyPlayer>().fightDir == null ||
             rival.GetComponent<MyPlayer>().fightDir == null) yield return new WaitForSeconds(Time.deltaTime);
 
+        int percentage = 30;
+
         for (int i = 0; i < specialOwner.transform.parent.childCount; i++)
         {
             if (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>()
-                .characterBasic.basicInfo.school == School.EGYPT &&
-                specialOwner.transform.parent.GetChild(i).gameObject != specialOwner)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.defense +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.defense * 10) / 100;
-            else if (specialOwner.transform.parent.GetChild(i).gameObject == specialOwner)
-                specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.defense +=
-                    (specialOwner.transform.parent.GetChild(i).GetComponent<MyPlayer>().stats.defense * 30) / 100;
+                .characterBasic.basicInfo.school == School.EGYPT && specialOwner !=
+                specialOwner.transform.parent.GetChild(i).gameObject) percentage += 10;
         }
 
-        yield break;
+        mg.statsUpdate(specialOwner.GetComponent<MyPlayer>().photonView.ViewID,
+            0, 0, specialOwner.GetComponent<MyPlayer>().stats.defense * percentage / 100);
     }
 }

@@ -33,13 +33,13 @@ public class DeadlyStun : SpecialAttack
 
         if (!rival.GetComponent<MyPlayer_PVE>().stunned) yield break;
 
-        string score0 = mg.scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;
-        string score1 = mg.scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;
+        string score0 = mg.scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text;
+        string score1 = mg.scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text;
 
         while (rival.GetComponent<MyPlayer_PVE>().stunned)
         {
-            if (score0 != mg.scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text ||
-                score1 != mg.scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text)
+            if (score0 != mg.scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text ||
+                score1 != mg.scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text)
                 yield break;
             else
                 yield return new WaitForSeconds(Time.deltaTime);
@@ -48,7 +48,6 @@ public class DeadlyStun : SpecialAttack
         while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
 
         rival.GetComponent<MyPlayer_PVE>().Lose();
-
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
@@ -63,13 +62,13 @@ public class DeadlyStun : SpecialAttack
 
         if (!rival.GetComponent<MyPlayer>().stunned) yield break;
 
-        string score0 = mg.scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;
-        string score1 = mg.scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text;
+        string score0 = mg.scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text;
+        string score1 = mg.scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text;
 
         while (rival.GetComponent<MyPlayer>().stunned)
         {
-            if (score0 != mg.scoreBoard.transform.GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text ||
-                score1 != mg.scoreBoard.transform.GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text)
+            if (score0 != mg.scoreBoard.transform.GetChild(0).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text ||
+                score1 != mg.scoreBoard.transform.GetChild(1).GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().text)
                 yield break;
             else
                 yield return new WaitForSeconds(Time.deltaTime);

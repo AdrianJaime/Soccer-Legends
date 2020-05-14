@@ -62,8 +62,8 @@ public class CharacterBasic : MonoBehaviour
     {
         info = _copy.info;
         currentExp = _copy.currentExp;
+        currentExpAwakening = _copy.currentExpAwakening;
         power = _copy.power;
-       // owned = _copy.owned;
         basicInfo = _copy.basicInfo;
         levelMAX = _copy.levelMAX;
     }

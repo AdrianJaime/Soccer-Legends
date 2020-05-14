@@ -28,8 +28,6 @@ public class DEFBuff : SpecialAttack
 
         mg.statsUpdate(!specialOwner.transform.parent.GetComponent<IA_manager>().playerTeam,
             0, 0, (specialOwner.GetComponent<MyPlayer_PVE>().stats.defense * 10) / 100);
-            
-        yield break;
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
@@ -39,7 +37,5 @@ public class DEFBuff : SpecialAttack
 
         mg.statsUpdate(specialOwner.GetComponent<MyPlayer>().photonView.ViewID, 
             0, 0, (specialOwner.GetComponent<MyPlayer>().stats.defense * 10) / 100);
-
-        yield break;
     }
 }

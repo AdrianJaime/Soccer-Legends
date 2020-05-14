@@ -12,12 +12,12 @@ public class MissionDetail : MonoBehaviour
 
     string description;
     int maxProgress, actualProgress;
-    List<MissionObject.OBJECT_DATA> rewards;
+   // List<MissionObject.OBJECT_DATA> rewards;
 
 
-    public void SetUpVariables(string _description, int _actualProgress, int _maxProgress, List<MissionObject.OBJECT_DATA> _rewards)
+    public void SetUpVariables(string _description, int _actualProgress, int _maxProgress/*, List<MissionObject.OBJECT_DATA> _rewards*/)
     {
-        description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; rewards = _rewards;
+        description = _description; actualProgress = _actualProgress; maxProgress = _maxProgress; /*rewards = _rewards;*/
 
         UpdateRender();
 
@@ -33,12 +33,12 @@ public class MissionDetail : MonoBehaviour
         {
             //comprobamos siempre que la i sea menor que la longitud de la lista para no accceder a un valor fuera de rango y pete.
             //tambien hago una comprobacion en el array de imagenes, por si acaso, aunque siempre va a ser constante 3.
-            if (i < rewards.Count && i < rewardImage.Length)
-            {
-                rewardImage[i].color = Color.white;
-                rewardImage[i].sprite = rewards[i].baseInfo.image;
-                rewardImage[i].gameObject.SetActive(true);
-            }
+            //if (i < rewards.Count && i < rewardImage.Length)
+            //{
+            //    rewardImage[i].color = Color.white;
+            //    rewardImage[i].sprite = rewards[i].baseInfo.image;
+            //    rewardImage[i].gameObject.SetActive(true);
+            //}
         }
         //barra de progreso
         progressBar.maxValue = maxProgress;

@@ -28,8 +28,6 @@ public class BastetTEQDebuff : SpecialAttack
 
         mg.statsUpdate(!rival.transform.parent.GetComponent<IA_manager>().playerTeam,
             0, -(rival.GetComponent<MyPlayer_PVE>().stats.technique * 30) / 100, 0);
-            
-        yield break;
     }
 
     public override IEnumerator callSpecial(Manager mg, GameObject specialOwner, GameObject rival)
@@ -39,7 +37,5 @@ public class BastetTEQDebuff : SpecialAttack
 
         mg.statsUpdate(rival.GetComponent<MyPlayer>().photonView.ViewID, 
             0, -(rival.GetComponent<MyPlayer>().stats.technique * 30) / 100, 0);
-
-        yield break;
     }
 }

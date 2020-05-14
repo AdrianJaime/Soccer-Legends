@@ -289,7 +289,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4764,7 +4764,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -4799,6 +4799,7 @@ GameObject:
   - component: {fileID: 7373942908428425097}
   - component: {fileID: 7373942908428425099}
   - component: {fileID: 7373942908428425096}
+  - component: {fileID: 5120982531477465414}
   m_Layer: 5
   m_Name: CirculoPrincipal
   m_TagString: Untagged
@@ -4815,7 +4816,7 @@ RectTransform:
   m_GameObject: {fileID: 7373942908428425094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 7373942908711489472}
   - {fileID: 7373942908153597865}
@@ -5080,7 +5081,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -9555,7 +9556,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -9579,6 +9580,18 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &5120982531477465414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7373942908428425094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd37f10959b6327478a205b4c58caf12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7373942908711489473
 GameObject:
   m_ObjectHideFlags: 0
@@ -9868,7 +9881,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -14343,7 +14356,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -14656,7 +14669,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -19131,7 +19144,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 40
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0

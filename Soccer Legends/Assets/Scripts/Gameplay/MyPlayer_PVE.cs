@@ -19,10 +19,17 @@ public class MyPlayer_PVE : MonoBehaviour
             technique = _technique;
             defense = _defense;
         }
+        public Stats(Stats _stats)
+        {
+            shoot = _stats.shoot;
+            technique = _stats.technique;
+            defense = _stats.defense;
+        }
     }
 
     [SerializeField]
     public Stats stats;
+    private Stats matchBasicStats;
     public float speed, dist, maxPointDist, minPointDist, characterRad, maxSize, shootTime;
     public GameObject ball, line;
     public bool onMove = false, stunned = false, colliding = false, covered = false;
@@ -90,60 +97,39 @@ public class MyPlayer_PVE : MonoBehaviour
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(3200, 4200), Random.Range(2300, 3200));
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(3200, 4200), Random.Range(2300, 3200), Random.Range(2300, 3200));
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
                 speed *= 3;
-                //HARDCODED STATS
-                //if (!iaPlayer) stats = new Stats(Random.Range(2300, 3200), Random.Range(2300, 3200), Random.Range(3200, 4200));
                 break;
             default:
-
                 break;
         }
 
-       stats = new Stats(characterBasic.info.atk, characterBasic.info.teq,
-                    characterBasic.info.def);
+        SetStats();
         confrontationSprite = characterBasic.basicInfo.artworkConforntation;
         specialSprite = characterBasic.basicInfo.completeArtwork;
         characterBasic.basicInfo.specialAttackInfo.LoadSpecialAtack();
         animator.runtimeAnimatorController = characterBasic.basicInfo.animator_character;
-
-        if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.OFFENSIVE)
-        {
-            stats.shoot = stats.shoot + stats.shoot / 2;
-            stats.technique = stats.technique + stats.technique / 4;
-        }
-        else if (iaPlayer && transform.parent.GetComponent<IA_manager>().teamStrategy == IA_manager.strategy.DEFFENSIVE)
-        {
-            stats.defense = stats.defense + stats.defense / 2;
-            stats.technique = stats.technique + stats.technique / 4;
-        }
         SetName(gameObject.name);
     }
 
 
     private void Update()
     {
-        //if (photonView.IsMine) //Check if we're the local player
-        //{
+        if (transform.parent.GetComponent<IA_manager>().playerTeam) iaPlayer = mg.autoplay;
+
         if (mg.GameOn && !stunned)
         {
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
@@ -162,7 +148,7 @@ public class MyPlayer_PVE : MonoBehaviour
             {
                 //Vector3 nextPos;
                 float runSpeed = speed;
-                if (((!iaPlayer && mg.HasTheBall() == 2) || (iaPlayer && mg.HasTheBall() == 1)) && formationPos != IA_manager.formationPositions.GOALKEEPER)
+                if (((transform.parent.GetComponent<IA_manager>().playerTeam && mg.HasTheBall() == 2) || (!transform.parent.GetComponent<IA_manager>().playerTeam && mg.HasTheBall() == 1)) && formationPos != IA_manager.formationPositions.GOALKEEPER)
                     runSpeed += speed * 0.25f;
                 Vector3 newPos = Vector3.MoveTowards(transform.position, playerObjective, Time.deltaTime * runSpeed);
                 GetComponent<Rigidbody2D>().velocity = Vector2.ClampMagnitude((Vector2)(newPos - transform.position) + GetComponent<Rigidbody2D>().velocity, Time.deltaTime * speed);
@@ -227,8 +213,8 @@ public class MyPlayer_PVE : MonoBehaviour
                             //Pass
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                             ShootBall(dir);
-                            //photonView.RPC("ShootBall", RpcTarget.AllViaServer, dir);
                         }
+                        Instantiate(mg.circleTapPrefab, aux, mg.circleTapPrefab.transform.rotation, null);
                     }
                 }
                 mg.releaseTouchIdx(fingerIdx);
@@ -333,7 +319,7 @@ public class MyPlayer_PVE : MonoBehaviour
         if (toGoal)
         {
             float[] dir;
-            if (iaPlayer)dir = new float[] { mg.myPlayers[3].transform.position.x, mg.myPlayers[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
+            if (!transform.parent.GetComponent<IA_manager>().playerTeam) dir = new float[] { mg.myPlayers[3].transform.position.x, mg.myPlayers[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
             else dir = new float[] { mg.myIA_Players[3].transform.position.x, mg.myIA_Players[3].transform.position.y, ball.transform.position.x, ball.transform.position.y };
             ShootBall(dir);
         }
@@ -401,7 +387,7 @@ public class MyPlayer_PVE : MonoBehaviour
             objective[1] = goal.transform.position.y;
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
-        else if (mg.fightRef + 2.0f >= Time.time && formationPos != IA_manager.formationPositions.GOALKEEPER && ((iaPlayer && mg.HasTheBall() == 1) || (!iaPlayer && mg.HasTheBall() == 2)) && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position) < 2.4f)
+        else if (mg.fightRef + 2.0f >= Time.time && formationPos != IA_manager.formationPositions.GOALKEEPER && ((!transform.parent.GetComponent<IA_manager>().playerTeam && mg.HasTheBall() == 1) || (transform.parent.GetComponent<IA_manager>().playerTeam && mg.HasTheBall() == 2)) && Vector2.Distance(GameObject.FindGameObjectWithTag("Ball").transform.position, transform.position) < 2.4f)
         {
             Vector2 retreatPos = GameObject.FindGameObjectWithTag("Ball").transform.position + (transform.position - GameObject.FindGameObjectWithTag("Ball").transform.position).normalized * 2.5f;
             objective[0] = retreatPos.x;
@@ -419,11 +405,9 @@ public class MyPlayer_PVE : MonoBehaviour
         else return false;
     }
 
-    private void SetStats(int[] arr)
+    public void SetStats()
     {
-        Debug.Log("Sent:" + arr[0] + arr[1] + arr[2]);
-        stats = new Stats(arr[0], arr[1], arr[2]);
-        //if(transform.GetChild(0).GetComponentInChildren<Text>().text != stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString()) photonView.RPC("SetName", RpcTarget.AllViaServer, stats.shoot.ToString() + " " + stats.technique.ToString() + " " + stats.defense.ToString());
+        stats = new Stats(characterBasic.info.atk, characterBasic.info.teq, characterBasic.info.def);
     }
 
     public void RepositionPlayer()
@@ -460,7 +444,7 @@ public class MyPlayer_PVE : MonoBehaviour
         GameObject[] rivals;
         bool foundCovered = false;
 
-        if (iaPlayer) rivals = mg.myPlayers;
+        if (!transform.parent.GetComponent<IA_manager>().playerTeam) rivals = mg.myPlayers;
         else rivals = mg.myIA_Players;
         foreach (GameObject rival in rivals)
         {
@@ -473,7 +457,7 @@ public class MyPlayer_PVE : MonoBehaviour
                     fightDir = null;
                     for (int i = 0; i < mg.myPlayers.Length; i++)
                     {
-                        if (iaPlayer)
+                        if (!transform.parent.GetComponent<IA_manager>().playerTeam)
                         {
                             if (gameObject == mg.myIA_Players[i]) ia_Idx = i;
                             if (rival.gameObject == mg.myPlayers[i]) playerIdx = i;
@@ -521,7 +505,7 @@ public class MyPlayer_PVE : MonoBehaviour
                 if(ball.transform.position.y / Mathf.Abs(ball.transform.position.y)
                     != mg.myIA_Players[ia_Idx].transform.position.y / Mathf.Abs(mg.myIA_Players[ia_Idx].transform.position.y)) return;
 
-                if (!iaPlayer) {
+                if (transform.parent.GetComponent<IA_manager>().playerTeam) {
                     for (int i = 0; i < mg.myPlayers.Length; i++)
                     {
 
@@ -541,7 +525,7 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         yield return new WaitForSeconds(0.25f);
 
-        if (!iaPlayer)
+        if (transform.parent.GetComponent<IA_manager>().playerTeam)
         {
             if (mg.HasTheBall() == 2 || mg.HasTheBall() == 0) animDir = (GameObject.FindGameObjectWithTag("Ball").transform.position - transform.position).normalized;
             else animDir = (playerObjective - transform.position).normalized;

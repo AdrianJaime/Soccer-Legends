@@ -126,15 +126,19 @@ public class IA_manager : MonoBehaviour
                 defensiveAtacking(_rivalPlayers, _ballPos);
                 break;
         }
-        if (!playerTeam)
+        if (!playerTeam || mg.autoplay)
         {
-            if(Vector2.Distance(_ballPos, mg.myPlayers[3].transform.position) < 1.5f)
+            GameObject[] rivals;
+            GameObject[] locals;
+            if (playerTeam) { rivals = mg.myIA_Players; locals = mg.myPlayers; }
+            else { rivals = mg.myPlayers; locals = mg.myIA_Players; }
+            if (Vector2.Distance(_ballPos, rivals[3].transform.position) < 1.5f)
             {
-                for(int i = 0; i < mg.myIA_Players.Length; i++)
+                for(int i = 0; i < locals.Length; i++)
                 {
-                    if (mg.myIA_Players[i].GetComponent<MyPlayer_PVE>().ball)
+                    if (locals[i].GetComponent<MyPlayer_PVE>().ball)
                     {
-                        shootToGoal(mg.myIA_Players[i]);
+                        shootToGoal(locals[i]);
                         return;
                     }
                 }
@@ -612,7 +616,12 @@ public class IA_manager : MonoBehaviour
     public void check_IA_Shoot()
     {
         GameObject playerWithBall = null;
-        foreach(GameObject player in mg.myIA_Players)
+        GameObject[] rivals;
+        GameObject[] locals;
+        int mltp = 1;
+        if (playerTeam) { rivals = mg.myIA_Players; locals = mg.myPlayers; mltp = -1; }
+        else { rivals = mg.myPlayers; locals = mg.myIA_Players; }
+        foreach(GameObject player in locals)
         {
             if (player.GetComponent<MyPlayer_PVE>().ball != null)
             {
@@ -620,9 +629,9 @@ public class IA_manager : MonoBehaviour
                 break;
             }
         }
-        if (!mg.GameOn || playerWithBall == null || (mg.myPlayers[0].transform.position.y > playerWithBall.transform.position.y
-            && mg.myPlayers[1].transform.position.y > playerWithBall.transform.position.y && mg.myPlayers[2].transform.position.y > playerWithBall.transform.position.y
-            && playerWithBall.transform.position.y > -4))
+        if (!mg.GameOn || playerWithBall == null || ((rivals[0].transform.position.y * mltp) > (playerWithBall.transform.position.y * mltp)
+            && (rivals[1].transform.position.y * mltp) > (playerWithBall.transform.position.y * mltp) && (rivals[2].transform.position.y * mltp) > (playerWithBall.transform.position.y * mltp)
+            && (playerWithBall.transform.position.y * mltp) > -4))
         {
             playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
             return;
@@ -635,11 +644,11 @@ public class IA_manager : MonoBehaviour
                 else passToPlayer(playerWithBall);
                 break;
             case formationPositions.ALA:
-                if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) > 90) passToPlayer(playerWithBall);
+                if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f * mltp, 101) > 90) passToPlayer(playerWithBall);
                 else playerWithBall.GetComponent<MyPlayer_PVE>().stablishNewShootCheck();
                 break;
             case formationPositions.PIVOT:
-                float randVal = Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101);
+                float randVal = Random.Range(1 + playerWithBall.transform.position.y * -22.5f * mltp, 101);
                 Debug.Log(randVal);
                 if (playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea) shootToGoal(playerWithBall);
                 else if (randVal > 90) shootToGoal(playerWithBall);
@@ -655,12 +664,17 @@ public class IA_manager : MonoBehaviour
 
     void passToPlayer(GameObject playerWithBall)
     {
+        GameObject[] rivals;
+        GameObject[] locals;
+        int mltp = 1;
+        if (playerTeam) { rivals = mg.myIA_Players; locals = mg.myPlayers; mltp = -1; }
+        else { rivals = mg.myPlayers; locals = mg.myIA_Players; }
         GameObject ball = playerWithBall.GetComponent<MyPlayer_PVE>().ball;
         Vector3 shootingTarget;
         List<Vector3> closePlayers = new List<Vector3>();
         playerWithBall.GetComponent<Collider2D>().enabled = false;
 
-        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        for (int i = 0; i < locals.Length; i++)
         {
             switch (playerWithBall.transform.GetComponent<MyPlayer_PVE>().formationPos)
             {
@@ -668,14 +682,14 @@ public class IA_manager : MonoBehaviour
                     switch (teamStrategy)
                     {
                         case strategy.TECHNICAL:
-                            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:
-                            if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
-                            else if (i == 2) closePlayers.Insert(1, mg.myIA_Players[i].transform.position);
+                            if (i == 1) closePlayers.Insert(0, locals[i].transform.position);
+                            else if (i == 2) closePlayers.Insert(1, locals[i].transform.position);
                             break;
                         case strategy.DEFFENSIVE:
-                            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                     }
                     break;
@@ -683,15 +697,15 @@ public class IA_manager : MonoBehaviour
                     switch (teamStrategy)
                     {
                         case strategy.TECHNICAL:
-                            if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
-                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (i == 2) closePlayers.Insert(0, locals[i].transform.position);
+                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f * mltp, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:
-                            if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
+                            if (i == 2) closePlayers.Insert(0, locals[i].transform.position);
                             break;
                         case strategy.DEFFENSIVE:
-                            if (i == 2) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
-                            else if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (i == 2) closePlayers.Insert(0, locals[i].transform.position);
+                            else if (Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                     }
                     break;
@@ -699,14 +713,14 @@ public class IA_manager : MonoBehaviour
                     switch (teamStrategy)
                     {
                         case strategy.TECHNICAL:
-                            if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
-                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (i == 1) closePlayers.Insert(0, locals[i].transform.position);
+                            else if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f * mltp, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:
-                            if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
+                            if (i == 1) closePlayers.Insert(0, locals[i].transform.position);
                             break;
                         case strategy.DEFFENSIVE:
-                            if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (Random.Range(1 + playerWithBall.transform.position.y * -22.5f * mltp, 101) <= 90 && Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                     }
                     break;
@@ -715,11 +729,11 @@ public class IA_manager : MonoBehaviour
                     {
                         case strategy.DEFFENSIVE:
                         case strategy.TECHNICAL:
-                            if (Vector2.Distance(playerWithBall.transform.position, mg.myIA_Players[i].transform.position) < 9 && mg.myIA_Players[i] != playerWithBall) closePlayers.Add(mg.myIA_Players[i].transform.position);
+                            if (Vector2.Distance(playerWithBall.transform.position, locals[i].transform.position) < 9 && locals[i] != playerWithBall) closePlayers.Add(locals[i].transform.position);
                             break;
                         case strategy.OFFENSIVE:
-                            if (i == 1) closePlayers.Insert(0, mg.myIA_Players[i].transform.position);
-                            else if (i == 2) closePlayers.Insert(1, mg.myIA_Players[i].transform.position);
+                            if (i == 1) closePlayers.Insert(0, locals[i].transform.position);
+                            else if (i == 2) closePlayers.Insert(1, locals[i].transform.position);
                             break;
                     }
                     break;
@@ -794,23 +808,28 @@ public class IA_manager : MonoBehaviour
 
     void shootToGoal(GameObject playerWithBall)
     {
+        GameObject[] rivals;
+        GameObject[] locals;
+        if (playerTeam) { rivals = mg.myIA_Players; locals = mg.myPlayers; }
+        else { rivals = mg.myPlayers; locals = mg.myIA_Players; }
         if (!playerWithBall.GetComponent<MyPlayer_PVE>().ball.GetComponent<Ball>().inArea || 
             (playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y / Mathf.Abs(playerWithBall.GetComponent<MyPlayer_PVE>().ball.transform.position.y))
-            != mg.myPlayers[3].transform.position.y / Mathf.Abs(mg.myPlayers[3].transform.position.y) || !mg.GameOn) return;
+            != rivals[3].transform.position.y / Mathf.Abs(rivals[3].transform.position.y) || !mg.GameOn
+            || mg.fightRef + 1.0f > Time.time) return;
         Debug.Log("Shooting to goal");
 
-        int playerIdx = 3;
-        int ia_Idx = 0;
-        for (int i = 0; i < mg.myIA_Players.Length; i++)
+        int goalkeeperIdx = 3;
+        int shooterIdx = 0;
+        for (int i = 0; i < locals.Length; i++)
         {
 
-            if (playerWithBall == mg.myIA_Players[i])
+            if (playerWithBall == locals[i])
             {
-                ia_Idx = i;
+                shooterIdx = i;
                 break;
             }
         }
-        mg.ChooseShoot(playerIdx, ia_Idx);
+        mg.ChooseShoot(playerTeam ? shooterIdx : goalkeeperIdx, !playerTeam ? shooterIdx : goalkeeperIdx);
 
         //if(mg.myIA_Players[3].transform.position.x < 0)
         //{

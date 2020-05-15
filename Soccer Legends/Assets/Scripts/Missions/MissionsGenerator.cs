@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Firebase;
-using Firebase.Unity.Editor;
-using Firebase.Database;
+//using Firebase;
+//using Firebase.Unity.Editor;
+//using Firebase.Database;
 
 public class MissionsGenerator : MonoBehaviour
 {
@@ -34,9 +34,9 @@ public class MissionsGenerator : MonoBehaviour
     private void Start()
     {
 
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
         DownloadMissionsDB();
     }
@@ -54,33 +54,33 @@ public class MissionsGenerator : MonoBehaviour
     /// </summary>
     void DownloadMissionsDB()
     {
-        FirebaseDatabase.DefaultInstance.GetReference("missions/normals").GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsFaulted) Debug.Log("F in the chat");
-            else if (task.IsCompleted)
-            {
-                DataSnapshot snapshot = task.Result;
-                for (int i = 1; i <= snapshot.ChildrenCount; i++)
-                {
+        //FirebaseDatabase.DefaultInstance.GetReference("missions/normals").GetValueAsync().ContinueWith(task =>
+        //{
+        //    if (task.IsFaulted) Debug.Log("F in the chat");
+        //    else if (task.IsCompleted)
+        //    {
+        //        DataSnapshot snapshot = task.Result;
+        //        for (int i = 1; i <= snapshot.ChildrenCount; i++)
+        //        {
 
-                    // Facilita lectura de base de datos.
+        //            // Facilita lectura de base de datos.
 
-                    string child = "000";
-                    if (i < 10) child = "00" + i.ToString();
-                    else if (i < 100) child = "0" + i.ToString();
-                    else child = i.ToString();
+        //            string child = "000";
+        //            if (i < 10) child = "00" + i.ToString();
+        //            else if (i < 100) child = "0" + i.ToString();
+        //            else child = i.ToString();
                     
 
-                    BD_MISSION_DATA mission = new BD_MISSION_DATA();
-                    mission.title = snapshot.Child(child).Child("title").GetValue(true).ToString();
-                    mission.maxProgress = int.Parse(snapshot.Child(child).Child("maxProgress").GetValue(true).ToString());
-                    mission.description = snapshot.Child(child).Child("description").GetValue(true).ToString();
-                    mission.id = child;
+        //            BD_MISSION_DATA mission = new BD_MISSION_DATA();
+        //            mission.title = snapshot.Child(child).Child("title").GetValue(true).ToString();
+        //            mission.maxProgress = int.Parse(snapshot.Child(child).Child("maxProgress").GetValue(true).ToString());
+        //            mission.description = snapshot.Child(child).Child("description").GetValue(true).ToString();
+        //            mission.id = child;
 
-                    missions.Add(mission);
-                }
-            }
-        });
+        //            missions.Add(mission);
+        //        }
+        //    }
+        //});
     }
 
     /// <summary>

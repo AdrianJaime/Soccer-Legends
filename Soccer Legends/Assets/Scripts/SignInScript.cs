@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
-using Firebase.Auth;
-using Firebase;
-using Firebase.Unity.Editor;
-using Firebase.Database;
+//using Firebase.Auth;
+//using Firebase;
+//using Firebase.Unity.Editor;
+//using Firebase.Database;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -23,9 +23,9 @@ public class SignInScript : MonoBehaviour
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
 
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
 

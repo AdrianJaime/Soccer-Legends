@@ -24,8 +24,7 @@ public class PVE_Manager : MonoBehaviour
     public GameObject lastPlayer;
     [SerializeField]
     Animator animator;
-    [SerializeField]
-    AnimationClip lastSpecialClip;
+    GameObject lastSpecialClip;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
@@ -779,7 +778,7 @@ public class PVE_Manager : MonoBehaviour
             animator.SetTrigger(fightType);
 
             //Override
-            AnimationClip newAnimationClip = null;
+            GameObject newAnimationClip = null;
             if (animator.GetBool("PlayerSpecial") && fightResult == "Win" && myPlayers[fightingPlayer]
                 .GetComponent<MyPlayer_PVE>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
                 newAnimationClip = myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().characterBasic.basicInfo
@@ -790,12 +789,9 @@ public class PVE_Manager : MonoBehaviour
                     .specialAttackInfo.specialClip;
             if (newAnimationClip != null)
             {
-                AnimatorOverrideController aoc = new AnimatorOverrideController(animator.runtimeAnimatorController);
-
-                aoc[lastSpecialClip] = newAnimationClip;
-                animator.runtimeAnimatorController = aoc;
-                animator.runtimeAnimatorController.name = "OverrideRunTimeController";
+                lastSpecialClip = Instantiate(newAnimationClip, animator.transform.parent);
                 animator.SetBool("SpecialAnim", true);
+                lastSpecialClip.SetActive(false);
             }
         }
 
@@ -868,7 +864,7 @@ public class PVE_Manager : MonoBehaviour
         rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
 
         //Set Results
-        animator.gameObject.GetComponent<Image>().enabled = animator.GetBool("SpecialAnim");
+        if(lastSpecialClip != null)lastSpecialClip.SetActive(animator.GetBool("SpecialAnim"));
         animator.SetTrigger(fightType);
         animator.SetTrigger(fightResult);
 
@@ -901,9 +897,13 @@ public class PVE_Manager : MonoBehaviour
 
     public void fightResult(string anim)
     {
-        if (anim == "SpecialAnim") anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0)
+        if (anim == "SpecialAnim")
+        {
+            anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0)
                  .GetComponent<Slider>().handleRect.GetComponent<Image>().enabled == false ?
                  "EnemyWinConfrontation" : "PlayerWinBattle";
+            Destroy(lastSpecialClip);
+        }
         switch (anim)
         {
             case "PlayerWinBattle":

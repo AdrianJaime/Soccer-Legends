@@ -37,8 +37,8 @@ public class RewardsManager : MonoBehaviour
 
         //}
 
-        //anim = GetComponent<Animator>();
-        //swipes = new Vector2[2];
+        anim = GetComponent<Animator>();
+        swipes = new Vector2[2];
     }
 
     // Update is called once per frame
@@ -66,6 +66,6 @@ public class RewardsManager : MonoBehaviour
 
     void loadMainMenu()
     {
-        SceneManager.LoadScene("MainMenuScene");
+        SceneManager.LoadScene("MainMenu_scene");
     }
 }

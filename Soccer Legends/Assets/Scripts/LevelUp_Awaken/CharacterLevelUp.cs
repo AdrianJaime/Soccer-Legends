@@ -9,7 +9,8 @@ public class CharacterLevelUp : MonoBehaviour
     [SerializeField] Image artworkLocation;
     [SerializeField] Text oldAtkTextLocation, oldTeqTextLocation, oldDefTextLocation;
     [SerializeField] Text newAtkTextLocation, newTeqTextLocation, newDefTextLocation;
-    [SerializeField] Text level, characterName;
+    [SerializeField] TMPro.TextMeshPro level;
+    [SerializeField] TMPro.TextMeshProUGUI  characterName;
     [SerializeField] Transform placeToSpawnAnimation;
 
     CharacterBasic character;

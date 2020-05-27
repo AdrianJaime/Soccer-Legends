@@ -133,7 +133,7 @@ public class CharacterBasic : MonoBehaviour
         //    }
         //});
         ///ALFA CHANGE
-        //info.owned = true;
+        info.owned = true;
 
 
     }

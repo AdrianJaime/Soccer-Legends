@@ -24,7 +24,8 @@ public class PVE_Manager : MonoBehaviour
     public GameObject lastPlayer;
     [SerializeField]
     Animator animator;
-    GameObject lastSpecialClip;
+    [NonSerialized]
+    public GameObject lastSpecialClip;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
@@ -74,7 +75,6 @@ public class PVE_Manager : MonoBehaviour
     //Taps
     [SerializeField]
     Transform trailTap;
-    float tapRef;
     public GameObject circleTapPrefab;
 
     //Hardcoded bug fixes
@@ -85,10 +85,10 @@ public class PVE_Manager : MonoBehaviour
     void Start()
     {
         confontationAnimSprites = new List<SpriteRenderer>();
-        tapRef = timeStart = Time.time;
+        timeStart = Time.time;
         touchesIdx = new List<int>();
         fingerIdx = -1;
-        swipes = new Vector2[2];
+        swipes = new Vector2[] { Vector2.zero, Vector2.zero };
         SpawnPlayers();
     }
 
@@ -138,20 +138,24 @@ public class PVE_Manager : MonoBehaviour
                 else { directionSlide.SetActive(false); specialSlide.SetActive(false); }
                 if (!autoplay && swipe.phase == TouchPhase.Began)
                 {
-                    tapRef = Time.time;
-                    swipes[0] = swipe.position;
-                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                }
-                else if (!autoplay && swipe.phase == TouchPhase.Moved)
-                {
                     trailTap.gameObject.SetActive(true);
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                    trailTap.GetComponent<TrailRenderer>().enabled = true;
                 }
-                else if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || swipe.phase == TouchPhase.Ended))
+                else if (!autoplay && swipe.phase == TouchPhase.Moved && swipes[1] == Vector2.zero)
+                {
+                    trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                    if (trailTap.GetComponent<TrailRenderer>().positionCount > 0)
+                    {
+                        swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
+                        swipes[1] = trailTap.GetComponent<TrailRenderer>().positionCount >= 4 ? trailTap.GetComponent<TrailRenderer>()
+                            .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1) : Vector3.zero;
+                    }
+                }
+                if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || swipe.phase == TouchPhase.Ended))
                 {
                     if (autoplay) swipes = new Vector2[] { Vector2.zero, Vector2.left };
-                    else swipes[1] = swipe.position;
-                    if (Vector2.Distance(swipes[0], swipes[1]) > Screen.width * 25.0f / 100.0f || tapRef + 0.5f < Time.time)
+                    if (swipes[1] != Vector2.zero)
                     {
                         if (state == fightState.FIGHT)
                         {
@@ -225,8 +229,10 @@ public class PVE_Manager : MonoBehaviour
                             }
                             else myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir = "Normal";
                         }
+                        swipes = new Vector2[] { Vector2.zero, Vector2.zero };
                         directionSlide.SetActive(false); specialSlide.SetActive(false);
                     }
+                    trailTap.GetComponent<TrailRenderer>().enabled = false;
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -902,7 +908,6 @@ public class PVE_Manager : MonoBehaviour
             anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0)
                  .GetComponent<Slider>().handleRect.GetComponent<Image>().enabled == false ?
                  "EnemyWinConfrontation" : "PlayerWinBattle";
-            Destroy(lastSpecialClip);
         }
         switch (anim)
         {
@@ -1009,7 +1014,7 @@ public class PVE_Manager : MonoBehaviour
         {
         while (confontationAnimSprites.Count > 0) { yield return new WaitForSeconds(Time.deltaTime); }
         confontationAnimSprites.AddRange(field.GetComponentsInChildren<SpriteRenderer>(true));
-        for(int i = 0; i < myPlayers.Length; i++)
+        for (int i = 0; i < myPlayers.Length; i++)
         {
             if(i != fightingPlayer) confontationAnimSprites.AddRange(myPlayers[i].GetComponentsInChildren<SpriteRenderer>(true));
             if (i != fightingIA) confontationAnimSprites.AddRange(myIA_Players[i].GetComponentsInChildren<SpriteRenderer>(true));

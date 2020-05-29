@@ -13,6 +13,9 @@ public class UI_Gameplay : MonoBehaviour
             GameObject.Find("Manager").GetComponent<PVE_Manager>().fightResult(anim);
         else if (GameObject.Find("Manager").GetComponent<Manager>() != null && PhotonNetwork.IsMasterClient)
             GameObject.Find("Manager").GetComponent<Manager>().fightResult(anim);
+        if (anim == "SpecialAnim") Destroy(GameObject.Find("Manager").GetComponent<PVE_Manager>() != null ?
+            GameObject.Find("Manager").GetComponent<PVE_Manager>().lastSpecialClip :
+            GameObject.Find("Manager").GetComponent<Manager>().lastSpecialClip);
     }
 
     public void specialSpriteSwap()

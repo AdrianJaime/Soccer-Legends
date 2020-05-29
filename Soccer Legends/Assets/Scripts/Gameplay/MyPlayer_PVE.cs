@@ -130,7 +130,7 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         if (transform.parent.GetComponent<IA_manager>().playerTeam) iaPlayer = mg.autoplay;
 
-        if (mg.GameOn && !stunned)
+        if (mg.GameOn && !stunned && Time.timeScale != 0.0f)
         {
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
             {
@@ -207,7 +207,8 @@ public class MyPlayer_PVE : MonoBehaviour
 
                     if (ball != null)
                     {
-                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea &&
+                            mg.fightRef + 1.0f <= Time.time) checkGoal();
                         else
                         {
                             //Pass

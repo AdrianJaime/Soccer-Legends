@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-public enum TypeConsum { TRAINING, AWAKEN }
+public enum TypeConsum { TRAINING, AWAKEN,CONSUM }
 
 
 [System.Serializable]

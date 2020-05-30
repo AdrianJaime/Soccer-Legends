@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResultRewardManager : MonoBehaviour
 {
@@ -19,12 +20,17 @@ public class ResultRewardManager : MonoBehaviour
     [SerializeField] Transform uniqueObjects, commonObjects, extraObjects, eventObjects;
     [SerializeField] GameObject rewardItemPrefab;
     [SerializeField] CompendiumItems compendiumItems;
+    [SerializeField] GameObject layoutCorrector;
+    public Text gold;
 
     // Start is called before the first frame update
     void Start()
     {
         LoadItemsBD();
         SetUpItems();
+
+        gold.text = Random.Range(500, 1000).ToString();
+
     }
 
     /// <summary>
@@ -49,8 +55,7 @@ public class ResultRewardManager : MonoBehaviour
                     //activamos el invenatrio si no lo estaba
                     if (!commonActive)
                     {
-                        commonActive = false;
-                        commonObjects.parent.gameObject.SetActive(true);
+                        commonActive = true;
                     }
                     ConsumBaseInfo itemBase=compendiumItems.compendiumOfItems.Find(x => x.ID == reward._id);
                     //Si lo ha encontrado lo instanciamos correctamente
@@ -69,8 +74,7 @@ public class ResultRewardManager : MonoBehaviour
                     //activamos el invenatrio si no lo estaba
                     if (!eventActive)
                     {
-                        eventActive = false;
-                        eventObjects.parent.gameObject.SetActive(true);
+                        eventActive = true;
                     }
                     itemBase = compendiumItems.compendiumOfItems.Find(x => x.ID == reward._id);
                     //Si lo ha encontrado lo instanciamos correctamente
@@ -89,8 +93,7 @@ public class ResultRewardManager : MonoBehaviour
                     //activamos el invenatrio si no lo estaba
                     if (!extraActive)
                     {
-                        extraActive = false;
-                        extraObjects.parent.gameObject.SetActive(true);
+                        extraActive = true;
                     }
                     itemBase = compendiumItems.compendiumOfItems.Find(x => x.ID == reward._id);
                     //Si lo ha encontrado lo instanciamos correctamente
@@ -109,8 +112,7 @@ public class ResultRewardManager : MonoBehaviour
                     //activamos el invenatrio si no lo estaba
                     if (!uniqueActive)
                     {
-                        uniqueActive = false;
-                        uniqueObjects.parent.gameObject.SetActive(true);
+                        uniqueActive = true;
                     }
                     itemBase=compendiumItems.compendiumOfItems.Find(x => x.ID == reward._id);
                     //Si lo ha encontrado lo instanciamos correctamente
@@ -130,6 +132,25 @@ public class ResultRewardManager : MonoBehaviour
 
             }
         }
+
+        if(commonActive)
+            commonObjects.parent.gameObject.SetActive(true);
+        if (eventActive)
+            eventObjects.parent.gameObject.SetActive(true);
+        if (extraActive)
+            extraObjects.parent.gameObject.SetActive(true);
+        if (uniqueActive)
+            uniqueObjects.parent.gameObject.SetActive(true);
+
     }
 
+
+    /// <summary>
+    /// QUITAR ESTA PUTA MIERDA
+    ///// </summary>
+    private void Update()
+    {
+        layoutCorrector.SetActive (false);
+        layoutCorrector.SetActive( true);
+    }
 }

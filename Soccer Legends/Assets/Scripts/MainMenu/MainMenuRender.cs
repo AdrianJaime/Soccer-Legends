@@ -9,24 +9,32 @@ public class MainMenuRender : MonoBehaviour
     [SerializeField] Image iconoArtwork;
     [SerializeField] Transform placeToSpawnAnimation;
     [SerializeField] CharacterInfo character;
+    [SerializeField] GameObject default2Danimation;
 
     private void Awake()
     {
+        if (StaticInfo.firstCharcter.basicInfo!=null) {
+            character = StaticInfo.firstCharcter.basicInfo;
+            iconoArtwork.sprite = StaticInfo.firstCharcter.basicInfo.artworkPointsGameplay;
 
-        character = StaticInfo.firstCharcter.basicInfo;
-        iconoArtwork.sprite = StaticInfo.firstCharcter.basicInfo.artworkIcon;
-
-        if (character.animation2DObject == null)
-        {
-            artworkLocation.sprite = character.completeArtwork;
-            artworkLocation.gameObject.SetActive(true);
+            if (character.animation2DObject == null)
+            {
+                artworkLocation.sprite = character.completeArtwork;
+                artworkLocation.gameObject.SetActive(true);
+            }
+            else
+            {
+                artworkLocation.gameObject.SetActive(false);
+                Instantiate(character.animation2DObject, placeToSpawnAnimation);
+            }
         }
         else
         {
-            artworkLocation.gameObject.SetActive(false);
-            Instantiate(character.animation2DObject, placeToSpawnAnimation);
+                Instantiate(default2Danimation, placeToSpawnAnimation);
+
+
         }
-        
+
     }
 
 }

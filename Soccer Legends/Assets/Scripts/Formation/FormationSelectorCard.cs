@@ -7,7 +7,8 @@ public class FormationSelectorCard : MonoBehaviour
 {
     public CharacterBasic characterInfo;
     private FormationManager manager;
-
+    [SerializeField] Image role;
+    [SerializeField] SpriteConpendiumSO roles;
     private void Start()
     {
         characterInfo = gameObject.GetComponent<CharacterBasic>();
@@ -19,6 +20,9 @@ public class FormationSelectorCard : MonoBehaviour
         characterInfo.power = StaticInfo.teamSelectedToPlay[transform.GetSiblingIndex()].power;
         gameObject.GetComponent<Image>().sprite= characterInfo.basicInfo.artworkSelectorIcon;
         manager = FindObjectOfType<FormationManager>();
+
+        //Temporal pone los roles
+        role.sprite = roles.sprites[(int)characterInfo.basicInfo.rol];
 
     }
     public void OnClickSlot()

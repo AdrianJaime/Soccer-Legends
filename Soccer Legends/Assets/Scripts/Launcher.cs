@@ -42,7 +42,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         }
         connectScreen.SetActive(false);
         okButton.SetActive(false);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu_scene");
     }
 
     public override void OnConnectedToMaster()

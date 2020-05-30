@@ -41,7 +41,7 @@ public class EquipCardRender : MonoBehaviour
 
                 nameText.text = characterInfo.basicInfo.nameCharacter;
                 artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
-                powerText.text = characterInfo.power.ToString();
+                powerText.text = "CP: "+characterInfo.power.ToString();
 
                 borderColor.sprite = borderColors.sprites[(int)characterInfo.basicInfo.rarity];
                 spriteStars.sprite = starSprites.sprites[(int)characterInfo.basicInfo.rarity];
@@ -58,7 +58,7 @@ public class EquipCardRender : MonoBehaviour
                 artworkImage.color = transparent;
 
                 nameText.text = "None";
-                powerText.text = "0";
+                powerText.text = "CP: " + "0";
 
 
 
@@ -82,7 +82,7 @@ public class EquipCardRender : MonoBehaviour
             artworkImage.color = transparent;
 
             nameText.text = "None";
-            powerText.text = "0";
+            powerText.text = "CP: " + "0";
 
             borderColor.sprite = borderColors.sprites[3];
             spriteStars.sprite = starSprites.sprites[0];

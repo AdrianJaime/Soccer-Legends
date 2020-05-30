@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using Firebase;
-//using Firebase.Unity.Editor;
-//using Firebase.Database;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
 using System;
 using UnityEngine.UI;
 using TMPro;
@@ -21,9 +21,9 @@ public class PlayerInfo : MonoBehaviour
 
     void Start()
     {
-        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
-        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     // Update is called once per frame
@@ -36,9 +36,9 @@ public class PlayerInfo : MonoBehaviour
             while (aux.TotalMinutes > 5 && stamina < maxSta)
             {
                 stamina++;
-                //lastRestore = lastRestore.AddMinutes(5);
-                //FirebaseDatabase.DefaultInstance.GetReference("player/2/lastRestore").SetValueAsync(lastRestore.ToString());
-                //FirebaseDatabase.DefaultInstance.GetReference("player/2/sta").SetValueAsync(stamina.ToString());
+                lastRestore = lastRestore.AddMinutes(5);
+                FirebaseDatabase.DefaultInstance.GetReference("player/2/lastRestore").SetValueAsync(lastRestore.ToString());
+                FirebaseDatabase.DefaultInstance.GetReference("player/2/sta").SetValueAsync(stamina.ToString());
                 aux = DateTime.Now.Subtract(lastRestore);
             }
             timeLeft.text = (Math.Truncate(aux.TotalMilliseconds / 60000 * 100) / 100).ToString();
@@ -64,38 +64,38 @@ public class PlayerInfo : MonoBehaviour
         }
         else
         {
-            //FirebaseDatabase.DefaultInstance.GetReference("player/2").GetValueAsync().ContinueWith(task =>
-            //{
-            //    if (task.IsFaulted) Debug.Log("F in the chat");
-            //    else if (task.IsCompleted)
-            //    {
-            //        DataSnapshot snapshot = task.Result;
+            FirebaseDatabase.DefaultInstance.GetReference("player/2").GetValueAsync().ContinueWith(task =>
+            {
+                if (task.IsFaulted) Debug.Log("F in the chat");
+                else if (task.IsCompleted)
+                {
+                    DataSnapshot snapshot = task.Result;
 
-            //        stamina = int.Parse(snapshot.Child("sta").GetValue(true).ToString());
-            //        lastRestore = Convert.ToDateTime(snapshot.Child("lastRestore").GetValue(true).ToString());
-            //        staSlider.maxValue = maxSta;
+                    stamina = int.Parse(snapshot.Child("sta").GetValue(true).ToString());
+                    lastRestore = Convert.ToDateTime(snapshot.Child("lastRestore").GetValue(true).ToString());
+                    staSlider.maxValue = maxSta;
 
-            //        nameStr = snapshot.Child("name").GetValue(true).ToString();
+                    nameStr = snapshot.Child("name").GetValue(true).ToString();
 
-            //        coinStr = snapshot.Child("coins").GetValue(true).ToString();
+                    coinStr = snapshot.Child("coins").GetValue(true).ToString();
 
-            //        ballStr = snapshot.Child("balls").GetValue(true).ToString();
+                    ballStr = snapshot.Child("balls").GetValue(true).ToString();
 
-            //        rankStr = snapshot.Child("rank").GetValue(true).ToString();
+                    rankStr = snapshot.Child("rank").GetValue(true).ToString();
 
-            //        FirebaseDatabase.DefaultInstance.GetReference("rankConditions/" + rankStr).GetValueAsync().ContinueWith(task2 =>
-            //        {
-            //            if (task2.IsFaulted) Debug.Log("F in the chat");
-            //            else if (task2.IsCompleted)
-            //            {
-            //                DataSnapshot snapshot2 = task.Result;
-            //                maxSta = int.Parse(snapshot2.Child("maxSta").GetValue(true).ToString());
-            //            }
-            //        });
+                    FirebaseDatabase.DefaultInstance.GetReference("rankConditions/" + rankStr).GetValueAsync().ContinueWith(task2 =>
+                    {
+                        if (task2.IsFaulted) Debug.Log("F in the chat");
+                        else if (task2.IsCompleted)
+                        {
+                            DataSnapshot snapshot2 = task.Result;
+                            maxSta = int.Parse(snapshot2.Child("maxSta").GetValue(true).ToString());
+                        }
+                    });
 
-            //        info = true;
-            //    }
-            //});
+                    info = true;
+                }
+            });
 
         }
     }

@@ -32,23 +32,23 @@ public class CharacterBasic : MonoBehaviour
 
     //info user
     public data info;
-    public int levelMAX=1;
+    public int levelMAX = 1;
     public int currentExpAwakening = 0;
-    public int currentExp=0;
-    public int power=1;
+    public int currentExp = 0;
+    public int power = 1;
 
     private void Start()
     {
-        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
-        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
     }
     public CharacterBasic()
     {
 
     }
 
-    public CharacterBasic(CharacterInfo _basicInfo, data _info, int _levelMAX = 1, int _currentExpAwakening = 0, 
+    public CharacterBasic(CharacterInfo _basicInfo, data _info, int _levelMAX = 1, int _currentExpAwakening = 0,
         int _currentExp = 0, int _power = 1)
     {
         basicInfo = _basicInfo;
@@ -92,6 +92,8 @@ public class CharacterBasic : MonoBehaviour
                 int exp = int.Parse(snapshot.Child("exp").GetValue(true).ToString());
                 info.level = Mathf.RoundToInt(Mathf.Pow(exp * 5 / 4, 0.33333f));
 
+
+                ///////***************NO TOCAR SI NO ERES ADRI*****************
                 //Guarrada ajustar exp
                 //if (info.level > levelMAX) info.level = levelMAX;
                 //FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + idstr + "/exp").SetValueAsync((Mathf.Pow(levelMAX, 3) * 4 / 5).ToString());
@@ -133,11 +135,10 @@ public class CharacterBasic : MonoBehaviour
             }
         });
         ///ALFA CHANGE
-        info.owned = true;
+        //info.owned = true;
 
 
     }
 
 
 }
-

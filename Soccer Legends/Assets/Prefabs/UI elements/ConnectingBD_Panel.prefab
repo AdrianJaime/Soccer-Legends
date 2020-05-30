@@ -109,10 +109,10 @@ RectTransform:
   m_Father: {fileID: 367025050894135698}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -542.1, y: -1389.5}
+  m_SizeDelta: {x: 537.9, y: 770.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1912926834977379894
 CanvasRenderer:
@@ -211,6 +211,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeToWait: 1
   panel: {fileID: 1005102919979915934}
+  ListenerEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &3082446386112622823
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,10 +252,10 @@ RectTransform:
   m_Father: {fileID: 3051690796665215487}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 149.84999}
-  m_SizeDelta: {x: -267.5, y: -330}
+  m_AnchoredPosition: {x: 0, y: -235.15001}
+  m_SizeDelta: {x: -267.5, y: 440}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!198 &3082446386112622818
 ParticleSystem:

@@ -70,6 +70,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [SerializeField]
     Animator outroObj;
     [SerializeField]
+    Animator goalAnim;
+    [SerializeField]
     Text playerOutroPoints;
     [SerializeField]
     Text enemyOutroPoints;
@@ -148,14 +150,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                     trailTap.GetComponent<TrailRenderer>().enabled = true;
                 }
-                else if (swipe.phase == TouchPhase.Moved && swipes[1] == Vector2.zero)
+                else if (swipe.phase == TouchPhase.Moved)
                 {
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                     if (trailTap.GetComponent<TrailRenderer>().positionCount > 0)
                     {
                         swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
-                        swipes[1] = trailTap.GetComponent<TrailRenderer>().positionCount >= 4 ? trailTap.GetComponent<TrailRenderer>()
-                            .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1) : Vector3.zero;
+                        if(trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
+                            swipes[1] =  trailTap.GetComponent<TrailRenderer>()
+                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1);
                     }
                 }
                 else if (swipe.phase == TouchPhase.Ended && PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
@@ -437,9 +440,17 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
             isLocal = false;
         else isLocal = true;
-            if (isLocal) score[0]++;
-        else score[1]++;
-
+        if (isLocal)
+        {
+            score[0]++;
+            goalAnim.SetTrigger("CallPlayerGoal");
+        }
+        else
+        {
+            score[1]++;
+            goalAnim.SetTrigger("CallEnemyGoal");
+        }
+        
         resumeGame();
         goalRefFrame = 0;
         lastPlayer = null;

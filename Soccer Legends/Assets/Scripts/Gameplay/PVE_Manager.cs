@@ -69,6 +69,8 @@ public class PVE_Manager : MonoBehaviour
     [SerializeField]
     Animator outroObj;
     [SerializeField]
+    Animator goalAnim;
+    [SerializeField]
     Text playerOutroPoints;
     [SerializeField]
     Text enemyOutroPoints;
@@ -142,14 +144,15 @@ public class PVE_Manager : MonoBehaviour
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                     trailTap.GetComponent<TrailRenderer>().enabled = true;
                 }
-                else if (!autoplay && swipe.phase == TouchPhase.Moved && swipes[1] == Vector2.zero)
+                else if (!autoplay && swipe.phase == TouchPhase.Moved)
                 {
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
                     if (trailTap.GetComponent<TrailRenderer>().positionCount > 0)
                     {
                         swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
-                        swipes[1] = trailTap.GetComponent<TrailRenderer>().positionCount >= 4 ? trailTap.GetComponent<TrailRenderer>()
-                            .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1) : Vector3.zero;
+                        if(trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
+                            swipes[1] = trailTap.GetComponent<TrailRenderer>()
+                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1);
                     }
                 }
                 if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || swipe.phase == TouchPhase.Ended))
@@ -399,8 +402,16 @@ public class PVE_Manager : MonoBehaviour
 
     public void Goal(bool isLocal)
     {
-        if (isLocal) score[0]++;
-        else score[1]++;
+        if (isLocal)
+        {
+            score[0]++;
+            goalAnim.SetTrigger("CallPlayerGoal");
+        }
+        else
+        {
+            score[1]++;
+            goalAnim.SetTrigger("CallEnemyGoal");
+        }
 
         goalRefFrame = 0;
         lastPlayer = null;

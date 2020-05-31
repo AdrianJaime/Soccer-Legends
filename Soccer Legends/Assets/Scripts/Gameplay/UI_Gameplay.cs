@@ -22,4 +22,36 @@ public class UI_Gameplay : MonoBehaviour
     {
         transform.GetChild(1).GetComponent<Image>().sprite = transform.GetChild(2).GetComponent<Image>().sprite;
     }
+
+    public void changeGoalNum(int _ref)
+    {
+        TMPro.TextMeshProUGUI score;
+        if(_ref == 0)
+        {
+            score = transform.GetChild(4).GetComponent<TMPro.TextMeshProUGUI>();
+            if (GameObject.Find("Manager").GetComponent<PVE_Manager>() != null)
+                transform.GetChild(3).GetComponent<TMPro.TextMeshProUGUI>().SetText(PlayerPrefs.GetString("username"));
+            else transform.GetChild(3).GetComponent<TMPro.TextMeshProUGUI>().SetText(PhotonNetwork.LocalPlayer.NickName);
+        }
+        else
+        {
+            score = transform.GetChild(6).GetComponent<TMPro.TextMeshProUGUI>();
+            if (GameObject.Find("Manager").GetComponent<PVE_Manager>() != null)
+                transform.GetChild(3).GetComponent<TMPro.TextMeshProUGUI>().SetText(StaticInfo.tournamentTeam.teamName);
+            else transform.GetChild(3).GetComponent<TMPro.TextMeshProUGUI>().SetText(PhotonNetwork.PlayerListOthers[0].NickName);
+        }
+        
+        int scoreNum = int.Parse(score.text.Substring(1));
+        scoreNum++;
+        score.SetText("0" + scoreNum.ToString());
+
+        StartCoroutine(endGoalAnim(1.25f));
+    }
+
+    IEnumerator endGoalAnim(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        GetComponent<Animator>().SetTrigger("Reset");
+    }
 }

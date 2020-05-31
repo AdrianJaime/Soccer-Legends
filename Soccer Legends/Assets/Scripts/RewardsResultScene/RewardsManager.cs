@@ -58,7 +58,7 @@ public class RewardsManager : MonoBehaviour
                 if (swipes[0].y < swipes[1].y)
                 {
                     anim.SetTrigger("SlideUp");
-                    Invoke("loadMainMenu", 1.0f);
+                    Invoke("ObjectsRewardsScene", 1.0f);
                 }
             }
         }

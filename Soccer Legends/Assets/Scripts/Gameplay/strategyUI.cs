@@ -36,8 +36,8 @@ public class strategyUI : MonoBehaviour
             GetComponent<Image>().color = c;
         }
         else if (!mg.GameOn) cooldown += Time.deltaTime;
-        if (Time.timeScale != 1.0f) mg.timmer.GetComponent<TMPro.TextMeshProUGUI>()
-                .SetText(mg.timmer.GetComponent<TMPro.TextMeshProUGUI>().text + "x" + ((int)Time.timeScale).ToString());
+        //if (Time.timeScale != 1.0f) mg.timmer.GetComponent<TMPro.TextMeshProUGUI>()
+        //        .SetText(mg.timmer.GetComponent<TMPro.TextMeshProUGUI>().text + "x" + ((int)Time.timeScale).ToString());
     }
 
     public void setStrategy(int _strat)

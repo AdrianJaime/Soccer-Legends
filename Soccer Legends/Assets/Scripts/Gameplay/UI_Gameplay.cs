@@ -45,7 +45,7 @@ public class UI_Gameplay : MonoBehaviour
         scoreNum++;
         score.SetText("0" + scoreNum.ToString());
 
-        StartCoroutine(endGoalAnim(scoreNum != 3 ? 1.25f : 0.0f));
+        StartCoroutine(endGoalAnim(1.25f));
     }
 
     IEnumerator endGoalAnim(float time)

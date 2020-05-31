@@ -405,12 +405,12 @@ public class PVE_Manager : MonoBehaviour
         if (isLocal)
         {
             score[0]++;
-            goalAnim.SetTrigger("CallPlayerGoal");
+            if (score[0] != 3) goalAnim.SetTrigger("CallPlayerGoal");
         }
         else
         {
             score[1]++;
-            goalAnim.SetTrigger("CallEnemyGoal");
+            if (score[1] != 3) goalAnim.SetTrigger("CallEnemyGoal");
         }
 
         goalRefFrame = 0;

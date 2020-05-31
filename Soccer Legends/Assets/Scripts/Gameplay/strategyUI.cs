@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ public class strategyUI : MonoBehaviour
 
     short timeMultiplier = 1;
 
+
+    [SerializeField] TextMeshProUGUI speedText;
+    [SerializeField] TextMeshProUGUI autoplayText;
     // Start is called before the first frame update
     void Start()
     {
@@ -72,10 +76,30 @@ public class strategyUI : MonoBehaviour
         Time.timeScale = timeMultiplier;
         InstantiateTap();
     }
+    int incrementTime = 1;
+    public void SetTimeMultiplierAlejandro()
+    {
+        if (timeMultiplier + incrementTime == 0.0f || timeMultiplier + incrementTime == 4.0f)
+        {
+            timeMultiplier = 0;
+            Time.timeScale = timeMultiplier;
+        }
+        timeMultiplier += (short)incrementTime;
+        Time.timeScale = timeMultiplier;
+
+        speedText.text = "Speed x" + Time.timeScale.ToString();
+
+        InstantiateTap();
+    }
 
     public bool isInteracting() { return interacting; }
 
-    public void setAutoplay() { mg.autoplay = !mg.autoplay; interacting = true; InstantiateTap(); }
+    public void setAutoplay() {
+        mg.autoplay = !mg.autoplay;
+        interacting = true;
+        autoplayText.text=(mg.autoplay) ?  "Automatic" :  "Manual";
+        InstantiateTap();
+    }
 
     void InstantiateTap()
     {

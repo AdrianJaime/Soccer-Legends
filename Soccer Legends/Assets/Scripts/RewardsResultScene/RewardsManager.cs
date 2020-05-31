@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//using Firebase;
-//using Firebase.Unity.Editor;
-//using Firebase.Database;
-
 public class RewardsManager : MonoBehaviour
 {
     Animator anim;
@@ -16,27 +12,9 @@ public class RewardsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
-
-        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-
-        //for (int i = 0; i < StaticInfo.teamSelectedToPlay.Count; i++)
-        //{
-        //    rewardsPanel.GetChild(i).GetComponent<UnityEngine.UI.Image>().sprite =
-        //        StaticInfo.teamSelectedToPlay[i].basicInfo.artworkResult;
-        //    string child = "000";
-        //    if (i < 10) child = "00" + i.ToString();
-        //    else if (i < 100) child = "0" + i.ToString();
-        //    else child = i.ToString();
-
-        //    if (StaticInfo.teamSelectedToPlay[i].levelMAX != StaticInfo.teamSelectedToPlay[i].info.level)
-        //    {
-        //        StaticInfo.teamSelectedToPlay[i].currentExp += 300; //CANTIDAD EXP HARDCODED
-        //        FirebaseDatabase.DefaultInstance.GetReference("player/2/characters/" + child + "/exp").SetValueAsync(StaticInfo.teamSelectedToPlay[i].currentExp.ToString());
-        //    }
-
-        //}
-
+        for (int i = 0; i < StaticInfo.teamSelectedToPlay.Count; i++)
+            rewardsPanel.GetChild(i).GetComponent<UnityEngine.UI.Image>().sprite =
+                StaticInfo.teamSelectedToPlay[i].basicInfo.artworkResult;
         anim = GetComponent<Animator>();
         swipes = new Vector2[2];
     }
@@ -58,7 +36,7 @@ public class RewardsManager : MonoBehaviour
                 if (swipes[0].y < swipes[1].y)
                 {
                     anim.SetTrigger("SlideUp");
-                    Invoke("ObjectsRewardsScene", 1.0f);
+                    Invoke("loadMainMenu", 1.0f);
                 }
             }
         }
@@ -66,6 +44,7 @@ public class RewardsManager : MonoBehaviour
 
     void loadMainMenu()
     {
-        SceneManager.LoadScene("MainMenu_scene");
+        SceneManager.LoadScene("ObjectsRewardsScene");
     }
 }
+

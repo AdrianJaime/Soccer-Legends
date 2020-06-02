@@ -17,13 +17,13 @@ public class SignInScript : MonoBehaviour
     void Start()
     {
         // Initialize Play Games Configuration and Activate it.
-        //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().RequestServerAuthCode(false /*forceRefresh*/).Build();
-        //PlayGamesPlatform.InitializeInstance(config);
-        //PlayGamesPlatform.Activate();
+        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().RequestServerAuthCode(false /*forceRefresh*/).Build();
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.Activate();
 
-        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://soccer-legends-db.firebaseio.com/");
 
-        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
 

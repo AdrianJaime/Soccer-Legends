@@ -147,15 +147,15 @@ public class PVE_Manager : MonoBehaviour
                 else if (!autoplay && swipe.phase == TouchPhase.Moved)
                 {
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                    if (trailTap.GetComponent<TrailRenderer>().positionCount > 0)
+                    if (trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
                     {
                         swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
-                        if(trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
                             swipes[1] = trailTap.GetComponent<TrailRenderer>()
-                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1);
+                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 3);
                     }
                 }
-                if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || swipe.phase == TouchPhase.Ended))
+                if (myPlayers[fightingPlayer].GetComponent<MyPlayer_PVE>().fightDir == null && (autoplay || 
+                    (swipe.phase == TouchPhase.Ended && trailTap.GetComponent<TrailRenderer>().positionCount >= 3)))
                 {
                     if (autoplay) swipes = new Vector2[] { Vector2.zero, Vector2.left };
                     if (swipes[1] != Vector2.zero)

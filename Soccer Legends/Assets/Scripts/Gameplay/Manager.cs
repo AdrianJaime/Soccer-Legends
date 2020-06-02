@@ -153,15 +153,15 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 else if (swipe.phase == TouchPhase.Moved)
                 {
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                    if (trailTap.GetComponent<TrailRenderer>().positionCount > 0)
+                    if (trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
                     {
                         swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
-                        if(trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
-                            swipes[1] =  trailTap.GetComponent<TrailRenderer>()
-                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 1);
+                            swipes[1] = trailTap.GetComponent<TrailRenderer>()
+                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 3);
                     }
                 }
-                else if (swipe.phase == TouchPhase.Ended && PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
+                else if (swipe.phase == TouchPhase.Ended && trailTap.GetComponent<TrailRenderer>().positionCount >= 3 && 
+                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
                 {
                     if (swipes[1] != Vector2.zero)
                     {

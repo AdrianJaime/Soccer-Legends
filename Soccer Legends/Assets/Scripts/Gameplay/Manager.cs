@@ -24,8 +24,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
     public GameObject lastPlayer;
     [SerializeField]
     Animator animator;
-    [NonSerialized]
-    public GameObject lastSpecialClip;
+    [SerializeField]
+    AnimationClip lastSpecialClip;
     private List<int> touchesIdx;
     private int fingerIdx = -1;
     private float enemySpecialBar = 0;
@@ -70,14 +70,13 @@ public class Manager : MonoBehaviourPun, IPunObservable
     [SerializeField]
     Animator outroObj;
     [SerializeField]
-    Animator goalAnim;
-    [SerializeField]
     Text playerOutroPoints;
     [SerializeField]
     Text enemyOutroPoints;
     //Taps
     [SerializeField]
     Transform trailTap;
+    float tapRef;
     public GameObject circleTapPrefab;
 
     //Hardcoded bug fixes
@@ -90,7 +89,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         confontationAnimSprites = new List<SpriteRenderer>();
         touchesIdx = new List<int>();
         fingerIdx = -1;
-        swipes = new Vector2[2] { Vector2.zero, Vector2.zero };
+        swipes = new Vector2[2];
         SpawnPlayers();
     }
 
@@ -146,24 +145,19 @@ public class Manager : MonoBehaviourPun, IPunObservable
                 }
                 if (swipe.phase == TouchPhase.Began)
                 {
-                    trailTap.gameObject.SetActive(true);
+                    tapRef = Time.time;
+                    swipes[0] = swipe.position;
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                    trailTap.GetComponent<TrailRenderer>().enabled = true;
                 }
                 else if (swipe.phase == TouchPhase.Moved)
                 {
+                    trailTap.gameObject.SetActive(true);
                     trailTap.position = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
-                    if (trailTap.GetComponent<TrailRenderer>().positionCount >= 3)
-                    {
-                        swipes[0] = trailTap.GetComponent<TrailRenderer>().GetPosition(0);
-                            swipes[1] = trailTap.GetComponent<TrailRenderer>()
-                                .GetPosition(trailTap.GetComponent<TrailRenderer>().positionCount - 3);
-                    }
                 }
-                else if (swipe.phase == TouchPhase.Ended && trailTap.GetComponent<TrailRenderer>().positionCount >= 3 && 
-                    PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
+                else if (swipe.phase == TouchPhase.Ended && PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir == null)
                 {
-                    if (swipes[1] != Vector2.zero)
+                    swipes[1] = swipe.position;
+                    if (Vector2.Distance(swipes[0], swipes[1]) > Screen.width * 25.0f / 100.0f || tapRef + 0.5f < Time.time)
                     {
                         if (state == fightState.FIGHT)
                         {
@@ -214,10 +208,8 @@ public class Manager : MonoBehaviourPun, IPunObservable
                         " chose direction " + PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().fightDir);
                         Debug.Log(PhotonView.Find(fightingIA).name + " from " + PhotonView.Find(fightingIA).transform.parent.name +
                             " chose direction " + PhotonView.Find(fightingIA).GetComponent<MyPlayer>().fightDir);
-                        swipes = new Vector2[] { Vector2.zero, Vector2.zero };
                         directionSlide.SetActive(false); specialSlide.SetActive(false);
                     }
-                    trailTap.GetComponent<TrailRenderer>().enabled = false;
                     releaseTouchIdx(fingerIdx);
                     fingerIdx = -1;
                 }
@@ -440,17 +432,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
         if (myPlayers[0].GetComponent<MyPlayer>().photonView.Owner != PhotonView.Find(GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().photonView.ViewID).Owner)
             isLocal = false;
         else isLocal = true;
-        if (isLocal)
-        {
-            score[0]++;
-            if(score[0] != 3) goalAnim.SetTrigger("CallPlayerGoal");
-        }
-        else
-        {
-            score[1]++;
-            if(score[1] != 3) goalAnim.SetTrigger("CallEnemyGoal");
-        }
-        
+            if (isLocal) score[0]++;
+        else score[1]++;
+
         resumeGame();
         goalRefFrame = 0;
         lastPlayer = null;
@@ -831,22 +815,25 @@ public class Manager : MonoBehaviourPun, IPunObservable
             animator.SetTrigger(fightType);
 
         //Override 
-        GameObject newAnimationClip = null;
-            if (animator.GetBool("PlayerSpecial") && fightResult == "Win" && PhotonView.Find(fightingPlayer)
-                .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
-                newAnimationClip = PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo
-                    .specialAttackInfo.specialClip;
-            else if (animator.GetBool("EnemySpecial") && fightResult == "Lose" && PhotonView.Find(fightingIA)
-                .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
-                newAnimationClip = PhotonView.Find(fightingIA).GetComponent<MyPlayer>().characterBasic.basicInfo
-                    .specialAttackInfo.specialClip;
-            if (newAnimationClip != null)
-            {
-                lastSpecialClip = Instantiate(newAnimationClip, animator.transform.parent);
-                animator.SetBool("SpecialAnim", true);
-                lastSpecialClip.SetActive(false);
-            }
+        AnimationClip newAnimationClip = null;
+        if (animator.GetBool("PlayerSpecial") && fightResult == "Win" && PhotonView.Find(fightingPlayer)
+            .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
+            newAnimationClip = PhotonView.Find(fightingPlayer).GetComponent<MyPlayer>().characterBasic.basicInfo
+                .specialAttackInfo.specialClip;
+        else if (animator.GetBool("EnemySpecial") && fightResult == "Lose" && PhotonView.Find(fightingIA)
+            .GetComponent<MyPlayer>().characterBasic.basicInfo.specialAttackInfo.specialClip != null)
+            newAnimationClip = PhotonView.Find(fightingIA).GetComponent<MyPlayer>().characterBasic.basicInfo
+                .specialAttackInfo.specialClip;
+        if (newAnimationClip != null)
+        {
+            AnimatorOverrideController aoc = new AnimatorOverrideController(animator.runtimeAnimatorController);
+
+            aoc[lastSpecialClip] = newAnimationClip;
+            animator.runtimeAnimatorController = aoc;
+            animator.runtimeAnimatorController.name = "OverrideRunTimeController";
+            animator.SetBool("SpecialAnim", true);
         }
+    }
 
     StartCoroutine(sliderEffect(waitTime, fightType, fightResult));
 
@@ -918,7 +905,7 @@ public class Manager : MonoBehaviourPun, IPunObservable
         rivalS.handleRect.GetComponent<Image>().enabled = currentVal - localS.maxValue > rivalS.minValue;
 
         //Set Results 
-        if (lastSpecialClip != null) lastSpecialClip.SetActive(animator.GetBool("SpecialAnim"));
+        animator.gameObject.GetComponent<Image>().enabled = animator.GetBool("SpecialAnim");
         animator.SetTrigger(fightType);
         animator.SetTrigger(fightResult);
 
@@ -951,12 +938,9 @@ public class Manager : MonoBehaviourPun, IPunObservable
 
     public void fightResult(string anim)
     {
-        if (anim == "SpecialAnim")
-        {
-            anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0)
-                 .GetComponent<Slider>().handleRect.GetComponent<Image>().enabled == false ?
+        if (anim == "SpecialAnim") anim = statsUI.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0) 
+                 .GetComponent<Slider>().handleRect.GetComponent<Image>().enabled == false ? 
                  "EnemyWinConfrontation" : "PlayerWinBattle";
-        }
         switch (anim)
         {
             case "PlayerWinBattle":

@@ -451,6 +451,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    shoot: 0
+    technique: 0
+    defense: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -468,6 +472,7 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  characterBasic: {fileID: 0}
   goal: {fileID: 0}
   rival_goal: {fileID: 0}
   fingerIdx: -1
@@ -475,6 +480,7 @@ MonoBehaviour:
   characterSprite: {fileID: 3671765858954661466}
   confrontationSprite: {fileID: 0}
   specialSprite: {fileID: 0}
+  steps: {fileID: 0}
 --- !u!58 &8843727232730737982
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -658,6 +664,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    shoot: 0
+    technique: 0
+    defense: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -675,6 +685,7 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  characterBasic: {fileID: 0}
   goal: {fileID: 0}
   rival_goal: {fileID: 0}
   fingerIdx: -1
@@ -682,6 +693,7 @@ MonoBehaviour:
   characterSprite: {fileID: 7706343757112591683}
   confrontationSprite: {fileID: 0}
   specialSprite: {fileID: 0}
+  steps: {fileID: 3414230128270926662}
 --- !u!58 &8660166707980364078
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -825,6 +837,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    shoot: 0
+    technique: 0
+    defense: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -842,6 +858,7 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  characterBasic: {fileID: 0}
   goal: {fileID: 0}
   rival_goal: {fileID: 0}
   fingerIdx: -1
@@ -849,6 +866,7 @@ MonoBehaviour:
   characterSprite: {fileID: 1944763297817998796}
   confrontationSprite: {fileID: 0}
   specialSprite: {fileID: 0}
+  steps: {fileID: 0}
 --- !u!58 &7336175632788540752
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -865,6 +883,103 @@ CircleCollider2D:
   m_Offset: {x: 0, y: -0.5}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!82 &6060847920504394901
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7706343757112591685}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 243787031462533386, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
+    type: 2}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 6.8
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7975296050309485964
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,6 +1047,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf455c3b1688b6e4b9fd2cc04fd22975, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    shoot: 0
+    technique: 0
+    defense: 0
   speed: 1
   dist: 0
   maxPointDist: 0
@@ -949,6 +1068,7 @@ MonoBehaviour:
   playerObjective: {x: 0, y: 0, z: 0}
   startPosition: {x: 0, y: 0}
   formationPos: 0
+  characterBasic: {fileID: 0}
   goal: {fileID: 0}
   rival_goal: {fileID: 0}
   fingerIdx: -1
@@ -956,6 +1076,7 @@ MonoBehaviour:
   characterSprite: {fileID: 7008630519076631465}
   confrontationSprite: {fileID: 0}
   specialSprite: {fileID: 0}
+  steps: {fileID: 0}
 --- !u!58 &3025570518091960455
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1414,9 +1535,51 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.03535815
       objectReference: {fileID: 0}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: stoneClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: mudClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: grassClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: stoneClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: c36f620b4dd57de4ab592a75b94dfe08, type: 3}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: mudClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 3da7828b9eaad5f43966b50084f1edb6, type: 3}
+    - target: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+        type: 3}
+      propertyPath: grassClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: e3dc94142089a0c46a5e7857c42b855d, type: 3}
     m_RemovedComponents:
     - {fileID: 4209466108772711809, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}
+--- !u!114 &3414230128270926662 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2812760636178895706, guid: fdaa8e8341682a14393758b3ecff236f,
+    type: 3}
+  m_PrefabInstance: {fileID: 606058312615817244}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7706343757112591685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c613cb7fd8a2f274daedbdafcc888daf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &7706343757112591684 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7105352011257591128, guid: fdaa8e8341682a14393758b3ecff236f,
@@ -1432,6 +1595,12 @@ SpriteRenderer:
 --- !u!4 &7706343757112591682 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7105352011257591134, guid: fdaa8e8341682a14393758b3ecff236f,
+    type: 3}
+  m_PrefabInstance: {fileID: 606058312615817244}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7706343757112591685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7105352011257591129, guid: fdaa8e8341682a14393758b3ecff236f,
     type: 3}
   m_PrefabInstance: {fileID: 606058312615817244}
   m_PrefabAsset: {fileID: 0}
@@ -1525,12 +1694,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 4209466108772711809, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fdaa8e8341682a14393758b3ecff236f, type: 3}
---- !u!95 &3671765858954661469 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 7105352011257591128, guid: fdaa8e8341682a14393758b3ecff236f,
-    type: 3}
-  m_PrefabInstance: {fileID: 5796119089851923205}
-  m_PrefabAsset: {fileID: 0}
 --- !u!212 &3671765858954661466 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 7105352011257591135, guid: fdaa8e8341682a14393758b3ecff236f,
@@ -1540,6 +1703,12 @@ SpriteRenderer:
 --- !u!4 &3671765858954661467 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7105352011257591134, guid: fdaa8e8341682a14393758b3ecff236f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5796119089851923205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &3671765858954661469 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7105352011257591128, guid: fdaa8e8341682a14393758b3ecff236f,
     type: 3}
   m_PrefabInstance: {fileID: 5796119089851923205}
   m_PrefabAsset: {fileID: 0}

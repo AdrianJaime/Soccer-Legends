@@ -13,7 +13,7 @@ public class PlayerSelector_CardRender : MonoBehaviour
     public CharacterBasic characterInfo;
     [SerializeField] Image borderColor;
     [SerializeField] Image spriteStars;
-    [SerializeField] Image elementColor,role;
+    [SerializeField] Image elementColor;
 
     [SerializeField] bool UtdateAtInit;
 
@@ -21,8 +21,9 @@ public class PlayerSelector_CardRender : MonoBehaviour
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
-    [SerializeField] SpriteConpendiumSO starSprites, borderColors,roles;
-    [SerializeField] ColorsScriptableObject elementColors;
+    [SerializeField] Sprite[] borderColors;
+    [SerializeField] Sprite[] starSprites;
+    [SerializeField] Color[] elementColors;
 
         private void Start()
     {
@@ -56,12 +57,9 @@ public class PlayerSelector_CardRender : MonoBehaviour
                 artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
                 powerText.text = characterInfo.power.ToString();
 
-                borderColor.sprite = borderColors.sprites[(int)characterInfo.basicInfo.rarity];
-                spriteStars.sprite = starSprites.sprites[(int)characterInfo.basicInfo.rarity];
-                elementColor.color = elementColors.colors[(int)characterInfo.basicInfo.type];
-
-
-                role.sprite = roles.sprites[(int)characterInfo.basicInfo.rol];
+                borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
+                spriteStars.sprite = starSprites[(int)characterInfo.basicInfo.rarity];
+                elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
             }
             else
             {
@@ -75,14 +73,12 @@ public class PlayerSelector_CardRender : MonoBehaviour
 
 
 
-                borderColor.sprite = borderColors.sprites[3];
+                borderColor.sprite = borderColors[3];
                 spriteStars.sprite = null;
 
-                borderColor.sprite = borderColors.sprites[3];
-                spriteStars.sprite = starSprites.sprites[0];
-                elementColor.color = elementColors.colors[5];
-                role.sprite = null;
-
+                borderColor.sprite = borderColors[3];
+                spriteStars.sprite = starSprites[0];
+                elementColor.color = elementColors[5];
 
             }
         }
@@ -96,11 +92,9 @@ public class PlayerSelector_CardRender : MonoBehaviour
             nameText.text = "None";
             powerText.text = "0";
 
-            borderColor.sprite = borderColors.sprites[3];
-            spriteStars.sprite = starSprites.sprites[0];
-            elementColor.color = elementColors.colors[5];
-            role.sprite = null;
-
+            borderColor.sprite = borderColors[3];
+            spriteStars.sprite = starSprites[0];
+            elementColor.color = elementColors[5];
 
         }
     }

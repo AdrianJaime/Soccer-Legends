@@ -14,8 +14,19 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
     [SerializeField] Animator []animatorsSlotsSelectors;
     [SerializeField] CharactersCompendium inventory;
 
+    [SerializeField] TeamTournamentInfo teamTournament;
+    [SerializeField] int stageNum;
+
     private void Awake()
     {
+        Screen.SetResolution(576, 1024, true);
+        PlayerPrefs.SetString("username", "MusicDemo");
+        PlayerPrefs.SetString("team" + "1" + "slot" + 0, "3");
+        PlayerPrefs.SetString("team" + "1" + "slot" + 1, "5");
+        PlayerPrefs.SetString("team" + "1" + "slot" + 2, "8");
+        PlayerPrefs.SetString("team" + "1" + "slot" + 3, "10");
+        StaticInfo.tournamentTeam = teamTournament;
+        StaticInfo.tournamentTeam.selectedStage = stageNum;
         StaticInfo.rivalTeam = new List<CharacterBasic>();
         LoadEquipBD();
     }
@@ -146,7 +157,16 @@ public class PlayerSelector_PlayerManager : MonoBehaviour
                 if (rivalTeam[i] == null)
                 {
                     CharacterBasic selectedCharacter = rivalDeck[Random.Range(0, rivalDeck.Count)];
+                    if (selectedCharacter.basicInfo.ID == "6")
+                    {
                     rivalTeam[i] = selectedCharacter;
+                    }
+                    else
+                    {
+                        CharacterBasic bastet = rivalTeam[2];
+                        rivalTeam[2] = selectedCharacter;
+                        rivalTeam[i] = bastet;
+                    }
                     rivalDeck.Remove(selectedCharacter);
                     if (rivalDeck.Count == 0) break;
                 }

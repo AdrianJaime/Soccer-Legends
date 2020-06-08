@@ -81,6 +81,10 @@ public class Formation : MonoBehaviour
         }
         StaticInfo.teamSelectedToPlay.RemoveRange(4, StaticInfo.teamSelectedToPlay.Count - 4);
 
+        localStats.shoot = 27503;
+        localStats.technique = 27279;
+        localStats.defense = 29403;
+
         localInfo.GetChild(0).GetComponent<Text>().text = PlayerPrefs.GetString("username");
         rivalInfo.GetChild(0).GetComponent<Text>().text = StaticInfo.tournamentTeam.teamName;
         localInfo.GetChild(1).GetComponent<Text>().text = "ATK: " + localStats.shoot.ToString();

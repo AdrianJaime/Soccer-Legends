@@ -21,15 +21,11 @@ public class TapUImanager : MonoBehaviour
     void Update()
     {
         if (!enabled) return;
-
-        foreach(var tap in Input.touches)
-        {
-            if(tap.phase == TouchPhase.Ended)
+            if(Input.GetMouseButtonDown(0))
             {
-                Vector2 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(tap.position.x, tap.position.y, 0));
+                Vector2 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
                 Instantiate(mg.circleTapPrefab, new Vector3(worldPos.x, worldPos.y, Camera.main.transform.position.z+1), mg.circleTapPrefab.transform.rotation, null);
             }
-        }
     }
 
     private void OnLevelWasLoaded(int level)

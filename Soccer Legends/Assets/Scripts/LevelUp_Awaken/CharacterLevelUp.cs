@@ -6,16 +6,13 @@ using UnityEngine.UI;
 public class CharacterLevelUp : MonoBehaviour
 {
 
-    [SerializeField] Image artworkLocation, namePlaceImageRarity;
+    [SerializeField] Image artworkLocation;
     [SerializeField] Text oldAtkTextLocation, oldTeqTextLocation, oldDefTextLocation;
     [SerializeField] Text newAtkTextLocation, newTeqTextLocation, newDefTextLocation;
-    [SerializeField] Text CPtext;
-    [SerializeField] TMPro.TextMeshPro level;
-    [SerializeField] TMPro.TextMeshProUGUI  characterName;
+    [SerializeField] Text level, characterName;
     [SerializeField] Transform placeToSpawnAnimation;
-    [SerializeField] ColorsScriptableObject rarityColors;
 
-    public CharacterBasic character;
+    CharacterBasic character;
     CharacterBasic newCharacter;
     private void Start()
     {
@@ -38,9 +35,7 @@ public class CharacterLevelUp : MonoBehaviour
         }
 
 
-        namePlaceImageRarity.color = rarityColors.colors[(int)character.basicInfo.rarity];
-        level.text = character.info.level + "/" + character.levelMAX;
-        CPtext.text = (character.info.atk + character.info.def + character.info.teq).ToString();
+
         UpdateUI();
     }
 
@@ -48,9 +43,9 @@ public class CharacterLevelUp : MonoBehaviour
     {
         if (character.info.level != newCharacter.info.level)
         {
-            newAtkTextLocation.text = newCharacter.info.atk.ToString();
-            newTeqTextLocation.text = newCharacter.info.teq.ToString();
-            newDefTextLocation.text = newCharacter.info.def.ToString();
+            newAtkTextLocation.text = "ATK: " + newCharacter.info.atk.ToString();
+            newTeqTextLocation.text = "TEQ: " + newCharacter.info.teq.ToString();
+            newDefTextLocation.text = "DEF: " + newCharacter.info.def.ToString();
 
             level.text = newCharacter.info.level + "/" + newCharacter.levelMAX;//sustituir este 100 en funcion de su maximo alcanzado si awaken o no
         }
@@ -59,9 +54,9 @@ public class CharacterLevelUp : MonoBehaviour
             oldAtkTextLocation.text = character.info.atk.ToString();
             oldTeqTextLocation.text = character.info.teq.ToString();
             oldDefTextLocation.text = character.info.def.ToString();
-            newAtkTextLocation.text = "-";
-            newTeqTextLocation.text = "-";
-            newDefTextLocation.text = "-";
+            newAtkTextLocation.text = "ATK: -";
+            newTeqTextLocation.text = "TEQ: -";
+            newDefTextLocation.text = "DEF: -";
             level.text = + character.info.level + "/"+newCharacter.levelMAX;
         }
     }
@@ -84,7 +79,7 @@ public class CharacterLevelUp : MonoBehaviour
 
     public void AddExp(int _exp)
     {
-        if(newCharacter.currentExp+_exp> (newCharacter.currentExp + 2)&&newCharacter.info.level<newCharacter.levelMAX)
+        if(newCharacter.currentExp+_exp> (newCharacter.currentExp + 2))
         {
             LevelUp();
             UpdateUI();
@@ -92,7 +87,7 @@ public class CharacterLevelUp : MonoBehaviour
     }
     public void SubstractExp(int _exp)
     {
-        if (newCharacter.currentExp - _exp < (newCharacter.currentExp - 2) && newCharacter.info.level > character.info.level)
+        if (newCharacter.currentExp - _exp < (newCharacter.currentExp - 2))
         {
             LevelDown();
             UpdateUI();

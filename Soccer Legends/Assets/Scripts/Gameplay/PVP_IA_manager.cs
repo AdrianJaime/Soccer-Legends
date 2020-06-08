@@ -650,7 +650,10 @@ public class PVP_IA_manager : MonoBehaviour
 
     void passToPlayer(GameObject playerWithBall)
     {
+
+
         GameObject ball = playerWithBall.GetComponent<MyPlayer>().ball;
+
         Vector3 shootingTarget;
         List<Vector3> closePlayers = new List<Vector3>();
         playerWithBall.GetComponent<Collider2D>().enabled = false;

@@ -29,18 +29,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         rb = GetComponent<Rigidbody2D>();
         shootTimeRef = Time.time - 0.05f;
+        if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null) transform.GetChild(0).gameObject.AddComponent<PVP_cameraMovement>();
+        else transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
         area1 = GameObject.Find("Area 1").GetComponent<Collider2D>();
         area2 = GameObject.Find("Area 2").GetComponent<Collider2D>();
-        if (GameObject.Find("Manager").GetComponent<PVE_Manager>() == null)
-        {
-            transform.GetChild(0).gameObject.AddComponent<PVP_cameraMovement>();
-            StartCoroutine(glowEffect(GameObject.Find("Manager").GetComponent<Manager>()));
-        }
-        else
-        {
-            transform.GetChild(0).gameObject.AddComponent<cameraMovement>();
-            StartCoroutine(glowEffect(GameObject.Find("Manager").GetComponent<PVE_Manager>()));
-        }
         firstBall = true;
         RepositionBall();
     }
@@ -57,94 +49,9 @@ public class Ball : MonoBehaviourPun, IPunObservable
                 transform.localPosition = new Vector3(0, -0.5f, transform.localPosition.z);
             }
         }
-        inArea = area1.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area1.transform.position.z)) ||
-            area2.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area2.transform.position.z));
-    }
-
-    IEnumerator glowEffect(Manager mg)
-    {
-        while (!mg.GameStarted) yield return new WaitForSeconds(Time.deltaTime);
-        Color glowColor = new Color();
-        ColorUtility.TryParseHtmlString("#FFD200", out glowColor);
-        SpriteRenderer areaGlow = area1.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        SpriteRenderer goalGlow = area2.transform.parent.GetComponent<SpriteRenderer>();
-        float frames = 8;
-        while (mg.GameStarted)
-        {
-            while (areaGlow.color.a < (100.0f / 255.0f))
-            {
-                while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-                if (!(inArea && mg.fightRef + 1.0f <= Time.time && transform.position.y > 0
-                    && mg.HasTheBall() == 1)) break;
-                Color c = areaGlow.color;
-                c.a += 100.0f / 255.0f / frames;
-                areaGlow.color = c;
-                c = goalGlow.color;
-                c.r += -(1 - glowColor.r) / frames;
-                c.g += -(1 - glowColor.g) / frames;
-                c.b += -(1 - glowColor.b) / frames;
-                goalGlow.color = c;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-
-            while (areaGlow.color.a > 0.0f)
-            {
-                while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-                Color c = areaGlow.color;
-                c.a -= 100.0f / 255.0f / frames;
-                areaGlow.color = c;
-                c = goalGlow.color;
-                c.r -= -(1 - glowColor.r) / frames;
-                c.g -= -(1 - glowColor.g) / frames;
-                c.b -= -(1 - glowColor.b) / frames;
-                goalGlow.color = c;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
-    }
-
-    IEnumerator glowEffect(PVE_Manager mg)
-    {
-        while (!mg.GameStarted) yield return new WaitForSeconds(Time.deltaTime);
-        Color glowColor = new Color();
-        ColorUtility.TryParseHtmlString("#FFD200", out glowColor);
-        SpriteRenderer areaGlow = area1.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        SpriteRenderer goalGlow = area2.transform.parent.GetComponent<SpriteRenderer>();
-        float frames = 8;
-        while (mg.GameStarted)
-        {
-            while (areaGlow.color.a < (100.0f / 255.0f))
-            {
-                while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-                if (!(inArea && mg.fightRef + 1.0f <= Time.time && transform.position.y > 0 
-                    && mg.HasTheBall() == 1)) break;
-                Color c = areaGlow.color;
-                c.a += 100.0f / 255.0f / frames;
-                areaGlow.color = c;
-                c = goalGlow.color;
-                c.r += -(1 - glowColor.r) / frames;
-                c.g += -(1 - glowColor.g) / frames;
-                c.b += -(1 - glowColor.b) / frames;
-                goalGlow.color = c;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-
-            while (areaGlow.color.a > 0.0f)
-            {
-                while (!mg.GameOn) yield return new WaitForSeconds(Time.deltaTime);
-                Color c = areaGlow.color;
-                c.a -= 100.0f / 255.0f / frames;
-                areaGlow.color = c;
-                c = goalGlow.color;
-                c.r -= -(1 - glowColor.r) / frames;
-                c.g -= -(1 - glowColor.g) / frames;
-                c.b -= -(1 - glowColor.b) / frames;
-                goalGlow.color = c;
-                yield return new WaitForSeconds(Time.deltaTime);
-            }
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
+        if (area1.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area1.transform.position.z)) ||
+            area2.bounds.Contains(new Vector3(transform.position.x, transform.position.y, area2.transform.position.z))) inArea = true;
+        else inArea = false;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) // Send position to the other player. Stream == Getter.
@@ -208,6 +115,15 @@ public class Ball : MonoBehaviourPun, IPunObservable
             direction = Vector2.zero;
             transform.parent = null;
             newBall = false;
+
+
+
+            //AÑADIDO POR ALEJANDRO SONIDO PARA PRÁCTICA MÚSICA
+
+            GetComponent<AudioSource>().Play();
+            //
+
+
         }
     }
 
@@ -230,8 +146,16 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         if (collision.tag == "Wall" && (photonView.IsMine || GameObject.Find("Manager").GetComponent<PVE_Manager>() != null))
         {
-            if ((collision.name == "U_Wall" || collision.name == "D_Wall")) rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
-            if (collision.name == "L_Wall" || collision.name == "R_Wall") rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+            if ((collision.name == "U_Wall" || collision.name == "D_Wall"))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
+                GetComponent<AudioSource>().Play();
+            }
+            if (collision.name == "L_Wall" || collision.name == "R_Wall")
+            {
+                rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+                GetComponent<AudioSource>().Play();
+            }
             if(!newBall && (collision.name == "Goal 1" || collision.name == "Goal 2"))
             {
                 if (GameObject.Find("Manager").GetComponent<PVE_Manager>() != null)

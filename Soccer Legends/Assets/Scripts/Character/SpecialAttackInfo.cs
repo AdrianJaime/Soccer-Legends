@@ -16,7 +16,7 @@ public class SpecialAttackInfo : ScriptableObject
     public SpecialAttack specialAtack;
     [SerializeField]
     Object specialScript;
-    public GameObject specialClip;
+    public AnimationClip specialClip;
 
     public void LoadSpecialAtack()
     {

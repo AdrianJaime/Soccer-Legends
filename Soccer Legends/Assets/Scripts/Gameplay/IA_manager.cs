@@ -670,6 +670,8 @@ public class IA_manager : MonoBehaviour
         if (playerTeam) { rivals = mg.myIA_Players; locals = mg.myPlayers; mltp = -1; }
         else { rivals = mg.myPlayers; locals = mg.myIA_Players; }
         GameObject ball = playerWithBall.GetComponent<MyPlayer_PVE>().ball;
+
+
         Vector3 shootingTarget;
         List<Vector3> closePlayers = new List<Vector3>();
         playerWithBall.GetComponent<Collider2D>().enabled = false;

@@ -240,8 +240,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
 
                     if (ball != null)
                     {
-                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea &&
-                            mg.fightRef + 1.0f <= Time.time) checkGoal();
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
                         else
                         {
                             //Pass

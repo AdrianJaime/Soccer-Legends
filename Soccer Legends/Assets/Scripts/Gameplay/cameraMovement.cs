@@ -12,8 +12,11 @@ public class cameraMovement : MonoBehaviour
     Vector3 offset;
     PVE_Manager mg;
     public int fingerIdx;
+    Vector3 aux;
 
     GameObject canvas;
+
+    bool moved = false;
 
     // Start is called before the first frame update
     void Start()
@@ -33,11 +36,6 @@ public class cameraMovement : MonoBehaviour
         if (!mg.GameStarted) { lastCamPosition = transform.position; return; }
         if (mg.GameOn) ProcessInputs();
         else { 
-        if (fingerIdx != -1 && Input.GetTouch(fingerIdx).phase == TouchPhase.Ended)
-            {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
-            }
         if(cameraBallOffset.y == -3) transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 1.5f, transform.position.z), Time.deltaTime);
         else transform.position = Vector3.Lerp(lastCamPosition, transform.parent.position + new Vector3(0, 2.5f, transform.position.z), Time.deltaTime);
             lastCamPosition = transform.position;
@@ -46,62 +44,39 @@ public class cameraMovement : MonoBehaviour
 
     private void ProcessInputs()
     {
-        bool found = false;
-        if (fingerIdx == -1)
-        {
-            foreach (Touch t in Input.touches)
-            {
-                if (t.phase == TouchPhase.Moved)
-                {
-                    foreach (GameObject p in mg.myPlayers)
-                    {
-                        if (p.GetComponent<MyPlayer_PVE>().fingerIdx != t.fingerId) found = true;
-                        else
-                        {
-                            found = false;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
         //Movement
-        if ((Input.touchCount > mg.getTotalTouches() && found || fingerIdx != -1))
+        if (!moved && Input.GetMouseButton(0))
         {
-            if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
-            Touch swipe = Input.GetTouch(fingerIdx);
-            Vector3 actualTouch = new Vector3(swipe.position.x, swipe.position.y, 0);
-            if (startTouch == Vector3.zero)
+            aux = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
             {
-                startTouch = actualTouch;
-                startTouchWorld = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                
+                startTouchWorld = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0)));
                 offset = transform.position - startTouchWorld;
-                //if(startTouchWorld.x < transform.position.x) startTouchWorld = new Vector3 ()
+                startTouch = Input.mousePosition;
             }
-
-            else if (swipe.phase == TouchPhase.Moved)
+            else if (Input.GetMouseButton(0) && Vector2.Distance(Input.mousePosition, startTouch) > 30)
             {
                 Vector3 camPos = offset + startTouchWorld;//transform.parent.position + lastCamPosition - startTouchWorld;
-                float dist = Vector3.Distance(actualTouch, startTouch) / Screen.width*5;
-                camPos += (startTouch - actualTouch).normalized * dist;
+                float dist = Vector2.Distance(aux, startTouch) / Screen.width * 5;
+                camPos += (startTouch - aux).normalized * dist;
 
                 //ransform.position = startTouch + (startTouch - camPos);
                 //if(putZAxis(Camera.main.ScreenToWorldPoint(startTouch)))
                 transform.position = putZAxis(camPos);// + startTouchWorld);
-                
+
                 //ransform.position = Vector3.Lerp(lastCamPosition, camPos, 2 * Time.deltaTime);
             }
-            else if(swipe.phase == TouchPhase.Ended)
-            {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
-                startTouchWorld = startTouch = Vector3.zero;
-                lastCamPosition = transform.position;
-            }
         }
-        else
+        else if (Input.GetMouseButtonUp(0))
         {
-            
+            startTouchWorld = startTouch = Vector3.zero;
+            lastCamPosition = transform.position;
+            moved = false;
+        }
+        else if (!Input.GetMouseButton(0))
+        {
+
             switch (mg.HasTheBall())
             {
                 case 0:

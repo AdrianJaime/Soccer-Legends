@@ -40,7 +40,7 @@ public class MyPlayer_PVE : MonoBehaviour
     public IA_manager.formationPositions formationPos;
     public CharacterBasic characterBasic;
 
-    private Vector3 smoothMove, aux;
+    private Vector3 smoothMove, aux, firstAux;
     private GameObject actualLine;
     private PVE_Manager mg;
     private List<Vector3> points;
@@ -62,6 +62,12 @@ public class MyPlayer_PVE : MonoBehaviour
 
     //IA
     bool iaPlayer;
+
+    bool moved = false;
+
+
+
+    public Steps steps;
 
     private void Start()
     {
@@ -97,20 +103,24 @@ public class MyPlayer_PVE : MonoBehaviour
                 formationPos = IA_manager.formationPositions.CIERRE;
                 gameObject.name = "Cierre";
                 characterBasic = teamInfo[2];
+                characterBasic.info = new CharacterBasic.data(4760, 7342, 8782);
                 break;
             case 1:
                 formationPos = IA_manager.formationPositions.ALA;
                 gameObject.name = "Ala";
                 characterBasic = teamInfo[0];
+                characterBasic.info = new CharacterBasic.data(6439, 8343, 7062);
                 break;
             case 2:
                 formationPos = IA_manager.formationPositions.PIVOT;
                 gameObject.name = "Pivot";
                 characterBasic = teamInfo[1];
+                characterBasic.info = new CharacterBasic.data(8525, 7089, 4986);
                 break;
             case 3:
                 formationPos = IA_manager.formationPositions.GOALKEEPER;
                 characterBasic = teamInfo[3];
+                characterBasic.info = new CharacterBasic.data(7779, 4505, 8573);
                 speed *= 3;
                 break;
             default:
@@ -130,7 +140,7 @@ public class MyPlayer_PVE : MonoBehaviour
     {
         if (transform.parent.GetComponent<IA_manager>().playerTeam) iaPlayer = mg.autoplay;
 
-        if (mg.GameOn && !stunned && Time.timeScale != 0.0f)
+        if (mg.GameOn && !stunned)
         {
             if (formationPos == IA_manager.formationPositions.GOALKEEPER)
             {
@@ -178,51 +188,42 @@ public class MyPlayer_PVE : MonoBehaviour
     private void ProcessInputs()
     {
         //Movement
-        if ((Input.touchCount > mg.getTotalTouches() || fingerIdx != -1))
+        if (!moved)
         {
-            if (fingerIdx == -1) fingerIdx = mg.getTouchIdx();
-            Touch swipe;
-            if (Input.touchCount > fingerIdx)swipe = Input.GetTouch(fingerIdx);
-            else
-            {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
-                return;
-            }
-            aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0.0f)));
-            if (swipe.phase == TouchPhase.Began)
+            aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f)));
+            if (Input.GetMouseButtonDown(0))
             {
                 touchTime = Time.time;
-                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(swipe.position.x, swipe.position.y, 0)));
+                aux = putZAxis(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0)));
+                firstAux = Input.mousePosition;
             }
-            else if (swipe.phase == TouchPhase.Moved)
+            else if (Input.GetMouseButton(0) && Vector2.Distance(Input.mousePosition, firstAux) > 30)
             {
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
+                moved = true;
+                return;
             }
-            if (swipe.phase == TouchPhase.Ended)
+            if (Input.GetMouseButtonUp(0) && Time.time - touchTime <= shootTime * 2)
             {
-                if (Time.time - touchTime <= shootTime * 2 && mg.GameOn && !stunned && !strategyScript.isInteracting())
+                if (mg.GameOn && !stunned && !strategyScript.isInteracting())
                 {
 
                     if (ball != null)
                     {
-                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea &&
-                            mg.fightRef + 1.0f <= Time.time) checkGoal();
+                        if (goal.bounds.Contains(aux) && ball.GetComponent<Ball>().inArea) checkGoal();
                         else
                         {
                             //Pass
+
                             float[] dir = { aux.x, aux.y, ball.transform.position.x, ball.transform.position.y };
                             ShootBall(dir);
                         }
                         Instantiate(mg.circleTapPrefab, aux, mg.circleTapPrefab.transform.rotation, null);
                     }
                 }
-                mg.releaseTouchIdx(fingerIdx);
-                fingerIdx = -1;
                 passFrames = 0;
             }
         }
+        else if (Input.GetMouseButtonUp(0)) moved = false;
     }
 
     public void FollowLine()
@@ -291,9 +292,6 @@ public class MyPlayer_PVE : MonoBehaviour
                 ball.GetComponent<Ball>().ShootBall(_dir);
                 ball.GetComponent<Ball>().shootTimeRef = Time.time;
             }
-            //if (!iaPlayer && (GameObject.FindGameObjectWithTag("MainCamera") != null)) {
-            //    GameObject.FindGameObjectWithTag("MainCamera").SetActive(false);
-            //    }
             ball.transform.parent = null;
             ball = null;
             transform.gameObject.layer = 0;
@@ -559,5 +557,27 @@ public class MyPlayer_PVE : MonoBehaviour
         if(mg.GameStarted && mg.GameOn!= animator.enabled)
             animator.enabled = mg.GameOn;
         StartCoroutine(SetAnimatorValues());
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (steps != null)
+        {
+            if (collision.GetComponent<Tarreno>())
+            {
+                steps.terrainIndex = collision.GetComponent<Tarreno>().index;
+            }
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (steps != null)
+        {
+            if (collision.GetComponent<Tarreno>())
+            {
+                steps.terrainIndex = 2;
+            }
+        }
+
     }
 }

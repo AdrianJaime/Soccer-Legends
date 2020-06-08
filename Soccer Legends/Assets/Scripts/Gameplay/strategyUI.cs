@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,9 +13,6 @@ public class strategyUI : MonoBehaviour
 
     short timeMultiplier = 1;
 
-
-    [SerializeField] TextMeshProUGUI speedText;
-    [SerializeField] TextMeshProUGUI autoplayText;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,8 +32,8 @@ public class strategyUI : MonoBehaviour
             GetComponent<Image>().color = c;
         }
         else if (!mg.GameOn) cooldown += Time.deltaTime;
-        //if (Time.timeScale != 1.0f) mg.timmer.GetComponent<TMPro.TextMeshProUGUI>()
-        //        .SetText(mg.timmer.GetComponent<TMPro.TextMeshProUGUI>().text + "x" + ((int)Time.timeScale).ToString());
+        if (Time.timeScale != 1.0f) mg.timmer.GetComponent<TMPro.TextMeshProUGUI>()
+                .SetText(mg.timmer.GetComponent<TMPro.TextMeshProUGUI>().text + "x" + ((int)Time.timeScale).ToString());
     }
 
     public void setStrategy(int _strat)
@@ -76,30 +72,10 @@ public class strategyUI : MonoBehaviour
         Time.timeScale = timeMultiplier;
         InstantiateTap();
     }
-    int incrementTime = 1;
-    public void SetTimeMultiplierAlejandro()
-    {
-        if (timeMultiplier + incrementTime == 0.0f || timeMultiplier + incrementTime == 4.0f)
-        {
-            timeMultiplier = 0;
-            Time.timeScale = timeMultiplier;
-        }
-        timeMultiplier += (short)incrementTime;
-        Time.timeScale = timeMultiplier;
-
-        speedText.text = "Speed x" + Time.timeScale.ToString();
-
-        InstantiateTap();
-    }
 
     public bool isInteracting() { return interacting; }
 
-    public void setAutoplay() {
-        mg.autoplay = !mg.autoplay;
-        interacting = true;
-        autoplayText.text=(mg.autoplay) ?  "Automatic" :  "Manual";
-        InstantiateTap();
-    }
+    public void setAutoplay() { mg.autoplay = !mg.autoplay; interacting = true; InstantiateTap(); }
 
     void InstantiateTap()
     {

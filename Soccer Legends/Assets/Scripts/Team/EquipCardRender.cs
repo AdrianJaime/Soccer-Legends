@@ -7,9 +7,13 @@ public class EquipCardRender : MonoBehaviour
     //public CharacterBasic characterInfo;
 
     //display objects from de prefab
-    [SerializeField] Text nameText, powerText;
-    [SerializeField] Image artworkImage, borderColor, spriteStars, elementColor, role;
+    [SerializeField] Text nameText;
+    [SerializeField] Image artworkImage;
+    [SerializeField] Text powerText;
     public CharacterBasic characterInfo;
+    [SerializeField] Image borderColor;
+    [SerializeField] Image spriteStars;
+    [SerializeField] Image elementColor;
 
     [SerializeField] bool UtdateAtInit;
 
@@ -17,8 +21,9 @@ public class EquipCardRender : MonoBehaviour
     //init resources
     //tema estrellas y cosas que se repiten entre cartas
     //como marcos o cosas asi
-    [SerializeField] SpriteConpendiumSO borderColors, starSprites, roles;
-    [SerializeField] ColorsScriptableObject elementColors;
+    [SerializeField] Sprite[] borderColors;
+    [SerializeField] Sprite[] starSprites;
+    [SerializeField] Color[] elementColors;
 
 
     //Es mejor esperar a que indique un script por encima que haga update el render
@@ -26,7 +31,6 @@ public class EquipCardRender : MonoBehaviour
     {
         if (UtdateAtInit)
             UpdateRender();
-
     }
 
     public void UpdateRender()
@@ -41,14 +45,11 @@ public class EquipCardRender : MonoBehaviour
 
                 nameText.text = characterInfo.basicInfo.nameCharacter;
                 artworkImage.sprite = characterInfo.basicInfo.artworkIcon;
-                powerText.text = "CP: "+characterInfo.power.ToString();
+                powerText.text = characterInfo.power.ToString();
 
-                borderColor.sprite = borderColors.sprites[(int)characterInfo.basicInfo.rarity];
-                spriteStars.sprite = starSprites.sprites[(int)characterInfo.basicInfo.rarity];
-                elementColor.color = elementColors.colors[(int)characterInfo.basicInfo.type];
-
-                role.sprite = roles.sprites[(int)characterInfo.basicInfo.rol];
-
+                borderColor.sprite = borderColors[(int)characterInfo.basicInfo.rarity];
+                spriteStars.sprite = starSprites[(int)characterInfo.basicInfo.rarity];
+                elementColor.color = elementColors[(int)characterInfo.basicInfo.type];
             }
             else
             {
@@ -58,19 +59,16 @@ public class EquipCardRender : MonoBehaviour
                 artworkImage.color = transparent;
 
                 nameText.text = "None";
-                powerText.text = "CP: " + "0";
+                powerText.text = "0";
 
 
 
-                borderColor.sprite = borderColors.sprites[3];
+                borderColor.sprite = borderColors[3];
                 spriteStars.sprite = null;
 
-                borderColor.sprite = borderColors.sprites[3];
-                spriteStars.sprite = starSprites.sprites[0];
-                elementColor.color = elementColors.colors[5];
-
-                role.sprite = roles.sprites[0];
-
+                borderColor.sprite = borderColors[3];
+                spriteStars.sprite = starSprites[0];
+                elementColor.color = elementColors[5];
 
             }
         }
@@ -82,13 +80,11 @@ public class EquipCardRender : MonoBehaviour
             artworkImage.color = transparent;
 
             nameText.text = "None";
-            powerText.text = "CP: " + "0";
+            powerText.text = "0";
 
-            borderColor.sprite = borderColors.sprites[3];
-            spriteStars.sprite = starSprites.sprites[0];
-            elementColor.color = elementColors.colors[5];
-            role.sprite = roles.sprites[0];
-
+            borderColor.sprite = borderColors[3];
+            spriteStars.sprite = starSprites[0];
+            elementColor.color = elementColors[5];
 
         }
     }

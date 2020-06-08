@@ -11,14 +11,12 @@ public class LuciferSpecial : SpecialAttack
 
     public override bool canUseSpecial(PVE_Manager mg, GameObject specialOwner, float energy)
     {
-        return energy >= specialAttackInfo.requiredEnergy && mg.state == PVE_Manager.fightState.SHOOT &&
-            specialOwner.GetComponent<MyPlayer_PVE>().ball != null;
+        return energy >= specialAttackInfo.requiredEnergy && specialOwner.GetComponent<MyPlayer_PVE>().ball != null;
     }
 
     public override bool canUseSpecial(Manager mg, GameObject specialOwner, float energy)
     {
-        return energy >= specialAttackInfo.requiredEnergy && mg.state == Manager.fightState.SHOOT &&
-            specialOwner.GetComponent<MyPlayer>().ball != null;
+        return energy >= specialAttackInfo.requiredEnergy && specialOwner.GetComponent<MyPlayer>().ball != null;
     }
 
     public override IEnumerator callSpecial(PVE_Manager mg, GameObject specialOwner, GameObject rival)

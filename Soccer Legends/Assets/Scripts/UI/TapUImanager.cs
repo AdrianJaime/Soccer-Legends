@@ -31,6 +31,6 @@ public class TapUImanager : MonoBehaviour
     private void OnLevelWasLoaded(int level)
     {
         enabled = !(SceneManager.GetSceneByBuildIndex(level).name == "Match" ||
-            SceneManager.GetSceneByBuildIndex(level).name == "Match-PVE_test");   
+            SceneManager.GetSceneByBuildIndex(level).name == "Match-PVE_test");
     }
 }

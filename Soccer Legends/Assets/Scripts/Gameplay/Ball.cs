@@ -118,10 +118,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
 
 
-            //AÑADIDO POR ALEJANDRO SONIDO PARA PRÁCTICA MÚSICA
-
-            GetComponent<AudioSource>().Play();
-            //
+            GetComponent<FMODUnity.StudioEventEmitter>().Play();
 
 
         }

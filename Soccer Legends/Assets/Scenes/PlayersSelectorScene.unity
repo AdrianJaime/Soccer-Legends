@@ -1136,6 +1136,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 243236921312505118, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
         type: 2}
+    - target: {fileID: 5691721411749772021, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1704559377}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bcdffb10e6fbd488de7a82ccfeb38b, type: 3}
 --- !u!1 &256616851
@@ -1150,6 +1180,10 @@ GameObject:
   - component: {fileID: 256616852}
   - component: {fileID: 256616855}
   - component: {fileID: 256616854}
+  - component: {fileID: 256616856}
+  - component: {fileID: 256616857}
+  - component: {fileID: 256616860}
+  - component: {fileID: 256616858}
   m_Layer: 0
   m_Name: TapsManager
   m_TagString: Untagged
@@ -1192,7 +1226,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256616851}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 243551065829333126, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
     type: 2}
@@ -1294,11 +1328,133 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e80bd2e497b62874198c76d5fde783c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 8300000, guid: 197eb7f67ec67ce45ba11a56e11d8560, type: 3}
-  intro: {fileID: 8300000, guid: f75d381d120c2d446ac701ce830f261d, type: 3}
-  normalMATCH: {fileID: 8300000, guid: e12d90101f86c7841ab3e5e538fda7c5, type: 3}
-  animationMusic: {fileID: 8300000, guid: 58d1ea1ad303a6a43b87c57bbaa736b7, type: 3}
-  src: {fileID: 256616854}
+  ui_emt: {fileID: 256616856}
+  gameplay_emt: {fileID: 256616857}
+  gradas_emt: {fileID: 256616860}
+  goal_emt: {fileID: 256616858}
+--- !u!114 &256616856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256616851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Music/UI
+  PlayEvent: 1
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
+--- !u!114 &256616857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256616851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Music/Gameplay
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params:
+  - Name: Animation
+    Value: 0
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
+--- !u!114 &256616858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256616851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/Goal
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
+--- !u!114 &256616860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256616851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Ambient/Grades
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
+--- !u!1 &258396162 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4589827642262145948, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+    type: 3}
+  m_PrefabInstance: {fileID: 240764917}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &258396164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258396162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/UI_Interaction
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!224 &261385121 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7005443149365463332, guid: 88325f58a4a249647b013a7d9b7c46ae,
@@ -2965,6 +3121,7 @@ GameObject:
   - component: {fileID: 671926300}
   - component: {fileID: 671926299}
   - component: {fileID: 671926298}
+  - component: {fileID: 671926301}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2979,7 +3136,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 671926297}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &671926299
 Camera:
   m_ObjectHideFlags: 0
@@ -3036,6 +3193,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &671926301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671926297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ListenerNumber: -1
 --- !u!114 &717193250 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1391864159168303450, guid: ff7dfcd8d8cdc1449a6567beb42f1ab0,
@@ -3261,6 +3431,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 243236921312505118, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
         type: 2}
+    - target: {fileID: 5691721411749772021, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1704559377}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bcdffb10e6fbd488de7a82ccfeb38b, type: 3}
 --- !u!114 &810896861 stripped
@@ -4867,6 +5067,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 243236921312505118, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
         type: 2}
+    - target: {fileID: 5691721411749772021, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1704559377}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bcdffb10e6fbd488de7a82ccfeb38b, type: 3}
 --- !u!114 &1266421853 stripped
@@ -5237,6 +5467,35 @@ PrefabInstance:
         type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bcdffb10e6fbd488de7a82ccfeb38b, type: 3}
+--- !u!1 &1518358241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4589827642262145948, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+    type: 3}
+  m_PrefabInstance: {fileID: 806238091}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1518358243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518358241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/UI_Interaction
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!114 &1568943781 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1391864159168303450, guid: ff7dfcd8d8cdc1449a6567beb42f1ab0,
@@ -5889,6 +6148,35 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1704559376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4589827642262145948, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6532099466656438013}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1704559377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704559376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/UI_Interaction
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!114 &1721578983 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5526329345504439571, guid: ff7dfcd8d8cdc1449a6567beb42f1ab0,
@@ -6118,6 +6406,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dccb018568d9f804b8b77700ccad133d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1842942286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4589827642262145948, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1235920290}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1842942288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842942286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/UI_Interaction
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!114 &1909718550 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6427657551092914296, guid: ff7dfcd8d8cdc1449a6567beb42f1ab0,
@@ -7161,6 +7478,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 243236921312505118, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
         type: 2}
+    - target: {fileID: 5691721411749772021, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1704559377}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217246230261133739, guid: 72bcdffb10e6fbd488de7a82ccfeb38b,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bcdffb10e6fbd488de7a82ccfeb38b, type: 3}
 --- !u!1001 &7005443149221536389

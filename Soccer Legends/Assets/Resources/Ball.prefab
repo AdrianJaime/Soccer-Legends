@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5445093676735528283}
   - component: {fileID: 5445093676735528280}
   - component: {fileID: 5899723275345275377}
+  - component: {fileID: 7528425082382390254}
   m_Layer: 2
   m_Name: Ball
   m_TagString: Ball
@@ -200,7 +201,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5445093676735528279}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 243787031462533386, guid: 31c9f12e2e54ce94e911c559f2cd45bd,
     type: 2}
@@ -290,6 +291,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7528425082382390254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5445093676735528279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/Sounds Effects/Ball
+  PlayEvent: 0
+  StopEvent: 2
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 10
 --- !u!1 &8041067093335799388
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,6 +325,7 @@ GameObject:
   - component: {fileID: 7469907388499553201}
   - component: {fileID: 2274151836997358256}
   - component: {fileID: 5589063104965305384}
+  - component: {fileID: 5125290498210295115}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -376,4 +401,17 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8041067093335799388}
+  m_Enabled: 0
+--- !u!114 &5125290498210295115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8041067093335799388}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ListenerNumber: -1

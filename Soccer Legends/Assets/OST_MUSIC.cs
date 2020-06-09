@@ -2,48 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using FMODUnity;
 
 public class OST_MUSIC : MonoBehaviour
 {
-    [SerializeField] AudioClip menu, intro, normalMATCH, animationMusic;
 
-    [SerializeField] AudioSource src;
-
-    private void Update()
-    {
-        if (src.clip == intro && !src.isPlaying) { src.clip = normalMATCH; src.loop = true; src.Play(); }
-    }
+    public StudioEventEmitter ui_emt, gameplay_emt, gradas_emt, goal_emt;
 
     private void OnLevelWasLoaded(int level)
     {
-        switch(SceneManager.GetSceneByBuildIndex(level).name)
+        switch (SceneManager.GetSceneByBuildIndex(level).name)
         {
             case "PlayersSelectorScene":
-                if (src.clip == menu) return;
-                src.Stop();
-                src.clip = menu;
-                src.loop = true;
-                src.volume = 0.6f;
-                src.Play();
+                if (!ui_emt.IsPlaying()) ui_emt.Play();
+                if (gameplay_emt.IsPlaying())
+                {
+                    gameplay_emt.Stop();
+                    gradas_emt.EventInstance.stop( FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+                }
                 break;
             case "Match-PVE_test":
-                src.Stop();
-                src.clip = intro;
-                src.loop = false;
-                src.volume = 1.0f;
-                src.Play();
+                ui_emt.Stop();
+                gameplay_emt.Play();
+                gradas_emt.Play();
                 break;
             default:
                 break;
         }
-    }
-
-    public void playAnimationMusic()
-    {
-        if (src.clip == animationMusic && src.isPlaying) return;
-        src.Stop();
-        src.clip = animationMusic;
-        src.loop = true;
-        src.Play();
     }
 }

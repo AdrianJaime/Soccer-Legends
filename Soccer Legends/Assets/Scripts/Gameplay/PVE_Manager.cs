@@ -382,6 +382,8 @@ public class PVE_Manager : MonoBehaviour
         if (isLocal) score[0]++;
         else score[1]++;
 
+        TapUImanager.mg.gameObject.GetComponent<OST_MUSIC>().goal_emt.Play();
+
         goalRefFrame = 0;
         lastPlayer = null;
         resumeGame();
@@ -781,7 +783,7 @@ public class PVE_Manager : MonoBehaviour
                 animator.runtimeAnimatorController = aoc;
                 animator.runtimeAnimatorController.name = "OverrideRunTimeController";
                 animator.SetBool("SpecialAnim", true);
-                TapUImanager.mg.gameObject.GetComponent<OST_MUSIC>().playAnimationMusic();
+                TapUImanager.mg.gameObject.GetComponent<OST_MUSIC>().gameplay_emt.EventInstance.setParameterByName("Animation", 1.0f);
             }
         }
 
